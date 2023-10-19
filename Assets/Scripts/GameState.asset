@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cddb9ed12c3a10d48bda5bbc738b0619, type: 3}
   m_Name: GameState
   m_EditorClassIdentifier: 
-  isRoundOver: 0
-  timer: 0.02
-  roundDuration: 60
-  score: 0
-  highScore: 0
-  currency: 0
-  grade: 65
+  roundState: 0
+  timer: 80.009026
+  roundDuration: 3.4028235e+38
+  score: 117000
+  highScore: 117000
+  currency: 92
+  grade: 66

@@ -202,5 +202,19 @@ public class InventoryController : MonoBehaviour
             return 0; // Item not found in inventory
         }
     }
+    public int TotalAvailableItems()
+    {
+        int totalItems = 0;
+        foreach (var entry in inventoryState.inventory)
+        {
+            totalItems += entry.Value.count;
+        }
+        return totalItems;
+    }
+    public int TotalItemsUsedThisRound()
+    {
+        return itemsUsedThisRound;
+    }
+
 }
 

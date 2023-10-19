@@ -6,9 +6,12 @@ public class PlayerController : MonoBehaviour
     public InventoryController inventoryController;
     public GameState gameState;
     private Rigidbody boatRb;
+    public GameController gameController;
+
 
     void Start()
     {
+        gameController = FindObjectOfType<GameController>();
         boatRb = GetComponent<Rigidbody>();
         boatRb.interpolation = RigidbodyInterpolation.Interpolate;
         boatRb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -16,8 +19,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Skip any updates if the round is over
-        if (gameState.isRoundOver)
+        // Restrict movement only if the round was started and is now over
+        if (gameState.roundState == RoundState.Over)
         {
             return;
         }

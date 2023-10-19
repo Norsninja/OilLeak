@@ -23,14 +23,14 @@ public class RoundLocation : MonoBehaviour
         }
     }
 
-    // private void Update()
-    // {
-    //     if (playerInside && Input.GetKeyDown(KeyCode.E)) // 'E' key to activate the round
-    //     {
-    //         GameController gameController = FindObjectOfType<GameController>();
-    //         gameController.SetCurrentRoundLocation(roundLocationData);
-    //         gameController.StartNewRound();
-    //     }
-    // }
+    private void Update()
+    {
+        if (playerInside && Input.GetKeyDown(KeyCode.E))
+        {
+            GameController gameController = FindObjectOfType<GameController>();
+            gameController.StartNewRound(roundLocationData);
+        }
+    }
+
 }
 

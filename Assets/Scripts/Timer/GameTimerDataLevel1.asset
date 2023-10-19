@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2733385dbc0f919499ae2ef32aa44ccc, type: 3}
   m_Name: GameTimerDataLevel1
   m_EditorClassIdentifier: 
-  roundDuration: 60
+  roundDuration: 80
