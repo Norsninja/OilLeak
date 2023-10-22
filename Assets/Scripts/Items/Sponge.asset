@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sponge
   m_EditorClassIdentifier: 
   itemName: Sponge
-  buoyancy: 0.1
+  buoyancy: 0.05
   weight: 1
   cost: 0
   itemPrefab: {fileID: 6609956680107887926, guid: 8b1fc74cb420f384da7cffab60b192a2,

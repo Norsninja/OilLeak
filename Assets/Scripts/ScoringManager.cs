@@ -6,9 +6,11 @@ public class ScoringManager : MonoBehaviour
 {
     public GameState gameState; // Reference to GameState Scriptable Object
     public OilLeakData oilLeakData; // Reference to OilLeakData Scriptable Object
-    public InventoryController inventoryController;
+    public InventoryController inventoryController;    
+    public ScoreSummary scoreSummary;  
     private float efficiencyScore;
     private float throwEfficiencyScore;
+
     public void CalculateGrade()
     {
         // Step 1: Calculate Maximum Possible Score
@@ -39,6 +41,7 @@ public class ScoringManager : MonoBehaviour
         
         // Step 9: Log Results
         LogResults(grade, finalScore, currencyAwarded);
+        scoreSummary = new ScoreSummary(maximumPossibleScore, escapePenalty, efficiencyScore, throwEfficiencyScore, adjustedGradeScore, bonus);
     }
     private int CalculateMaximumPossibleScore()
     {

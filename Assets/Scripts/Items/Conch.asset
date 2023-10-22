@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb79824094b549e439ae15c3050e3135, type: 3}
   m_Name: Conch
   m_EditorClassIdentifier: 
-  itemName: 
-  buoyancy: 0
-  weight: 0
+  itemName: Conch
+  buoyancy: 0.7
+  weight: 5
   cost: 0
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 3628251255734086848, guid: ba1bf8fe317ad5a4381683aa74791376,
+    type: 3}
   isRagdoll: 0

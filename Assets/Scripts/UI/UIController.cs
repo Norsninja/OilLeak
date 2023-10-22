@@ -15,6 +15,14 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI highScoreText; 
     public TextMeshProUGUI currencyRewardedText; 
 
+    public TextMeshProUGUI maximumPossibleScoreText;
+    public TextMeshProUGUI escapePenaltyText;
+    public TextMeshProUGUI efficiencyScoreText;
+    public TextMeshProUGUI throwEfficiencyScoreText;
+    public TextMeshProUGUI adjustedGradeScoreText;
+    public TextMeshProUGUI bonusText;
+
+    public ScoringManager scoringManager;
     public GameState gameState; // Reference to GameState ScriptableObject
     public GameTimerData gameTimerData; // Reference to GameTimerData ScriptableObject
     public OilLeakData oilLeakData;
@@ -23,6 +31,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         gameController = FindObjectOfType<GameController>();
+        scoringManager = FindObjectOfType<ScoringManager>();
         // ... any other initialization logic you might have
     }
     // Update UI elements based on game state
@@ -77,6 +86,12 @@ public class UIController : MonoBehaviour
         roundTotalScoreText.text = "Total Score: " + gameState.score;
         highScoreText.text = "High Score: " + gameState.highScore;
         currencyRewardedText.text = "Currency Rewarded: " + gameState.currency;
+        maximumPossibleScoreText.text = "Max Possible Score: " + gameController.scoringManager.scoreSummary.maximumPossibleScore;
+        escapePenaltyText.text = "Escape Penalty: " + gameController.scoringManager.scoreSummary.escapePenalty;
+        efficiencyScoreText.text = "Efficiency Score: " + gameController.scoringManager.scoreSummary.efficiencyScore;
+        throwEfficiencyScoreText.text = "Throw Efficiency Score: " + gameController.scoringManager.scoreSummary.throwEfficiencyScore;
+        adjustedGradeScoreText.text = "Adjusted Grade Score: " + gameController.scoringManager.scoreSummary.adjustedGradeScore;
+        bonusText.text = "Bonus: " + gameController.scoringManager.scoreSummary.bonus;
     }
     public void HideRoundOverUI()
     {
