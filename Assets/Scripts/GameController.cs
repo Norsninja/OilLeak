@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
-{
+    {// Singleton instance made read-only
+    public static GameController Instance { get; private set; }
     public GameState gameState; // Reference to GameState Scriptable Object
     public PlayerProfile playerProfile; // Reference to PlayerProfile Scriptable Object
     public OilLeakData oilLeakData; // Reference to OilLeakData Scriptable Object
@@ -12,39 +13,75 @@ public class GameController : MonoBehaviour
     private RoundLocationData currentRoundLocationData; // The current round's data
     public ScoringManager scoringManager;
     public bool roundStarted = false;
-
+    // Activate Singleton 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }    
     // Initialize the game state
     void Start()
     {
+        InitializeGameState();
+        uiController.UpdatePlayerProfileUI();
+    }
+    void InitializeGameState()
+    {
         Debug.Log("GameState instance ID in GameController: " + gameState.GetInstanceID());
-
-        // Set the initial round state
         gameState.roundState = RoundState.NotStarted;
-
         gameState.score = 0;
         gameState.highScore = 0;
         gameState.currency = 0;
-        uiController.UpdatePlayerProfileUI();
     }
     // Update and check round-over conditions
     void Update()
     {
-        // Store the current round state at the beginning of the frame
-        RoundState currentRoundState = gameState.roundState;
+        RoundState currentRoundState = GetCurrentRoundState();
+        
+        HandleRoundStateLogic(currentRoundState);
+        
+        CheckForStateChanges(currentRoundState);
+    }
 
+    RoundState GetCurrentRoundState()
+    {
+        return gameState.roundState;
+    }
+
+    void HandleRoundStateLogic(RoundState currentRoundState)
+    {
         switch (currentRoundState)
         {
             case RoundState.Active:
-                UpdateRealTimeScore(); // Update the score in real-time
-                CheckRoundOverConditions();
+                HandleActiveState();
                 break;
             
             case RoundState.Over:
-                uiController.ShowRoundOverUI();
-                gameState.roundState = RoundState.NotStarted; // Reset the round state to NotStarted after showing UI
+                HandleOverState();
                 break;
         }
-        // Check for state changes
+    }
+
+    void HandleActiveState()
+    {
+        UpdateRealTimeScore(); // Update the score in real-time
+        CheckRoundOverConditions();
+    }
+
+    void HandleOverState()
+    {
+        uiController.ShowRoundOverUI();
+        gameState.roundState = RoundState.NotStarted; // Reset the round state to NotStarted after showing UI
+    }
+
+    void CheckForStateChanges(RoundState currentRoundState)
+    {
         if (currentRoundState != previousRoundState)
         {
             // Update previousRoundState
@@ -54,6 +91,7 @@ public class GameController : MonoBehaviour
             uiController.UpdatePlayerProfileUI();
         }
     }
+
 
     // Check if the round is over based on the timer
     void CheckRoundOverConditions()
@@ -71,21 +109,6 @@ public class GameController : MonoBehaviour
     {
         gameState.score = currentRoundLocationData.oilLeakData.particlesBlocked * 1000;
         uiController.UpdateUI();
-    }
-
-
-    public void SetCurrentRoundLocation(RoundLocationData roundLocationData)
-    {
-        currentRoundLocationData = roundLocationData;
-        oilLeakData = roundLocationData.oilLeakData; // Update oilLeakData with the current round's data
-
-        // Reset round-specific data
-        gameState.roundState = RoundState.Over;
-        gameState.score = 0;
-        gameState.timer = 0;
-        
-        OilController oilController = FindObjectOfType<OilController>();
-        oilController.SetOilLeakData(oilLeakData); // Set the oil data in the OilController
     }
 
     void UpdatePlayerProfile()
@@ -118,6 +141,14 @@ public class GameController : MonoBehaviour
             return -1; // Return -1 to indicate no active round
         }
     }
+    // Common method to reset game state
+    public void ResetGameState(RoundState newRoundState)
+    {
+        gameState.score = 0;
+        gameState.timer = 0;
+        gameState.roundState = newRoundState;
+        uiController.UpdateUI();
+    }
 
     public void StartNewRound(RoundLocationData roundLocationData)
     {
@@ -126,9 +157,7 @@ public class GameController : MonoBehaviour
         oilLeakData = roundLocationData.oilLeakData;
 
         // Reset game state parameters
-        gameState.roundState = RoundState.Active; // Set the round state to Active
-        gameState.score = 0;
-        gameState.timer = 0;
+        ResetGameState(RoundState.Active);
         inventoryController.itemsUsedThisRound = 0;
         // Capture the initial state of the inventory
         int initialTotalItems = inventoryController.TotalAvailableItems();
@@ -142,23 +171,13 @@ public class GameController : MonoBehaviour
             oilController.ResetOilSystem();
         }
 
-        GameTimer gameTimer = FindObjectOfType<GameTimer>();
-        if (gameTimer)
-        {
-            gameTimer.ResetTimer();
-        }
+        GameTimer.Instance.ResetTimer();  // Using Singleton instance
     }
     public void ContinueGame()
     {
-        // Hide the "Game Over" UI
         uiController.HideRoundOverUI();
-        gameState.score = 0;
-        gameState.timer = 0;
+        ResetGameState(RoundState.NotStarted);
         scoringManager.scoreSummary = null;
-        // Reset game state (or set it to a state that allows the player to continue)
-        gameState.roundState = RoundState.NotStarted;
-        uiController.UpdateUI();
-        // Additional logic to reset or prepare the game for continuation could go here
     }
 
 }

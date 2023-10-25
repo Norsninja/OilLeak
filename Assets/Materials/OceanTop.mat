@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: OceanTop
   m_Shader: {fileID: 4800000, guid: c8110ef7c96474f73b2ee5f90e026b10, type: 3}
-  m_Parent: {fileID: 2100000, guid: 30713a051052b4d25b10f61c7c53434c, type: 2}
+  m_Parent: {fileID: 2100000, guid: 2f280c117f7574253a4a2adca2bf0e6b, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -37,34 +37,35 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DepthDensity: 0.5
-    - _DistanceDensity: 0.025
-    - _EdgeFoamDepth: 0.25
+    - _DepthDensity: 0.183
+    - _DistanceDensity: 0.155
+    - _EdgeFoamDepth: 2.1
     - _FancyShadows: 0
-    - _FoamContribution: 0.549
-    - _FoamNoiseScale: 0.32
+    - _FoamContribution: 0.233
+    - _FoamNoiseScale: 0.151
     - _FoamScale: 1
     - _FoamSpeed: 1
-    - _ReflectionContribution: 0.22
+    - _MaxShadowDistance: 64
+    - _ReflectionContribution: 0.185
     - _SparkleExponent: 20000
-    - _SparkleScale: 50
+    - _SparkleScale: 9.1
     - _SparkleSpeed: 0.025
-    - _SunSpecularExponent: 1000
+    - _SunSpecularExponent: 47.9
     - _Wave1Amplitude: 0.25
-    - _Wave1Direction: 0.5
+    - _Wave1Direction: 0.359
     - _Wave1Speed: 0.25
     - _Wave1Wavelength: 10
     - _Wave2Amplitude: 0.2
-    - _Wave2Direction: 0.25
+    - _Wave2Direction: 0.335
     - _Wave2Wavelength: 10
-    - _WaveNormalScale: 20
-    - _WaveNormalSpeed: 0.05
+    - _WaveNormalScale: 15.75
+    - _WaveNormalSpeed: 2.1
     m_Colors:
-    - _DeepColor: {r: 0, g: 0.05, b: 0.19, a: 1}
+    - _DeepColor: {r: 0, g: 0.13563336, b: 1, a: 1}
     - _FarColor: {r: 0.04, g: 0.27, b: 0.75, a: 1}
     - _SSSColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.055802785, g: 0.07317973, b: 0.3584906, a: 1}
-    - _ShallowColor: {r: 0.44, g: 0.95, b: 0.36, a: 1}
+    - _ShallowColor: {r: 0, g: 0.9734455, b: 1, a: 1}
     - _SparkleColor: {r: 0.43454072, g: 0.990566, b: 0.602066, a: 1}
-    - _SunSpecularColor: {r: 0.11213955, g: 0.13794385, b: 0.3773585, a: 0.99215686}
+    - _SunSpecularColor: {r: 0.76052475, g: 1, b: 1, a: 0.99215686}
   m_BuildTextureStacks: []
