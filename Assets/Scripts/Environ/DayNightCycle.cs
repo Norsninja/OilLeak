@@ -32,8 +32,9 @@ public class DayNightCycle : MonoBehaviour
     private Color dayColor = Color.white;
     private Color nightColor = new Color(0, 0, 0.5f);
     //colors for material set in in inspector
-    public Color dayTopColor = new Color(0.5f, 0.75f, 1);
-    public Color dayBottomColor = new Color(1, 1, 0.5f);
+    public Color dayTopColor = new Color(0.5f, 0.75f, 1, 0.9f); // 90% transparency
+    public Color dayBottomColor = new Color(1, 1, 0.5f, 1); // No transparency
+
     public Color nightTopColor = new Color(0, 0, 0.5f);
     public Color nightBottomColor = new Color(0, 0, 0.25f);
     // Speed factor for ambient light transition
@@ -173,13 +174,16 @@ public class DayNightCycle : MonoBehaviour
         float blendFactor = isDayPhase ?
             Mathf.InverseLerp(0, halfDay, dayNightData.currentTime) :
             Mathf.InverseLerp(halfDay, dayNightData.dayLength, dayNightData.currentTime);
-        
+
+        // Adjust the alpha based on the time of day
         Color currentColor = isDayPhase ?
             Color.Lerp(dayColor, nightColor, blendFactor) :
             Color.Lerp(nightColor, dayColor, blendFactor);
 
+        // Set the color property
         material.SetColor(colorPropertyName, currentColor);
     }
+
 
 
 }

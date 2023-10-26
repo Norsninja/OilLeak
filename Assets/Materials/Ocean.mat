@@ -74,18 +74,18 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
-    - _MoonIntensity: 0.4576651
+    - _MoonIntensity: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
     - _SrcBlend: 1
-    - _SunIntensity: 0
+    - _SunIntensity: 0.17672086
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BottomColor: {r: 0, g: 0.004586969, b: 0.36348563, a: 1}
+    - _BottomColor: {r: 0, g: 0.02859997, b: 0.95758826, a: 1}
     - _Color: {r: 0, g: 0.7203593, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _TopColor: {r: 0, g: 0.12580425, b: 0.57565707, a: 1}
+    - _TopColor: {r: 0, g: 0.78439546, b: 0.9717255, a: 1}
   m_BuildTextureStacks: []

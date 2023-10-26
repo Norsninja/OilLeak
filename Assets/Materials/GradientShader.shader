@@ -2,13 +2,15 @@ Shader "Unlit/GradientShader"
 {
     Properties
     {
-        _TopColor ("Top Color", Color) = (0, 0, 1, 1) // Default to blue
-        _BottomColor ("Bottom Color", Color) = (0, 1, 1, 1) // Default to light blue
+        _TopColor ("Top Color", Color) = (0, 0, 1, 0.9) // Default to blue at 50% transparency
+        _BottomColor ("Bottom Color", Color) = (0, 1, 1, 1) // Default to light blue at 50% transparency
     }
     SubShader
     {
+        Tags { "Queue" = "Transparent" } // This makes sure your shader is rendered after all opaque shaders
         Pass
         {
+            Blend SrcAlpha OneMinusSrcAlpha // This line enables transparency based on the alpha value
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -40,9 +42,11 @@ Shader "Unlit/GradientShader"
             half4 frag (v2f i) : SV_Target
             {
                 // Linearly interpolate between top and bottom colors based on the y-coordinate of the UV
-                return lerp(_BottomColor, _TopColor, i.uv.y);
+                half4 col = lerp(_BottomColor, _TopColor, i.uv.y);
+                return col * col.a; // Multiply by alpha for proper transparency
             }
             ENDCG
         }
     }
 }
+
