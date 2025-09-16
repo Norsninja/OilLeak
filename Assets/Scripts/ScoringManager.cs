@@ -32,21 +32,20 @@ public class ScoringManager : MonoBehaviour
         // Step 6: Determine Grade and Bonus
         (char grade, float bonus) = DetermineGradeAndBonus(adjustedGradeScore, maximumPossibleScore);
         
-        // Step 7: Calculate Final Score and Currency
+        // Step 7: Calculate Final Score
         int finalScore = CalculateFinalScore(baseScore, bonus);
-        int currencyAwarded = CalculateCurrencyAwarded(finalScore);
-        
+
         // Step 8: Update Player Profile
-        UpdatePlayerProfile(finalScore, grade, currencyAwarded);
-        
+        UpdatePlayerProfile(finalScore, grade);
+
         // Step 9: Log Results
-        LogResults(grade, finalScore, currencyAwarded);
+        LogResults(grade, finalScore);
         scoreSummary = new ScoreSummary(maximumPossibleScore, escapePenalty, efficiencyScore, throwEfficiencyScore, adjustedGradeScore, bonus);
     }
     private int CalculateMaximumPossibleScore()
     {
         int totalParticles = oilLeakData.particlesBlocked + oilLeakData.particlesEscaped;
-        return totalParticles * 1000;
+        return totalParticles * 10; // Match actual points awarded per particle
     }
 
     private int GetBaseScore()
@@ -62,7 +61,8 @@ public class ScoringManager : MonoBehaviour
 
     private float CalculateEfficiencyScore()
     {
-        int totalItemInstances = inventoryController.TotalAvailableItems();  // Dynamic total items
+        // FIX: Use initial items count from game state, not remaining items
+        int totalItemInstances = gameState.initialTotalItems > 0 ? gameState.initialTotalItems : 1;  // Avoid divide by zero
         return 1 - ((float)inventoryController.itemsUsedThisRound / totalItemInstances);
     }
 
@@ -118,25 +118,21 @@ public class ScoringManager : MonoBehaviour
         return (int)(baseScore * (1 + bonus));
     }
 
-    private int CalculateCurrencyAwarded(int finalScore)
-    {
-        return finalScore / 1000;
-    }
 
-    private void UpdatePlayerProfile(int finalScore, char grade, int currencyAwarded)
+    private void UpdatePlayerProfile(int finalScore, char grade)
     {
         gameState.score = finalScore;
         gameState.grade = grade;
-        gameState.currency += currencyAwarded;
+        // Currency removed - futility simulator uses only score
         if (finalScore > gameState.highScore)
         {
             gameState.highScore = finalScore;
         }
     }
 
-    private void LogResults(char grade, int finalScore, int currencyAwarded)
+    private void LogResults(char grade, int finalScore)
     {
-        Debug.Log($"Final Grade: {grade}, Final Score: {finalScore}, Currency Awarded: {currencyAwarded}");
+        Debug.Log($"Final Grade: {grade}, Final Score: {finalScore}");
         Debug.Log($"Items Used This Round: {inventoryController.itemsUsedThisRound}");
         Debug.Log($"Total Items Used This Round (From Method): {inventoryController.TotalItemsUsedThisRound()}");
         Debug.Log($"Efficiency Score: {efficiencyScore}");

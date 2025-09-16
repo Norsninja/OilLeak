@@ -70,3 +70,20 @@ $RECYCLE.BIN/
 
 # Windows thumbnail cache files
 ._*
+
+# ==========================================
+# Claude Code Workspace Files
+# ==========================================
+# These are development/planning files, not part of the game
+.claude/
+project/
+SPRINT.md
+TEST_CHECKLIST*.md
+
+# Backup files
+*.backup
+*_backup.*
+Packages/manifest_backup.json
+
+# Temporary development notes (keep CLAUDE.md as it's identity)
+# CLAUDE.md is committed - it defines the AI assistant's role

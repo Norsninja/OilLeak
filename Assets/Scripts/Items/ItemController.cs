@@ -91,7 +91,28 @@ public class ItemController : MonoBehaviour
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
         {
             oilLeakData.particlesBlocked++;
-            Debug.Log("Blocked with ItemController: " + oilLeakData.particlesBlocked);
+            // Debug.Log("Blocked with ItemController: " + oilLeakData.particlesBlocked);
+
+            // Award points for blocking particles (continuous scoring)
+            GameController gameController = GameController.Instance;
+            if (gameController != null && gameController.gameState != null)
+            {
+                int pointsPerParticle = 10; // Base points for each particle blocked
+                gameController.gameState.score += pointsPerParticle;
+            }
+
+            // Notify DifficultyManager for rubber band system
+            if (DifficultyManager.Instance != null)
+            {
+                DifficultyManager.Instance.OnParticleBlocked(1);
+            }
+
+            // Notify ItemDegradation about oil exposure
+            ItemDegradation degradation = GetComponent<ItemDegradation>();
+            if (degradation != null)
+            {
+                degradation.RegisterOilExposure();
+            }
         }
     }
 }

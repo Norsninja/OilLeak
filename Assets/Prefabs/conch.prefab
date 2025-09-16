@@ -114,6 +114,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4376270382224656312}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c7db78ef3d504c94a9039b95cd5303ce,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7664610960390721361}
   m_SourcePrefab: {fileID: 100100000, guid: c7db78ef3d504c94a9039b95cd5303ce, type: 3}
 --- !u!1 &3628251255734086848 stripped
 GameObject:
@@ -185,3 +189,19 @@ MonoBehaviour:
   buoyancy: 0
   rotationSpeed: {x: 0, y: 0, z: 0}
   oilLeakData: {fileID: 11400000, guid: 5201d926e9d95f542af240f2d62b1561, type: 2}
+--- !u!114 &-7664610960390721361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3628251255734086848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abb28c2455e67f84b800b1df74589088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: 0
+  exposureSeconds: 0
+  particlesBlockedCount: 0
+  itemData: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}

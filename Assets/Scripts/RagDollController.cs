@@ -54,7 +54,7 @@ public class RagdollController : MonoBehaviour
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
         {
             oilLeakData.particlesBlocked++;
-            Debug.Log("Blocked with RagdollController: " + oilLeakData.particlesBlocked);
+            // Debug.Log("Blocked with RagdollController: " + oilLeakData.particlesBlocked);
         }
     }
     // Function to apply throwing force to "Spine.002"

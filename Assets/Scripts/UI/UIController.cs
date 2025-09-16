@@ -4,16 +4,18 @@ using TMPro; // for TextMeshProUGUI
 public class UIController : MonoBehaviour
 {
     public GameObject roundOverCanvas;  // Reference to the RoundOver Canvas GameObject
+    public TextMeshProUGUI roundOverTitleText;  // Title text for game over message
+    public TextMeshProUGUI roundOverSubtitleText;  // Subtitle showing survival stats
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
-    public TextMeshProUGUI currencyText;
+    [SerializeField, HideInInspector] private TextMeshProUGUI currencyText; // Hidden for serialization compatibility
     public TextMeshProUGUI gradeText;
     public TextMeshProUGUI particlesBlockedText;
     public TextMeshProUGUI particlesEscapedText;
-    public TextMeshProUGUI roundTotalScoreText;  // For round-over UI 
+    public TextMeshProUGUI roundTotalScoreText;  // For round-over UI
     public TextMeshProUGUI profileTotalScoreText;
-    public TextMeshProUGUI highScoreText; 
-    public TextMeshProUGUI currencyRewardedText; 
+    public TextMeshProUGUI highScoreText;
+    [SerializeField, HideInInspector] private TextMeshProUGUI currencyRewardedText; // Hidden for serialization compatibility 
 
     public TextMeshProUGUI maximumPossibleScoreText;
     public TextMeshProUGUI escapePenaltyText;
@@ -37,14 +39,44 @@ public class UIController : MonoBehaviour
     // Update UI elements based on game state
     public void UpdateUI()
     {
-        scoreText.text = "Round Score: " + gameState.score.ToString();
-        timerText.text = "Round Time: " + Mathf.RoundToInt(gameState.timer).ToString() + "/" + gameTimerData.roundDuration.ToString();
-        // currencyText.text = "Currency: " + gameState.currency.ToString();
+        // Check if we're in endless mode
+        if (gameController != null && gameController.useEndlessMode)
+        {
+            // Format time as MM:SS for endless mode
+            int totalSeconds = Mathf.FloorToInt(gameState.timer);
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            timerText.text = $"Time: {minutes:00}:{seconds:00}";
+
+            // Calculate gallons delayed (main metric)
+            int gallonsDelayed = oilLeakData.particlesBlocked * 100; // Each particle = 100 gallons
+            scoreText.text = $"Gallons Delayed: {gallonsDelayed:N0}";
+
+            // Show difficulty multiplier if we have DifficultyManager
+            var difficultyManager = DifficultyManager.Instance;
+            if (difficultyManager != null && particlesBlockedText != null)
+            {
+                float multiplier = difficultyManager.GetCurrentMultiplier();
+                particlesBlockedText.text = $"Difficulty: {multiplier:F1}x";
+            }
+
+            // Show particles escaped as secondary stat
+            if (particlesEscapedText != null)
+            {
+                particlesEscapedText.text = $"Oil Escaped: {oilLeakData.particlesEscaped}";
+            }
+        }
+        else
+        {
+            // Original round-based display
+            scoreText.text = "Round Score: " + gameState.score.ToString();
+            timerText.text = "Round Time: " + Mathf.RoundToInt(gameState.timer).ToString() + "/" + gameTimerData.roundDuration.ToString();
+        }
     }
     public void UpdatePlayerProfileUI()
     {
         profileTotalScoreText.text = "Total Score: " + playerProfile.totalScore;
-        currencyText.text = "Scrilla: " + playerProfile.totalCurrency;
+        // currencyText.text = "Scrilla: " + playerProfile.totalCurrency; // Removed - futility simulator uses only score
     }
 
     public void SetGradeTextColor(char grade)
@@ -77,21 +109,49 @@ public class UIController : MonoBehaviour
     public void ShowRoundOverUI()
     {
         roundOverCanvas.SetActive(true);
-        // Update round-over UI components
-        gradeText.text = "Grade: " + gameState.grade;  
-        SetGradeTextColor(gameState.grade);  // Call the new function here
 
-        particlesBlockedText.text = "Particles Blocked: " + oilLeakData.particlesBlocked;
-        particlesEscapedText.text = "Particles Escaped: " + oilLeakData.particlesEscaped;
-        roundTotalScoreText.text = "Total Score: " + gameState.score;
+        // Calculate survival time and gallons for futility display
+        int minutes = Mathf.FloorToInt(gameState.timer / 60f);
+        int seconds = Mathf.FloorToInt(gameState.timer % 60f);
+        int gallonsDelayed = oilLeakData.particlesBlocked * 100;
+        int gallonsEscaped = oilLeakData.particlesEscaped * 100;
+
+        // Set the futility message - the oil always wins
+        if (roundOverTitleText != null)
+        {
+            roundOverTitleText.text = "The Oil Won";
+        }
+
+        // Show what they accomplished before the inevitable
+        if (roundOverSubtitleText != null)
+        {
+            roundOverSubtitleText.text = $"You delayed {minutes:00}:{seconds:00} and blocked {gallonsDelayed:N0} gallons";
+        }
+
+        // Update round-over UI components
+        gradeText.text = "Grade: " + gameState.grade;
+        SetGradeTextColor(gameState.grade);
+
+        // Main stats - what matters in the futility simulator
+        if (roundTotalScoreText != null)
+            roundTotalScoreText.text = $"Survived: {minutes:00}:{seconds:00}";
+
+        // Show gallons instead of particles for impact
+        particlesBlockedText.text = $"Gallons Delayed: {gallonsDelayed:N0}";
+        particlesEscapedText.text = $"Gallons Escaped: {gallonsEscaped:N0}";
+
         highScoreText.text = "High Score: " + gameState.highScore;
-        currencyRewardedText.text = "Currency Rewarded: " + gameState.currency;
-        maximumPossibleScoreText.text = "Max Possible Score: " + gameController.scoringManager.scoreSummary.maximumPossibleScore;
-        escapePenaltyText.text = "Escape Penalty: " + gameController.scoringManager.scoreSummary.escapePenalty;
-        efficiencyScoreText.text = "Efficiency Score: " + gameController.scoringManager.scoreSummary.efficiencyScore;
-        throwEfficiencyScoreText.text = "Throw Efficiency Score: " + gameController.scoringManager.scoreSummary.throwEfficiencyScore;
-        adjustedGradeScoreText.text = "Adjusted Grade Score: " + gameController.scoringManager.scoreSummary.adjustedGradeScore;
-        bonusText.text = "Bonus: " + gameController.scoringManager.scoreSummary.bonus;
+
+        // Show detailed scoring if available
+        if (gameController.scoringManager.scoreSummary != null)
+        {
+            maximumPossibleScoreText.text = "Max Possible Score: " + gameController.scoringManager.scoreSummary.maximumPossibleScore;
+            escapePenaltyText.text = "Escape Penalty: " + gameController.scoringManager.scoreSummary.escapePenalty;
+            efficiencyScoreText.text = "Efficiency Score: " + gameController.scoringManager.scoreSummary.efficiencyScore;
+            throwEfficiencyScoreText.text = "Throw Efficiency Score: " + gameController.scoringManager.scoreSummary.throwEfficiencyScore;
+            adjustedGradeScoreText.text = "Adjusted Grade Score: " + gameController.scoringManager.scoreSummary.adjustedGradeScore;
+            bonusText.text = "Bonus: " + gameController.scoringManager.scoreSummary.bonus;
+        }
     }
     public void HideRoundOverUI()
     {

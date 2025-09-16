@@ -15,9 +15,21 @@ public class InventoryController : MonoBehaviour
     public GameState gameState;
     public InventoryState inventoryState;
 
+    // Pooling system reference
+    private ItemPooler itemPooler;
+
     void Start()
     {
         Debug.Log("InventoryController: Start");
+
+        // Find or create ItemPooler
+        itemPooler = FindObjectOfType<ItemPooler>();
+        if (itemPooler == null)
+        {
+            GameObject poolerObject = new GameObject("ItemPooler");
+            itemPooler = poolerObject.AddComponent<ItemPooler>();
+        }
+
         inventoryState.Reset();  // Reset the inventory state
         LoadInventory();         // Then, load the inventory
     }
@@ -76,9 +88,20 @@ public class InventoryController : MonoBehaviour
             
         if (itemToDrop != null)
         {
-            Debug.Log("Dropping item: " + itemToDrop.itemName);
             Vector3 dropPosition = boatTransform.position + itemDropOffset;
-            GameObject droppedItem = Instantiate(itemToDrop.itemPrefab, dropPosition, Quaternion.identity);
+            Debug.Log($"[INV] Requesting item at position {dropPosition}");
+
+            // Get pooled item with position set (will be activated by pooler)
+            GameObject droppedItem = itemPooler.GetPooledItem(itemToDrop.itemPrefab, dropPosition, Quaternion.identity);
+            Debug.Log($"[INV] Item activated at {droppedItem.transform.position}");
+
+            // Reset rigidbody state after activation
+            Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
 
             // Check if the dropped item is a ragdoll
             if (itemToDrop.isRagdoll)  // Assume isRagdoll is a boolean flag in your Item class
@@ -95,7 +118,7 @@ public class InventoryController : MonoBehaviour
                 ItemController itemController = droppedItem.GetComponent<ItemController>();
                 itemController.item = itemToDrop;
 
-                Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
+                // rb was already retrieved above, reuse it
                 if (rb != null)
                 {
                     float boatRotationY = boatTransform.rotation.eulerAngles.y;

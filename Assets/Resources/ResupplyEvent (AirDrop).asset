@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84915db9fb767e24c928a0f8d365a0db, type: 3}
+  m_Name: ResupplyEvent (AirDrop)
+  m_EditorClassIdentifier: 
+  eventName: Air Drop
+  type: 0
+  minInterval: 75
+  maxInterval: 120
+  cooldown: 90
+  spawnWindow: 30
+  spawnHeight: 15
+  vehicleSpeed: 8
+  parachuteDescentSpeed: 2
+  horizontalDrift: 0.3
+  minDropCount: 1
+  maxDropCount: 3
+  despawnTime: 30
+  pickupRadius: 1.5
+  allowRubberBandTrigger: 1
+  rubberBandPriority: 1
+  vehiclePrefab: {fileID: 7512155009075620288, guid: 11149df8a42106c4b82f08f45bf46f57,
+    type: 3}
+  packagePrefab: {fileID: 4188851391824454191, guid: a1a931e1e669add42829d195c1aff6dd,
+    type: 3}
+  showIndicator: 1
+  spawnSound: {fileID: 0}
+  pickupSound: {fileID: 0}

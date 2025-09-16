@@ -32,7 +32,13 @@ public class WaterSurfaceController : MonoBehaviour
         {
             // Increase the count of escaped particles
             oilLeakData.particlesEscaped++;
-            Debug.Log("Escaped to the WaterSurface: " + oilLeakData.particlesEscaped);
+            // Debug.Log("Escaped to the WaterSurface: " + oilLeakData.particlesEscaped);
+
+            // Notify DifficultyManager for rubber band system
+            if (DifficultyManager.Instance != null)
+            {
+                DifficultyManager.Instance.OnParticleEscaped(1);
+            }
 
             // Play the bubble sound with a varied pitch
             audioSource.pitch = Random.Range(0.8f, 1.2f); // Change the pitch randomly between 0.8 and 1.2

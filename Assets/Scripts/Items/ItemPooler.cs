@@ -11,7 +11,7 @@ public class ItemPooler : MonoBehaviour
         itemPools = new Dictionary<string, Queue<GameObject>>();
     }
 
-    public GameObject GetPooledItem(GameObject prefab)
+    public GameObject GetPooledItem(GameObject prefab, Vector3 position, Quaternion rotation)
     {
         string key = prefab.name;
 
@@ -22,18 +22,24 @@ public class ItemPooler : MonoBehaviour
 
         Queue<GameObject> pool = itemPools[key];
 
+        GameObject item;
         if (pool.Count > 0)
         {
-            GameObject item = pool.Dequeue();
-            item.SetActive(true);
-            return item;
+            // Get from pool
+            item = pool.Dequeue();
+            item.transform.position = position;
+            item.transform.rotation = rotation;
         }
         else
         {
-            GameObject item = Instantiate(prefab);
+            // Create new at specified position (avoids origin spawn)
+            item = Instantiate(prefab, position, rotation);
             item.name = key; // Reset the name as Instantiate appends "(Clone)" to it
-            return item;
         }
+
+        // Activate AFTER positioning
+        item.SetActive(true);
+        return item;
     }
 
     private void CreateNewPool(GameObject prefab)

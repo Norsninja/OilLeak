@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 800275367008234914}
   - component: {fileID: 8653078199136145221}
   - component: {fileID: -1408614704285514115}
+  - component: {fileID: 9092227718317965785}
   m_Layer: 6
   m_Name: Cube
   m_TagString: Item
@@ -150,3 +151,20 @@ MonoBehaviour:
   buoyancy: 0
   rotationSpeed: {x: 0, y: 0, z: 0}
   oilLeakData: {fileID: 11400000, guid: 5201d926e9d95f542af240f2d62b1561, type: 2}
+--- !u!114 &9092227718317965785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4188851391824454191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abb28c2455e67f84b800b1df74589088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: 0
+  exposureSeconds: 0
+  particlesBlockedCount: 0
+  itemData: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+  exposureGracePeriod: 0.2
