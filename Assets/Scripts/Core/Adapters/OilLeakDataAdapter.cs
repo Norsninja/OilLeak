@@ -22,11 +22,13 @@ public class OilLeakDataAdapter : MonoBehaviour
     {
         if (legacyOilLeakData == null)
         {
-            Debug.LogError("OilLeakDataAdapter: No legacy OilLeakData assigned!");
-            return;
+            Debug.LogWarning("OilLeakDataAdapter: No legacy OilLeakData assigned yet. Will be set via reflection or Inspector.");
+            // Don't return - it might be set later
         }
-
-        Debug.LogWarning("OilLeakDataAdapter: TEMPORARY migration adapter active. Remove after refactor!");
+        else
+        {
+            Debug.LogWarning("OilLeakDataAdapter: TEMPORARY migration adapter active. Remove after refactor!");
+        }
     }
 
     void Update()

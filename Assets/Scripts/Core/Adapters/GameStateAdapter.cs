@@ -22,11 +22,13 @@ public class GameStateAdapter : MonoBehaviour
     {
         if (legacyGameState == null)
         {
-            Debug.LogError("GameStateAdapter: No legacy GameState assigned!");
-            return;
+            Debug.LogWarning("GameStateAdapter: No legacy GameState assigned yet. Will be set via reflection or Inspector.");
+            // Don't return - it might be set later
         }
-
-        Debug.LogWarning("GameStateAdapter: TEMPORARY migration adapter active. Remove after refactor!");
+        else
+        {
+            Debug.LogWarning("GameStateAdapter: TEMPORARY migration adapter active. Remove after refactor!");
+        }
     }
 
     void Update()

@@ -54,9 +54,15 @@ public class GameFlowStateMachine
         var states = Enum.GetNames(typeof(GameFlowState));
         foreach (var state in states)
         {
-            if (state.ToLower().Contains("victory") ||
-                state.ToLower().Contains("win") ||
-                state.ToLower().Contains("success"))
+            string stateLower = state.ToLower();
+            // Be specific - don't catch "ShowingResults" as "success"
+            if (stateLower == "victory" ||
+                stateLower == "win" ||
+                stateLower == "winning" ||
+                stateLower == "success" ||
+                stateLower == "succeeded" ||
+                stateLower.Contains("victory") ||
+                stateLower.Contains("winner"))
             {
                 throw new System.InvalidOperationException(
                     $"ILLEGAL STATE DETECTED: {state}\n" +

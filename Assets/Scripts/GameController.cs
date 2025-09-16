@@ -44,11 +44,29 @@ public class GameController : MonoBehaviour
 
             // Add migration adapters
             GameObject adapterObject = new GameObject("MigrationAdapters");
-            var stateAdapter = adapterObject.AddComponent<GameStateAdapter>();
-            var oilAdapter = adapterObject.AddComponent<OilLeakDataAdapter>();
 
-            // Wire up legacy references (these would be set in Inspector normally)
-            // For now, using the existing references
+            // Create and configure GameStateAdapter
+            var stateAdapter = adapterObject.AddComponent<GameStateAdapter>();
+            // Use reflection to set the private serialized field
+            var stateField = typeof(GameStateAdapter).GetField("legacyGameState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (stateField != null && gameState != null)
+            {
+                stateField.SetValue(stateAdapter, gameState);
+                Debug.Log("GameStateAdapter: Wired to legacy GameState");
+            }
+
+            // Create and configure OilLeakDataAdapter
+            var oilAdapter = adapterObject.AddComponent<OilLeakDataAdapter>();
+            // Use reflection to set the private serialized field
+            var oilField = typeof(OilLeakDataAdapter).GetField("legacyOilLeakData",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (oilField != null && oilLeakData != null)
+            {
+                oilField.SetValue(oilAdapter, oilLeakData);
+                Debug.Log("OilLeakDataAdapter: Wired to legacy OilLeakData");
+            }
+
             Debug.LogWarning("MIGRATION: Temporary adapters active. Remove after full refactor!");
         }
 
