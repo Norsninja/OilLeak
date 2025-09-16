@@ -34,6 +34,24 @@ public class GameController : MonoBehaviour
     // Initialize the game state
     void Start()
     {
+        // TEMPORARY: Initialize GameCore if not already present
+        // This will be moved to a persistent scene later
+        if (!GameCore.IsInitialized)
+        {
+            Debug.Log("GameController: Creating GameCore...");
+            GameObject coreObject = new GameObject("GameCore");
+            coreObject.AddComponent<GameCore>();
+
+            // Add migration adapters
+            GameObject adapterObject = new GameObject("MigrationAdapters");
+            var stateAdapter = adapterObject.AddComponent<GameStateAdapter>();
+            var oilAdapter = adapterObject.AddComponent<OilLeakDataAdapter>();
+
+            // Wire up legacy references (these would be set in Inspector normally)
+            // For now, using the existing references
+            Debug.LogWarning("MIGRATION: Temporary adapters active. Remove after full refactor!");
+        }
+
         InitializeGameState();
         uiController.UpdatePlayerProfileUI();
 
