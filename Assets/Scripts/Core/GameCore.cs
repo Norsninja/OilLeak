@@ -243,6 +243,59 @@ public class GameCore : MonoBehaviour
         {
             Session?.Tick(Time.deltaTime);
         }
+
+        // Performance monitoring (every 5 seconds)
+        if (Time.frameCount % 300 == 0 && debugMode)
+        {
+            string leakStatus = Leaks != null ? $"Clean:{Leaks.IsClean}" : "null";
+            string itemStatus = Items != null ? $"Active:{Items.ActiveItemCount}" : "null";
+            string resupplyStatus = Resupply != null ? $"Active:{Resupply.IsMajorEventActive}" : "null";
+
+            Debug.Log($"[GameCore Monitor] Leaks:{leakStatus}, Items:{itemStatus}, Resupply:{resupplyStatus}");
+        }
+    }
+
+    /// <summary>
+    /// Safe accessor for services with null checks
+    /// </summary>
+    public static ILeakService GetLeakService()
+    {
+        if (instance == null)
+        {
+            Debug.LogError("GameCore not initialized!");
+            return null;
+        }
+        return Leaks;
+    }
+
+    public static IItemService GetItemService()
+    {
+        if (instance == null)
+        {
+            Debug.LogError("GameCore not initialized!");
+            return null;
+        }
+        return Items;
+    }
+
+    public static IResupplyService GetResupplyService()
+    {
+        if (instance == null)
+        {
+            Debug.LogError("GameCore not initialized!");
+            return null;
+        }
+        return Resupply;
+    }
+
+    public static GameSession GetSession()
+    {
+        if (instance == null)
+        {
+            Debug.LogError("GameCore not initialized!");
+            return null;
+        }
+        return Session;
     }
 
     /// <summary>

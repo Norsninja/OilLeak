@@ -52,7 +52,41 @@ public class GameSession : IDisposable
         personalBestTime = PlayerPrefs.GetFloat("PersonalBestTime", 0f);
         personalBestGallons = PlayerPrefs.GetInt("PersonalBestGallons", 0);
 
+        // WebGL: Register for page unload to save data
+        #if UNITY_WEBGL && !UNITY_EDITOR
+        Application.focusChanged += OnApplicationFocusChanged;
+        Application.wantsToQuit += OnApplicationWantsToQuit;
+        #endif
+
         Debug.Log($"GameSession initialized. Personal best: {personalBestScore} (Time: {personalBestTime:F1}s, Gallons: {personalBestGallons})");
+    }
+
+    /// <summary>
+    /// Handle WebGL focus loss (tab switch, minimize)
+    /// </summary>
+    private void OnApplicationFocusChanged(bool hasFocus)
+    {
+        if (!hasFocus && IsActive)
+        {
+            // Save when losing focus
+            PlayerPrefs.Save();
+            Debug.Log("GameSession: Saved due to focus loss");
+        }
+    }
+
+    /// <summary>
+    /// Handle WebGL page closing
+    /// </summary>
+    private bool OnApplicationWantsToQuit()
+    {
+        // Final save before quit
+        if (IsActive)
+        {
+            EndSession();
+        }
+        PlayerPrefs.Save();
+        Debug.Log("GameSession: Final save on quit");
+        return true; // Allow quit
     }
 
     /// <summary>
@@ -199,6 +233,13 @@ public class GameSession : IDisposable
     public void Dispose()
     {
         Reset();
+
+        // Unregister WebGL handlers
+        #if UNITY_WEBGL && !UNITY_EDITOR
+        Application.focusChanged -= OnApplicationFocusChanged;
+        Application.wantsToQuit -= OnApplicationWantsToQuit;
+        #endif
+
         // Events will be nulled here in Phase 2
         Debug.Log("GameSession disposed");
     }
