@@ -5,8 +5,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Manages all resupply events (air-drops, barges, etc)
 /// Driven by LeakManager/EndlessMode lifecycle - not self-starting
+/// Implements IResettable for deterministic cleanup during state transitions
 /// </summary>
-public class ResupplyManager : MonoBehaviour
+public class ResupplyManager : MonoBehaviour, IResettable
 {
     [Header("Configuration")]
     [SerializeField] private ResupplyEventConfig airDropConfig;
@@ -589,4 +590,79 @@ public class ResupplyManager : MonoBehaviour
         activePackages.Clear();
         activeCrates.Clear();
     }
+
+    // === IResettable Implementation ===
+
+    /// <summary>
+    /// Reset to initial state for game restart
+    /// Reuses existing EndResupply logic
+    /// </summary>
+    public void Reset()
+    {
+        // Stop all coroutines first
+        StopAllCoroutines();
+
+        // Use existing cleanup logic
+        EndResupply();
+
+        // Reset timing state
+        nextAirDropTime = 0f;
+        nextBargeTime = 0f;
+        lastRubberBandTime = 0f;
+        struggleStartTime = -1f;
+
+        // Ensure state is clean
+        isActive = false;
+    }
+
+    /// <summary>
+    /// Verify the manager is properly cleaned
+    /// </summary>
+    public bool IsClean
+    {
+        get
+        {
+            // Check no active vehicles
+            bool noVehicles = activeAircraft == null && activeBarge == null;
+
+            // Check no active packages or crates
+            bool noActiveItems = (activePackages == null || activePackages.Count == 0) &&
+                                  (activeCrates == null || activeCrates.Count == 0);
+
+            // Check not active
+            bool notActive = !isActive;
+
+            // Check pools are consistent (all pooled items should be inactive)
+            bool poolsClean = true;
+            foreach (var package in packagePool)
+            {
+                if (package != null && package.activeSelf)
+                {
+                    poolsClean = false;
+                    Debug.LogError($"[ResupplyManager] Active package found in pool during IsClean check");
+                    break;
+                }
+            }
+
+            if (poolsClean)
+            {
+                foreach (var crate in cratePool)
+                {
+                    if (crate != null && crate.activeSelf)
+                    {
+                        poolsClean = false;
+                        Debug.LogError($"[ResupplyManager] Active crate found in pool during IsClean check");
+                        break;
+                    }
+                }
+            }
+
+            return noVehicles && noActiveItems && notActive && poolsClean;
+        }
+    }
+
+    /// <summary>
+    /// Check if any major event is active (for telemetry)
+    /// </summary>
+    public bool IsMajorEventActive => activeAircraft != null || activeBarge != null;
 }

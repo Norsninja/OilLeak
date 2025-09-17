@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Manages multiple oil leak points to prevent perfect sealing
 /// Single authority for all oil leaks - controls emission, collisions, and state
+/// Implements IResettable for deterministic cleanup during state transitions
 /// </summary>
 public enum LeakManagerState
 {
@@ -13,7 +14,7 @@ public enum LeakManagerState
     Stopped     // Game ended (particles cleared)
 }
 
-public class LeakManager : MonoBehaviour
+public class LeakManager : MonoBehaviour, IResettable
 {
     [Header("State")]
     [SerializeField] private LeakManagerState currentState = LeakManagerState.Menu;
@@ -644,4 +645,58 @@ public class LeakManager : MonoBehaviour
 
         return total;
     }
+
+    // === IResettable Implementation ===
+
+    /// <summary>
+    /// Reset to initial state for game restart
+    /// Reuses existing StopAndClear logic
+    /// </summary>
+    public void Reset()
+    {
+        // Use existing cleanup logic
+        StopAndClear();
+
+        // Ensure we're in stopped state
+        ChangeState(LeakManagerState.Stopped);
+    }
+
+    /// <summary>
+    /// Verify the manager is properly cleaned
+    /// </summary>
+    public bool IsClean
+    {
+        get
+        {
+            // Check all conditions for clean state:
+            // 1. No managed leaks emitting
+            bool noManagedLeaks = managedLeaks.Count == 0;
+
+            // 2. No ambient leak (unless in Menu state where it's allowed)
+            bool noAmbientOutsideMenu = ambientLeak == null || currentState == LeakManagerState.Menu;
+
+            // 3. Pressure state reset
+            bool pressureReset = currentPressure == 0f && !isBursting;
+
+            // 4. Correct state (Menu or Stopped)
+            bool correctState = currentState == LeakManagerState.Menu || currentState == LeakManagerState.Stopped;
+
+            return noManagedLeaks && noAmbientOutsideMenu && pressureReset && correctState;
+        }
+    }
+
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Editor-only helper to reset singleton for Enter Play Mode without domain reload
+    /// </summary>
+    public static bool EditorResetSingleton()
+    {
+        if (Instance != null)
+        {
+            Instance = null;
+            return true;
+        }
+        return false;
+    }
+    #endif
 }

@@ -18,6 +18,11 @@ public class OilLeakDataAdapter : MonoBehaviour
     private float updateInterval = 0.1f; // 10Hz updates
     private float lastUpdate = 0f;
 
+    // Delta tracking for bi-directional sync
+    private int lastBlockedCount = 0;
+    private int lastEscapedCount = 0;
+    private bool syncing = false; // Prevent sync loops during updates
+
     void Awake()
     {
         if (legacyOilLeakData == null)
@@ -27,9 +32,24 @@ public class OilLeakDataAdapter : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("OilLeakDataAdapter: TEMPORARY migration adapter active. Remove after refactor!");
+            Debug.LogWarning("OilLeakDataAdapter: TEMPORARY migration adapter active with bi-directional sync. Remove after refactor!");
+            // Initialize baseline counts
+            lastBlockedCount = legacyOilLeakData.particlesBlocked;
+            lastEscapedCount = legacyOilLeakData.particlesEscaped;
         }
     }
+
+    void OnEnable()
+    {
+        // Re-initialize baseline counts when enabled (handles scene reloads)
+        if (legacyOilLeakData != null)
+        {
+            lastBlockedCount = legacyOilLeakData.particlesBlocked;
+            lastEscapedCount = legacyOilLeakData.particlesEscaped;
+            Debug.Log($"[OilLeakDataAdapter] OnEnable - Baseline counts: Blocked={lastBlockedCount}, Escaped={lastEscapedCount}");
+        }
+    }
+
 
     void Update()
     {
@@ -39,12 +59,58 @@ public class OilLeakDataAdapter : MonoBehaviour
 
         lastUpdate = Time.time;
 
-        // Only sync if we have both systems
-        if (legacyOilLeakData == null || session == null)
+        // Only sync if we have both systems and not already syncing
+        if (legacyOilLeakData == null || session == null || syncing)
             return;
 
-        // Sync data from new to old
+        syncing = true;
+
+        // Bi-directional sync: Detect changes in legacy system
+        if (legacyOilLeakData.particlesBlocked != lastBlockedCount)
+        {
+            int delta = legacyOilLeakData.particlesBlocked - lastBlockedCount;
+            
+            if (delta > 0)
+            {
+                // Legacy system incremented (ItemController/RagdollController collision)
+                Debug.Log($"[OilLeakDataAdapter] Detected {delta} blocked particles from legacy system, forwarding to GameSession");
+                for (int i = 0; i < delta; i++)
+                {
+                    session.RecordParticleBlocked();
+                }
+            }
+            else if (delta < 0)
+            {
+                // Negative delta means reset occurred
+                Debug.Log("[OilLeakDataAdapter] Detected reset in legacy system");
+                // Don't call session.Reset() here as it might already be resetting
+            }
+            
+            lastBlockedCount = legacyOilLeakData.particlesBlocked;
+        }
+
+        // Same for escaped particles
+        if (legacyOilLeakData.particlesEscaped != lastEscapedCount)
+        {
+            int delta = legacyOilLeakData.particlesEscaped - lastEscapedCount;
+            
+            if (delta > 0)
+            {
+                // Legacy system incremented (WaterSurfaceController collision)
+                Debug.Log($"[OilLeakDataAdapter] Detected {delta} escaped particles from legacy system, forwarding to GameSession");
+                for (int i = 0; i < delta; i++)
+                {
+                    session.RecordParticleEscaped();
+                }
+            }
+            
+            lastEscapedCount = legacyOilLeakData.particlesEscaped;
+        }
+
+        // Sync from new to old (for UI that still reads legacy)
         SyncToLegacy();
+        
+        syncing = false;
     }
 
     /// <summary>
@@ -52,9 +118,16 @@ public class OilLeakDataAdapter : MonoBehaviour
     /// </summary>
     private void SyncToLegacy()
     {
-        // Map particle counts
-        legacyOilLeakData.particlesBlocked = session.ParticlesBlocked;
-        legacyOilLeakData.particlesEscaped = session.ParticlesEscaped;
+        // Only update legacy if values differ (avoid unnecessary writes)
+        if (legacyOilLeakData.particlesBlocked != session.ParticlesBlocked)
+        {
+            legacyOilLeakData.particlesBlocked = session.ParticlesBlocked;
+        }
+        
+        if (legacyOilLeakData.particlesEscaped != session.ParticlesEscaped)
+        {
+            legacyOilLeakData.particlesEscaped = session.ParticlesEscaped;
+        }
     }
 
     /// <summary>
@@ -80,7 +153,9 @@ public class OilLeakDataAdapter : MonoBehaviour
     /// </summary>
     public void ResetCounts()
     {
-        // New system handles this via session.Reset()
-        Debug.Log("OilLeakDataAdapter: Reset requested (handled by GameSession)");
+        // Reset our tracking when counts are reset
+        lastBlockedCount = 0;
+        lastEscapedCount = 0;
+        Debug.Log("[OilLeakDataAdapter] Reset requested - clearing baseline counts");
     }
 }

@@ -79,7 +79,31 @@ public class GameFlowStateMachine
     {
         // CRITICAL: Block any victory transitions (belt and suspenders with static check)
         string stateName = newState.ToString().ToLower();
-        if (stateName.Contains("victory") || stateName.Contains("win") || stateName.Contains("success"))
+        
+        // Be more specific - check for whole words, not substrings
+        // ShowingResults contains "win" in "showing" but that's not a victory state!
+        bool isVictoryState = false;
+        
+        // Check for exact matches or obvious victory patterns
+        if (stateName == "victory" || 
+            stateName == "win" || 
+            stateName == "winner" || 
+            stateName == "winning" || 
+            stateName == "success" || 
+            stateName == "succeeded" ||
+            stateName.StartsWith("victory") ||
+            stateName.StartsWith("win") ||
+            stateName.EndsWith("victory") ||
+            stateName.EndsWith("winner") ||
+            stateName.Contains("_victory") ||
+            stateName.Contains("victory_") ||
+            stateName.Contains("_win_") ||
+            stateName.Contains("_winner"))
+        {
+            isVictoryState = true;
+        }
+        
+        if (isVictoryState)
         {
             Debug.LogError($"ILLEGAL: Attempted transition to victory state '{newState}'! This is a futility simulator!");
             return false;
@@ -286,4 +310,17 @@ public class GameFlowStateMachine
     {
         return $"Current: {currentState}, InGame: {IsInGameplay()}, Active: {IsActive()}";
     }
+
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Editor-only helper to clear event subscriptions for Enter Play Mode without domain reload
+    /// </summary>
+    public static bool EditorClearEvents()
+    {
+        // Note: OnStateChanged is not static, it's per-instance
+        // This method is here for future static events if added
+        // For now, clearing the instance in GameCore.EditorResetStatics() handles it
+        return false;
+    }
+    #endif
 }
