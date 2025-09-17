@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed;
+    public float speed = 5f;
     public InventoryController inventoryController;
-    public GameState gameState;
     private Rigidbody boatRb;
-    public GameController gameController;
+    private bool canMove = false;
+    private Vector3 startPosition;
 
 
     void Start()
     {
-        gameController = FindObjectOfType<GameController>();
         boatRb = GetComponent<Rigidbody>();
         boatRb.interpolation = RigidbodyInterpolation.Interpolate;
         boatRb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        startPosition = transform.position;
     }
 
     void FixedUpdate()
     {
-        // Restrict movement only if the round was started and is now over
-        if (gameState.roundState == RoundState.Over)
+        // Early out if movement is disabled
+        if (!canMove)
         {
             return;
         }
@@ -55,10 +55,29 @@ public class PlayerController : MonoBehaviour
         // ... other game state updates
     }
 
-    int CalculateScore()
+    /// <summary>
+    /// Enable or disable player movement
+    /// </summary>
+    public void EnableMovement(bool enable)
     {
-        // Implement your scoring logic here
-        return 0;
+        canMove = enable;
+    }
+
+    /// <summary>
+    /// Check if movement is enabled
+    /// </summary>
+    public bool IsMovementEnabled => canMove;
+
+    /// <summary>
+    /// Reset boat to starting position
+    /// </summary>
+    public void ResetPosition()
+    {
+        if (boatRb != null)
+        {
+            boatRb.position = startPosition;
+            boatRb.rotation = Quaternion.identity;
+        }
     }
 }
 

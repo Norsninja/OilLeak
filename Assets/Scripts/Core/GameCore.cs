@@ -1,5 +1,8 @@
 using UnityEngine;
 using System;
+using Core;
+using Core.Services;
+using Core.Systems;
 
 /// <summary>
 /// Central service locator for all game services
@@ -15,10 +18,16 @@ public class GameCore : MonoBehaviour
     public static IItemService Items { get; private set; }
     public static IResupplyService Resupply { get; private set; }
     public static IAudioService Audio { get; private set; }
+    public static IDifficultyService Difficulty { get; private set; }
+    public static IHUDService HUD { get; private set; }
+    public static IPlayerMovementService Player { get; private set; }
 
     // Core game systems
     public static GameFlowStateMachine Flow { get; private set; }
     public static GameSession Session { get; private set; }
+
+    // Gameplay system - orchestrates the futility loop
+    private static FutilityGameplaySystem futilitySystem;
 
     // Configuration references (will be set in Inspector)
     [Header("Service Configurations")]
@@ -28,7 +37,6 @@ public class GameCore : MonoBehaviour
     // Debug settings
     [Header("Debug")]
     [SerializeField] private bool debugMode = true;
-    [SerializeField] private bool useNullServices = true; // For testing without implementations
 
     /// <summary>
     /// Check if GameCore is initialized
@@ -37,28 +45,39 @@ public class GameCore : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log($"[GameCore] Awake START - GameObject: {gameObject.name}, InstanceID: {GetInstanceID()}");
+        Debug.Log($"[GameCore] Static instance before assignment: {(instance != null ? $"{instance.gameObject.name} (ID: {instance.GetInstanceID()})" : "null")}");
+
         // Singleton pattern
         if (instance != null && instance != this)
         {
+            Debug.LogError($"[GameCore] DUPLICATE DETECTED! DESTROYING GameObject '{gameObject.name}'");
+            Debug.LogError($"  - Original instance: '{instance.gameObject.name}' (InstanceID: {instance.GetInstanceID()})");
+            Debug.LogError($"  - This duplicate: '{gameObject.name}' (InstanceID: {GetInstanceID()})");
+            Debug.LogError($"  - This will also destroy GameController on same GameObject!");
             Destroy(gameObject);
             return;
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
+        Debug.Log($"[GameCore] Awake COMPLETE - Set as instance: {gameObject.name} (ID: {GetInstanceID()})");
+        // DontDestroyOnLoad removed - single scene game doesn't need persistence
+        // This was causing duplicate GameController issues with Enter Play Mode settings
 
         // Initialize core systems
         InitializeCoreSystemsPhase1();
 
+        // Register services explicitly - NO REFLECTION
+        RegisterServices();
+
         if (debugMode)
         {
-            Debug.Log("GameCore initialized - Phase 1 (Core systems only)");
+            Debug.Log("GameCore initialized with explicit service registration");
         }
     }
 
     /// <summary>
     /// Phase 1 initialization - Core systems only
-    /// Services will be added in Phase 2
     /// </summary>
     private void InitializeCoreSystemsPhase1()
     {
@@ -69,37 +88,99 @@ public class GameCore : MonoBehaviour
         // Create state machine
         Flow = new GameFlowStateMachine();
 
-        // Services will be null for now (Phase 2)
-        if (useNullServices)
-        {
-            Debug.LogWarning("GameCore: Using NULL services for Phase 1 testing");
-            Leaks = null;
-            Items = null;
-            Resupply = null;
-            Audio = null;
-        }
-
         // Subscribe to state changes
         Flow.OnStateChanged += HandleStateChange;
     }
 
     /// <summary>
-    /// Phase 2 initialization - Wire up services
-    /// This will be called after service implementations exist
+    /// Register services explicitly - NO FindObjectOfType after Awake
     /// </summary>
-    public void InitializeServicesPhase2()
+    private void RegisterServices()
     {
-        if (!useNullServices)
+        // Find existing managers (only in Awake, not after)
+        var leakManager = FindObjectOfType<LeakManager>();
+        var itemPooler = FindObjectOfType<ItemPooler>();
+        var resupplyManager = FindObjectOfType<ResupplyManager>();
+        var difficultyManager = FindObjectOfType<DifficultyManager>();
+        var uiController = FindObjectOfType<UIController>();
+        var playerController = FindObjectOfType<PlayerController>();
+
+        // Wrap in adapters
+        if (leakManager != null)
         {
-            Debug.Log("GameCore: Initializing services - Phase 2");
-
-            // TODO: Find existing managers and wrap them
-            // For now, services remain null
-
-            // Example of what Phase 2 will do:
-            // var leakManager = FindObjectOfType<LeakManager>();
-            // Leaks = new LeakServiceAdapter(leakManager);
+            Leaks = new LeakManagerAdapter(leakManager);
+            ResetRegistry.Register(leakManager);
+            Debug.Log("[GameCore] LeakManager registered");
         }
+        else
+        {
+            Debug.LogError("[GameCore] LeakManager not found - LeakService will be null!");
+        }
+
+        if (itemPooler != null)
+        {
+            Items = new ItemPoolerAdapter(itemPooler);
+            ResetRegistry.Register(itemPooler);
+            Debug.Log("[GameCore] ItemPooler registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] ItemPooler not found - ItemService will be null");
+        }
+
+        if (resupplyManager != null)
+        {
+            Resupply = new ResupplyManagerAdapter(resupplyManager);
+            ResetRegistry.Register(resupplyManager);
+            Debug.Log("[GameCore] ResupplyManager registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] ResupplyManager not found - ResupplyService will be null");
+        }
+
+        if (difficultyManager != null)
+        {
+            var adapter = new DifficultyManagerAdapter(difficultyManager);
+            Difficulty = adapter;
+            ResetRegistry.Register(adapter);
+            Debug.Log("[GameCore] DifficultyManager registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] DifficultyManager not found - DifficultyService will be null");
+        }
+
+        if (uiController != null)
+        {
+            var adapter = new UIControllerAdapter(uiController);
+            HUD = adapter;
+            ResetRegistry.Register(adapter);
+            Debug.Log("[GameCore] UIController registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] UIController not found - HUDService will be null");
+        }
+
+        if (playerController != null)
+        {
+            var adapter = new PlayerControllerAdapter(playerController);
+            Player = adapter;
+            ResetRegistry.Register(adapter);
+            Debug.Log("[GameCore] PlayerController registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] PlayerController not found - PlayerMovementService will be null");
+        }
+
+        // Audio service remains null for now
+        Audio = null;
+
+        // Verify critical services
+        Debug.Assert(Leaks != null, "LeakService is required!");
+        Debug.Assert(Items != null, "ItemService is required!");
     }
 
     /// <summary>
@@ -156,6 +237,14 @@ public class GameCore : MonoBehaviour
         Resupply?.Reset();
         Audio?.Reset();
 
+        // Create FutilityGameplaySystem
+        if (futilitySystem == null)
+        {
+            futilitySystem = new FutilityGameplaySystem();
+            ResetRegistry.Register(futilitySystem);
+            Debug.Log("[GameCore] FutilityGameplaySystem created and registered");
+        }
+
         // Auto-transition to Running
         Flow.TransitionTo(GameFlowState.Running);
     }
@@ -168,6 +257,9 @@ public class GameCore : MonoBehaviour
         // Start services (when they exist)
         Leaks?.StartLeaks();
         Resupply?.StartResupply();
+
+        // FutilitySystem responds to state changes automatically
+        // No need to explicitly start it
     }
 
     private void HandlePausedState()
@@ -180,6 +272,9 @@ public class GameCore : MonoBehaviour
 
     private void HandleEndingState()
     {
+        // FutilitySystem responds to state changes automatically
+        // It will handle ending logic without calling EndGame()
+
         // End session
         Session.EndSession();
 
@@ -193,14 +288,20 @@ public class GameCore : MonoBehaviour
 
     private void HandleCleaningState()
     {
-        // Clear everything
-        Leaks?.Clear();
-        Items?.ClearAll();
-        Resupply?.CancelAll();
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        float cleanStart = Time.realtimeSinceStartup;
+        #endif
+
+        // FutilitySystem handles its own cleanup via IResettable
+
+        // Order matters for cleanup
+        Leaks?.Clear();           // Stop particles first
+        Items?.ClearAll();        // Return all items
+        Resupply?.CancelAll();    // Cancel coroutines
         Audio?.StopAll();
 
-        // Reset all IResettable objects
-        ResettableExtensions.ResetAll();
+        // Reset all registered objects using ResetRegistry
+        ResetRegistry.ResetAll(); // Replaces ResettableExtensions.ResetAll()
 
         // Force garbage collection (WebGL consideration)
         if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -210,13 +311,20 @@ public class GameCore : MonoBehaviour
             GC.Collect();
         }
 
-        // Verify cleanup
-        if (debugMode && !ResettableExtensions.VerifyAllClean())
-        {
-            Debug.LogError("GameCore: Cleanup verification failed!");
-        }
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        float cleanTime = (Time.realtimeSinceStartup - cleanStart) * 1000f;
 
-        // Transition to showing results
+        if (cleanTime > 5f)
+        {
+            Debug.LogError($"[GameCore] PERFORMANCE: Cleaning took {cleanTime:F2}ms (max: 5ms)");
+        }
+        else
+        {
+            Debug.Log($"[GameCore] Cleaning completed in {cleanTime:F2}ms");
+        }
+        #endif
+
+        // Auto-transition to results
         Flow.TransitionTo(GameFlowState.ShowingResults);
     }
 
@@ -242,6 +350,12 @@ public class GameCore : MonoBehaviour
         if (Flow != null && Flow.IsActive())
         {
             Session?.Tick(Time.deltaTime);
+
+            // Update FutilityGameplaySystem
+            if (futilitySystem != null)
+            {
+                futilitySystem.Update();
+            }
         }
 
         // Performance monitoring (every 5 seconds)
@@ -254,6 +368,78 @@ public class GameCore : MonoBehaviour
             Debug.Log($"[GameCore Monitor] Leaks:{leakStatus}, Items:{itemStatus}, Resupply:{resupplyStatus}");
         }
     }
+
+    // ============================================================
+    // PUBLIC API - External systems use these to control game flow
+    // ============================================================
+
+    /// <summary>
+    /// Start a new game session
+    /// Transitions: Menu → Starting → Running (automatic chain)
+    /// </summary>
+    public static void StartGame()
+    {
+        if (!IsInitialized || Flow == null)
+        {
+            Debug.LogError("[GameCore] Cannot start - not initialized");
+            return;
+        }
+
+        Debug.Log("[GameCore] StartGame called - transitioning to Starting state");
+        Flow.TransitionTo(GameFlowState.Starting);
+    }
+
+    /// <summary>
+    /// End the current game
+    /// Transitions: Running → Ending → Cleaning → ShowingResults (automatic chain)
+    /// </summary>
+    public static void EndGame()
+    {
+        if (!IsInitialized || Flow == null) return;
+
+        Debug.Log("[GameCore] EndGame called - transitioning to Ending state");
+        Flow.TransitionTo(GameFlowState.Ending);
+    }
+
+    /// <summary>
+    /// Restart the game (return to menu, ready for new start)
+    /// </summary>
+    public static void RestartGame()
+    {
+        if (!IsInitialized || Flow == null) return;
+
+        Debug.Log("[GameCore] RestartGame called - returning to Menu state");
+        Flow.TransitionTo(GameFlowState.Menu);
+    }
+
+    /// <summary>
+    /// Pause the game
+    /// </summary>
+    public static void PauseGame()
+    {
+        if (!IsInitialized || Flow == null) return;
+        
+        if (Flow.CurrentState == GameFlowState.Running)
+        {
+            Debug.Log("[GameCore] PauseGame called - transitioning to Paused state");
+            Flow.TransitionTo(GameFlowState.Paused);
+        }
+    }
+
+    /// <summary>
+    /// Resume from pause
+    /// </summary>
+    public static void ResumeGame()
+    {
+        if (!IsInitialized || Flow == null) return;
+        
+        if (Flow.CurrentState == GameFlowState.Paused)
+        {
+            Debug.Log("[GameCore] ResumeGame called - returning to Running state");
+            Flow.TransitionTo(GameFlowState.Running);
+        }
+    }
+
 
     /// <summary>
     /// Safe accessor for services with null checks
@@ -319,4 +505,55 @@ public class GameCore : MonoBehaviour
         return $"Services - Leaks: {Leaks != null}, Items: {Items != null}, " +
                $"Resupply: {Resupply != null}, Audio: {Audio != null}";
     }
+
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Editor-only helper to reset all static state for Enter Play Mode without domain reload
+    /// </summary>
+    public static bool EditorResetStatics()
+    {
+        bool hadState = false;
+
+        // Clear singleton instance
+        if (instance != null)
+        {
+            instance = null;
+            hadState = true;
+        }
+
+        // Clear services
+        if (Leaks != null) { Leaks = null; hadState = true; }
+        if (Items != null) { Items = null; hadState = true; }
+        if (Resupply != null) { Resupply = null; hadState = true; }
+        if (Audio != null) { Audio = null; hadState = true; }
+        if (Difficulty != null) { Difficulty = null; hadState = true; }
+        if (HUD != null) { HUD = null; hadState = true; }
+        if (Player != null) { Player = null; hadState = true; }
+
+        // Clear core systems
+        if (Flow != null)
+        {
+            // Unsubscribe any lingering event handlers
+            // Event cleanup handled by setting Flow to null
+            Flow = null;
+            hadState = true;
+        }
+
+        if (Session != null)
+        {
+            Session.Dispose();
+            Session = null;
+            hadState = true;
+        }
+
+        // Clear FutilityGameplaySystem
+        if (futilitySystem != null)
+        {
+            futilitySystem = null;
+            hadState = true;
+        }
+
+        return hadState;
+    }
+    #endif
 }
