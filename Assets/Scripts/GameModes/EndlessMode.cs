@@ -279,6 +279,13 @@ public class EndlessMode : IGameMode
             gameController.scoringManager.CalculateGrade();
         }
 
+        // Transition GameCore state machine to ending
+        if (GameCore.IsInitialized)
+        {
+            Debug.Log("[EndlessMode] Signaling GameCore to end game...");
+            GameCore.EndGame(); // Running → Ending → Cleaning → ShowingResults
+        }
+
         // Show game over UI
         if (uiController != null)
         {
