@@ -65,6 +65,9 @@ namespace Core.Services
                 GameCore.HUD.UpdateTimer(stats.TimeElapsed);
                 GameCore.HUD.UpdateScore(stats.GallonsDelayed);
                 GameCore.HUD.UpdateOilLeaked(stats.GallonsEscaped);
+
+                // Update player profile to show current score
+                GameCore.HUD.UpdatePlayerProfile();
             }
 
             // DevHUD is already updated in GameCore.Update(), but we could consolidate here later

@@ -80,7 +80,15 @@ public class UIController : MonoBehaviour
     }
     public void UpdatePlayerProfileUI()
     {
-        profileTotalScoreText.text = "Total Score: " + playerProfile.totalScore;
+        // Read from GameSession instead of PlayerProfile ScriptableObject
+        if (GameCore.Session != null)
+        {
+            profileTotalScoreText.text = "Total Score: " + GameCore.Session.CombinedScore;
+        }
+        else
+        {
+            profileTotalScoreText.text = "Total Score: 0";
+        }
         // currencyText.text = "Scrilla: " + playerProfile.totalCurrency; // Removed - futility simulator uses only score
     }
 

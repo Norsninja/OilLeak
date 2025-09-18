@@ -193,9 +193,10 @@ public class ItemDegradation : MonoBehaviour
         // Change layer when becoming porous
         if (to >= DegradationState.Saturating && !hasChangedLayer)
         {
-            gameObject.layer = LAYER_POROUS_DEBRIS;
+            SetLayerRecursive(gameObject, LAYER_POROUS_DEBRIS);
+            DisableForceFields();
             hasChangedLayer = true;
-            Debug.Log($"[DEGRADE] Layer changed to PorousDebris - oil will pass through");
+            Debug.Log($"[DEGRADE] Layer changed to PorousDebris recursively - oil will pass through, force fields disabled");
         }
 
         // Apply sinking if configured
@@ -261,8 +262,11 @@ public class ItemDegradation : MonoBehaviour
         lastOilContactTime = 0f;
         hasChangedLayer = false;
 
-        // Reset to solid layer
-        gameObject.layer = LAYER_ITEMS_SOLID;
+        // Reset to solid layer (recursively)
+        SetLayerRecursive(gameObject, LAYER_ITEMS_SOLID);
+
+        // Re-enable force fields for fresh items
+        EnableForceFields();
 
         // Reset visuals
         if (itemRenderer != null && propertyBlock != null)
@@ -306,8 +310,47 @@ public class ItemDegradation : MonoBehaviour
 
         if (state >= DegradationState.Saturating)
         {
-            gameObject.layer = LAYER_POROUS_DEBRIS;
+            SetLayerRecursive(gameObject, LAYER_POROUS_DEBRIS);
+            DisableForceFields();
             hasChangedLayer = true;
+        }
+    }
+
+    /// <summary>
+    /// Recursively set layer for GameObject and all children
+    /// </summary>
+    private void SetLayerRecursive(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursive(child.gameObject, layer);
+        }
+    }
+
+    /// <summary>
+    /// Disable all ParticleSystemForceField components in hierarchy
+    /// </summary>
+    private void DisableForceFields()
+    {
+        ParticleSystemForceField[] forceFields = GetComponentsInChildren<ParticleSystemForceField>();
+        foreach (var field in forceFields)
+        {
+            field.enabled = false;
+            Debug.Log($"[DEGRADE] Disabled force field on {field.gameObject.name}");
+        }
+    }
+
+    /// <summary>
+    /// Re-enable all ParticleSystemForceField components in hierarchy (for reset)
+    /// </summary>
+    private void EnableForceFields()
+    {
+        ParticleSystemForceField[] forceFields = GetComponentsInChildren<ParticleSystemForceField>();
+        foreach (var field in forceFields)
+        {
+            field.enabled = true;
+            Debug.Log($"[DEGRADE] Re-enabled force field on {field.gameObject.name}");
         }
     }
 
