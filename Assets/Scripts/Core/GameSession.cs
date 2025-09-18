@@ -35,18 +35,35 @@ public class GameSession : IDisposable
     private float personalBestTime = 0f;
     private int personalBestGallons = 0;
 
-    // Configuration (will come from GameConfig later)
-    private const int MAX_ESCAPED_PARTICLES = 1000;
-    private const float NEAR_FAIL_PERCENT = 0.8f;
+    // Configuration from GameRulesConfig
+    private int maxEscapedParticles = 100; // Default to 100 for development
+    private float nearFailPercent = 0.8f;
+
+    // Debug override for testing
+    public static int DebugMaxEscapedOverride = 0; // If > 0, overrides config value
 
     // Events will be added in Phase 2
     // For now, direct data access only
 
     /// <summary>
-    /// Initialize session with saved personal best
+    /// Initialize session with config and saved personal best
     /// </summary>
-    public void Initialize()
+    public void Initialize(GameRulesConfig config = null)
     {
+        // Apply config if provided
+        if (config != null)
+        {
+            maxEscapedParticles = config.maxEscapedParticles;
+            nearFailPercent = config.nearFailWarnPercent;
+        }
+
+        // Apply debug override if set
+        if (DebugMaxEscapedOverride > 0)
+        {
+            maxEscapedParticles = DebugMaxEscapedOverride;
+            Debug.Log($"[GameSession] Using debug override: max escaped = {maxEscapedParticles}");
+        }
+
         // Load personal best from PlayerPrefs
         personalBestScore = PlayerPrefs.GetInt("PersonalBestScore", 0);
         personalBestTime = PlayerPrefs.GetFloat("PersonalBestTime", 0f);
@@ -58,7 +75,7 @@ public class GameSession : IDisposable
         Application.wantsToQuit += OnApplicationWantsToQuit;
         #endif
 
-        Debug.Log($"GameSession initialized. Personal best: {personalBestScore} (Time: {personalBestTime:F1}s, Gallons: {personalBestGallons})");
+        Debug.Log($"GameSession initialized. Max escaped: {maxEscapedParticles}, Personal best: {personalBestScore} (Time: {personalBestTime:F1}s, Gallons: {personalBestGallons})");
     }
 
     /// <summary>
@@ -194,8 +211,16 @@ public class GameSession : IDisposable
     /// </summary>
     private int GetMaxEscaped()
     {
-        // Could scale with time in future, for now constant
-        return MAX_ESCAPED_PARTICLES;
+        // Use debug override if set, otherwise use config value
+        return DebugMaxEscapedOverride > 0 ? DebugMaxEscapedOverride : maxEscapedParticles;
+    }
+
+    /// <summary>
+    /// Get maximum allowed escaped particles for display
+    /// </summary>
+    public int GetMaxEscapedForDisplay()
+    {
+        return GetMaxEscaped();
     }
 
     /// <summary>
@@ -203,7 +228,7 @@ public class GameSession : IDisposable
     /// </summary>
     public bool IsNearFailure()
     {
-        return FailPercentage >= NEAR_FAIL_PERCENT;
+        return FailPercentage >= nearFailPercent;
     }
 
     /// <summary>

@@ -26,19 +26,18 @@ namespace Core.Services
 
         public void SetEmissionCurve(AnimationCurve curve, float baseRate, float maxRate)
         {
-            if (manager == null) return;
-
-            // We'll need to expose these setters in DifficultyManager
-            // For now, log the intent
-            Debug.Log($"[DifficultyAdapter] SetEmissionCurve - base: {baseRate}, max: {maxRate}");
+            if (manager != null)
+            {
+                manager.SetEmissionCurve(curve, baseRate, maxRate);
+            }
         }
 
         public void SetMultiplierCurve(AnimationCurve curve)
         {
-            if (manager == null) return;
-
-            // We'll need to expose this setter in DifficultyManager
-            Debug.Log("[DifficultyAdapter] SetMultiplierCurve");
+            if (manager != null)
+            {
+                manager.SetDifficultyMultiplierCurve(curve);
+            }
         }
 
         public bool TickIfDue()
@@ -111,10 +110,10 @@ namespace Core.Services
 
         public void SetRubberBandEnabled(bool enabled)
         {
-            if (manager == null) return;
-
-            // We'll need to expose this setter in DifficultyManager
-            Debug.Log($"[DifficultyAdapter] SetRubberBandEnabled: {enabled}");
+            if (manager != null)
+            {
+                manager.SetRubberBandEnabled(enabled);
+            }
         }
 
         #endregion

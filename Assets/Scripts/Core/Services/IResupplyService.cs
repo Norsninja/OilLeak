@@ -60,6 +60,21 @@ public interface IResupplyService : IResettable
     bool IsMajorEventActive { get; }
 
     /// <summary>
+    /// Check if resupply system is active
+    /// </summary>
+    bool IsActive { get; }
+
+    /// <summary>
+    /// Get time until next air drop in seconds (-1 if none scheduled)
+    /// </summary>
+    float GetTimeToNextAirDrop();
+
+    /// <summary>
+    /// Get time until next barge in seconds (-1 if none scheduled)
+    /// </summary>
+    float GetTimeToNextBarge();
+
+    /// <summary>
     /// Get all active coroutines (for debug/cleanup verification)
     /// </summary>
     HashSet<Coroutine> ActiveCoroutines { get; }

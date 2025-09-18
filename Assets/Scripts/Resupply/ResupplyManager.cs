@@ -487,13 +487,14 @@ public class ResupplyManager : MonoBehaviour, IResettable
     // Helper to get game time (not Time.time which ignores pause)
     private float GetGameTime()
     {
-        // Use GameState timer (updated by EndlessMode)
-        if (gameController?.gameState != null)
+        // Use GameSession's elapsed time (properly tracked by GameCore)
+        if (GameCore.Session != null && GameCore.Session.IsActive)
         {
-            return gameController.gameState.timer;
+            return GameCore.Session.TimeElapsed;
         }
 
-        return Time.time; // Fallback
+        // Fallback to Time.time if session not available
+        return Time.time;
     }
 
     // Helper to get world edge positions (works for ortho and perspective)
@@ -665,4 +666,34 @@ public class ResupplyManager : MonoBehaviour, IResettable
     /// Check if any major event is active (for telemetry)
     /// </summary>
     public bool IsMajorEventActive => activeAircraft != null || activeBarge != null;
+
+    /// <summary>
+    /// Get total count of active packages and crates (for service layer)
+    /// </summary>
+    public int ActivePackageCount => activePackages.Count + activeCrates.Count;
+
+    /// <summary>
+    /// Check if resupply system is active
+    /// </summary>
+    public bool IsActive => isActive;
+
+    /// <summary>
+    /// Get time until next air drop (for DevHUD)
+    /// </summary>
+    public float GetTimeToNextAirDrop()
+    {
+        if (!isActive) return -1;
+        float timeLeft = nextAirDropTime - GetGameTime();
+        return timeLeft > 0 ? timeLeft : -1;
+    }
+
+    /// <summary>
+    /// Get time until next barge (for DevHUD)
+    /// </summary>
+    public float GetTimeToNextBarge()
+    {
+        if (!isActive) return -1;
+        float timeLeft = nextBargeTime - GetGameTime();
+        return timeLeft > 0 ? timeLeft : -1;
+    }
 }

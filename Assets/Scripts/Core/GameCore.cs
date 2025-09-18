@@ -21,6 +21,7 @@ public class GameCore : MonoBehaviour
     public static IDifficultyService Difficulty { get; private set; }
     public static IHUDService HUD { get; private set; }
     public static IPlayerMovementService Player { get; private set; }
+    public static IDevHudService DevHud { get; private set; }
 
     // Core game systems
     public static GameFlowStateMachine Flow { get; private set; }
@@ -81,9 +82,17 @@ public class GameCore : MonoBehaviour
     /// </summary>
     private void InitializeCoreSystemsPhase1()
     {
-        // Create game session
+        // Get config from GameController
+        GameRulesConfig rulesConfig = null;
+        var gameController = GetComponent<GameController>();
+        if (gameController != null)
+        {
+            rulesConfig = gameController.gameRulesConfig;
+        }
+
+        // Create game session with config
         Session = new GameSession();
-        Session.Initialize();
+        Session.Initialize(rulesConfig);
 
         // Create state machine
         Flow = new GameFlowStateMachine();
@@ -173,6 +182,20 @@ public class GameCore : MonoBehaviour
         else
         {
             Debug.LogWarning("[GameCore] PlayerController not found - PlayerMovementService will be null");
+        }
+
+        // DevHUD service
+        var devHud = FindObjectOfType<DevHUD>();
+        if (devHud != null)
+        {
+            var adapter = new DevHudAdapter(devHud);
+            DevHud = adapter;
+            ResetRegistry.Register(adapter);
+            Debug.Log("[GameCore] DevHUD registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] DevHUD not found - DevHudService will be null");
         }
 
         // Audio service remains null for now
@@ -350,6 +373,40 @@ public class GameCore : MonoBehaviour
         if (Flow != null && Flow.IsActive())
         {
             Session?.Tick(Time.deltaTime);
+
+            // Push session data to DevHUD
+            if (DevHud != null && Session != null)
+            {
+                DevHud.UpdateSessionStats(
+                    Session.TimeElapsed,
+                    Session.ParticlesBlocked,
+                    Session.ParticlesEscaped,
+                    Session.GetMaxEscapedForDisplay()
+                );
+
+                DevHud.UpdateGameState(Flow.CurrentState, true);
+            }
+
+            // Push resupply status to DevHUD
+            if (DevHud != null && Resupply != null)
+            {
+                DevHud.UpdateResupplyStatus(
+                    Resupply.IsActive,
+                    Resupply.GetTimeToNextAirDrop(),
+                    Resupply.GetTimeToNextBarge(),
+                    Resupply.ActivePackageCount
+                );
+            }
+
+            // Push leak status to DevHUD
+            if (DevHud != null && Leaks != null)
+            {
+                DevHud.UpdateLeakStatus(
+                    Leaks.TotalParticleCount,
+                    Leaks.PressurePercentage,
+                    Leaks.ActiveLeakCount
+                );
+            }
 
             // Update FutilityGameplaySystem
             if (futilitySystem != null)

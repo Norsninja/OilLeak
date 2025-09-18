@@ -213,6 +213,15 @@ namespace Core.Systems
         {
             if (!isRunning) return;
 
+            // Check for failure condition every frame
+            if (GameCore.Session != null && GameCore.Session.IsFailing)
+            {
+                Debug.Log($"[FutilitySystem] Failure threshold reached - {GameCore.Session.ParticlesEscaped} particles escaped");
+                // Trigger the end game transition
+                GameCore.Flow?.TransitionTo(GameFlowState.Ending);
+                return; // Don't process other updates once we're ending
+            }
+
             // Update difficulty at 2Hz
             if (GameCore.Difficulty != null && GameCore.Difficulty.TickIfDue())
             {
@@ -226,6 +235,16 @@ namespace Core.Systems
                 if (GameCore.HUD != null)
                 {
                     GameCore.HUD.UpdateDifficultyDisplay(currentDifficulty);
+                }
+
+                // Push to DevHUD
+                if (GameCore.DevHud != null)
+                {
+                    GameCore.DevHud.UpdateDifficulty(
+                        GameCore.Difficulty.GetCurrentEmissionRate(),
+                        currentDifficulty,
+                        GameCore.Difficulty.GetRubberBandAdjustment()
+                    );
                 }
             }
 

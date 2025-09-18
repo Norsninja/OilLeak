@@ -103,16 +103,12 @@ namespace Core.Services
 
         /// <summary>
         /// Get count of active packages/crates
-        /// Note: Would need to expose this from ResupplyManager
         /// </summary>
         public int ActivePackageCount
         {
             get
             {
-                // ResupplyManager doesn't expose this yet
-                // Would need to add public property for activePackages.Count + activeCrates.Count
-                Debug.LogWarning("[ResupplyManagerAdapter] ActivePackageCount not exposed by ResupplyManager");
-                return 0;
+                return wrapped != null ? wrapped.ActivePackageCount : 0;
             }
         }
 
@@ -120,6 +116,27 @@ namespace Core.Services
         /// Check if major event is active (plane/barge)
         /// </summary>
         public bool IsMajorEventActive => wrapped.IsMajorEventActive;
+
+        /// <summary>
+        /// Check if resupply system is active
+        /// </summary>
+        public bool IsActive => wrapped != null ? wrapped.IsActive : false;
+
+        /// <summary>
+        /// Get time until next air drop
+        /// </summary>
+        public float GetTimeToNextAirDrop()
+        {
+            return wrapped != null ? wrapped.GetTimeToNextAirDrop() : -1;
+        }
+
+        /// <summary>
+        /// Get time until next barge
+        /// </summary>
+        public float GetTimeToNextBarge()
+        {
+            return wrapped != null ? wrapped.GetTimeToNextBarge() : -1;
+        }
 
         /// <summary>
         /// Get all active coroutines (for debug/cleanup verification)
