@@ -24,13 +24,7 @@ namespace Core.Services
 
         #region IHUDService Implementation
 
-        public void UpdateGameUI()
-        {
-            if (controller != null)
-            {
-                controller.UpdateUI();
-            }
-        }
+        // Deprecated UpdateGameUI removed - use UpdateWithStats instead
 
         public void UpdatePlayerProfile()
         {
@@ -64,35 +58,11 @@ namespace Core.Services
             }
         }
 
-        public void UpdateScore(int score)
-        {
-            // Deprecated - use UpdateWithStats instead
-            // Kept for compatibility but should be removed
-            if (controller != null)
-            {
-                controller.UpdateUI();
-            }
-        }
+        // Deprecated UpdateScore removed - use UpdateWithStats instead
 
-        public void UpdateTimer(float timeRemaining)
-        {
-            // Deprecated - use UpdateWithStats instead
-            // Kept for compatibility but should be removed
-            if (controller != null)
-            {
-                controller.UpdateUI();
-            }
-        }
+        // Deprecated UpdateTimer removed - use UpdateWithStats instead
 
-        public void UpdateOilLeaked(int gallonsLeaked)
-        {
-            // Deprecated - use UpdateWithStats instead
-            // Kept for compatibility but should be removed
-            if (controller != null)
-            {
-                controller.UpdateUI();
-            }
-        }
+        // Deprecated UpdateOilLeaked removed - use UpdateWithStats instead
 
         /// <summary>
         /// New method to update UI with SessionStats
@@ -146,7 +116,7 @@ namespace Core.Services
             {
                 // CRITICAL: Hide the round over screen when resetting
                 controller.HideRoundOverUI();
-                controller.UpdateUI();
+                // UI will be updated via HudUpdateCoordinator
             }
 
             Debug.Log("[UIAdapter] State reset");

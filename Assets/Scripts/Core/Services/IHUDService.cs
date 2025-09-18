@@ -6,10 +6,7 @@ namespace Core.Services
     /// </summary>
     public interface IHUDService
     {
-        /// <summary>
-        /// Update main game UI with current state
-        /// </summary>
-        void UpdateGameUI();
+        // Deprecated UpdateGameUI - use UpdateWithStats instead
 
         /// <summary>
         /// Update player profile display
@@ -33,20 +30,11 @@ namespace Core.Services
         /// </summary>
         void HideResults();
 
-        /// <summary>
-        /// Update score display
-        /// </summary>
-        void UpdateScore(int score);
+        // Deprecated UpdateScore - use UpdateWithStats instead
 
-        /// <summary>
-        /// Update timer display
-        /// </summary>
-        void UpdateTimer(float timeRemaining);
+        // Deprecated UpdateTimer - use UpdateWithStats instead
 
-        /// <summary>
-        /// Update oil leaked display
-        /// </summary>
-        void UpdateOilLeaked(int gallonsLeaked);
+        // Deprecated UpdateOilLeaked - use UpdateWithStats instead
 
         /// <summary>
         /// Update UI with complete SessionStats data

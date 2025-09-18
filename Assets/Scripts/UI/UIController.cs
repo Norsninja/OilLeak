@@ -41,43 +41,8 @@ public class UIController : MonoBehaviour
         scoringManager = FindObjectOfType<ScoringManager>();
         // ... any other initialization logic you might have
     }
-    // Update UI elements based on game state
-    public void UpdateUI()
-    {
-        // Check if we're in endless mode
-        if (gameController != null && gameController.useEndlessMode)
-        {
-            // Format time as MM:SS for endless mode
-            int totalSeconds = Mathf.FloorToInt(gameState.timer);
-            int minutes = totalSeconds / 60;
-            int seconds = totalSeconds % 60;
-            timerText.text = $"Time: {minutes:00}:{seconds:00}";
-
-            // Calculate gallons delayed (main metric)
-            int gallonsDelayed = oilLeakData.particlesBlocked * 100; // Each particle = 100 gallons
-            scoreText.text = $"Gallons Delayed: {gallonsDelayed:N0}";
-
-            // Show difficulty multiplier if we have DifficultyManager
-            var difficultyManager = DifficultyManager.Instance;
-            if (difficultyManager != null && particlesBlockedText != null)
-            {
-                float multiplier = difficultyManager.GetCurrentMultiplier();
-                particlesBlockedText.text = $"Difficulty: {multiplier:F1}x";
-            }
-
-            // Show particles escaped as secondary stat
-            if (particlesEscapedText != null)
-            {
-                particlesEscapedText.text = $"Oil Escaped: {oilLeakData.particlesEscaped}";
-            }
-        }
-        else
-        {
-            // Original round-based display
-            scoreText.text = "Round Score: " + gameState.score.ToString();
-            timerText.text = "Round Time: " + Mathf.RoundToInt(gameState.timer).ToString() + "/" + gameTimerData.roundDuration.ToString();
-        }
-    }
+    // Legacy UpdateUI removed - use UpdateGameUI(SessionStats) instead
+    // This ensures all UI updates come from SessionStats, not ScriptableObjects
     public void UpdatePlayerProfileUI()
     {
         // Read from GameSession instead of PlayerProfile ScriptableObject
@@ -104,13 +69,13 @@ public class UIController : MonoBehaviour
         int seconds = totalSeconds % 60;
         timerText.text = $"Time: {minutes:00}:{seconds:00}";
 
-        // Show gallons delayed as main score
+        // Show gallons delayed as the main display metric
         scoreText.text = $"Gallons Delayed: {stats.GallonsDelayed:N0}";
 
-        // Show current block value and multiplier
+        // Show current block value and multiplier prominently
         if (particlesBlockedText != null)
         {
-            particlesBlockedText.text = $"Next Block: {stats.CurrentBlockValue} pts ({stats.ScoreMultiplier}x)";
+            particlesBlockedText.text = $"Block Value: {stats.CurrentBlockValue} pts (×{stats.ScoreMultiplier})";
         }
 
         // Show particles escaped as secondary stat
@@ -229,16 +194,31 @@ public class UIController : MonoBehaviour
             gradeText.gameObject.SetActive(false);
         }
 
-        // Main stats - what matters in the futility simulator
+        // Main stats - show total score with breakdown
         if (roundTotalScoreText != null)
-            roundTotalScoreText.text = $"Survived: {minutes:00}:{seconds:00}";
+        {
+            roundTotalScoreText.text = $"Final Score: {stats.Score:N0}";
+        }
 
-        // Show gallons instead of particles for impact
+        // Score breakdown - show contribution from blocks vs time
         if (particlesBlockedText != null)
-            particlesBlockedText.text = $"Gallons Delayed: {stats.GallonsDelayed:N0}";
+        {
+            // Get breakdown from GameSession if available
+            int blockScore = 0;
+            int timeScore = 0;
+            if (GameCore.Session != null)
+            {
+                blockScore = GameCore.Session.RunningBlockScore;
+                timeScore = GameCore.Session.SurvivalBonus;
+            }
+            particlesBlockedText.text = $"Blocks: {blockScore:N0} pts | Time: {timeScore:N0} pts";
+        }
 
+        // Show impact metrics
         if (particlesEscapedText != null)
-            particlesEscapedText.text = $"Gallons Escaped: {stats.GallonsEscaped:N0}";
+        {
+            particlesEscapedText.text = $"Delayed: {stats.GallonsDelayed:N0} gal | Escaped: {stats.GallonsEscaped:N0} gal";
+        }
 
         // Show peak difficulty reached
         if (peakDifficultyText != null)

@@ -232,6 +232,16 @@ public class GameSession : IDisposable
     }
 
     /// <summary>
+    /// Get accumulated score from blocked particles
+    /// </summary>
+    public int RunningBlockScore => runningBlockScore;
+
+    /// <summary>
+    /// Get survival bonus for current time
+    /// </summary>
+    public int SurvivalBonus => scoringConfig != null ? scoringConfig.CalculateSurvivalBonus(timeElapsed) : 0;
+
+    /// <summary>
     /// Calculate combined score for leaderboard
     /// </summary>
     private int CalculateCombinedScore()

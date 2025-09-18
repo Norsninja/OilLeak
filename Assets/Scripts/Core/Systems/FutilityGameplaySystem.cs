@@ -108,7 +108,7 @@ namespace Core.Systems
             if (GameCore.HUD != null)
             {
                 GameCore.HUD.HideResults();
-                GameCore.HUD.UpdateGameUI();
+                // HUD updates now handled by HudUpdateCoordinator
             }
 
             Debug.Log("[FutilitySystem] Starting state initialized");

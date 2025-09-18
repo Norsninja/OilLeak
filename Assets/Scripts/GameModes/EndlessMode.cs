@@ -153,11 +153,7 @@ public class EndlessMode : IGameMode
             resupplyManager.StartResupply();
         }
 
-        // Update UI for endless mode
-        if (uiController != null)
-        {
-            uiController.UpdateUI();
-        }
+        // UI updates handled by HudUpdateCoordinator
     }
 
     public void Tick(float deltaTime)
@@ -177,11 +173,7 @@ public class EndlessMode : IGameMode
         // DifficultyManager handles difficulty updates automatically
         // LeakManager handles leak spawning automatically
 
-        // Update UI
-        if (uiController != null)
-        {
-            uiController.UpdateUI();
-        }
+        // UI updates handled by HudUpdateCoordinator
 
         // Check game over conditions
         CheckGameOver();
