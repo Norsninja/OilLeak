@@ -49,6 +49,11 @@ namespace Core.Services
         void UpdateOilLeaked(int gallonsLeaked);
 
         /// <summary>
+        /// Update UI with complete SessionStats data
+        /// </summary>
+        void UpdateWithStats(SessionStats stats);
+
+        /// <summary>
         /// Show temporary message/notification
         /// </summary>
         void ShowMessage(string message, float duration = 2f);

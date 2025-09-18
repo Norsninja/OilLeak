@@ -66,33 +66,43 @@ namespace Core.Services
 
         public void UpdateScore(int score)
         {
-            // UIController doesn't have direct score update
-            // It reads from GameState, so trigger general update
-            if (controller != null && controller.gameState != null)
+            // Deprecated - use UpdateWithStats instead
+            // Kept for compatibility but should be removed
+            if (controller != null)
             {
-                controller.gameState.score = score;
                 controller.UpdateUI();
             }
         }
 
         public void UpdateTimer(float timeRemaining)
         {
-            // UIController reads from GameState
-            if (controller != null && controller.gameState != null)
+            // Deprecated - use UpdateWithStats instead
+            // Kept for compatibility but should be removed
+            if (controller != null)
             {
-                // GameState uses 'timer' not 'timeRemaining'
-                controller.gameState.timer = timeRemaining;
                 controller.UpdateUI();
             }
         }
 
         public void UpdateOilLeaked(int gallonsLeaked)
         {
-            // GameState doesn't have gallonsLeaked directly
-            // Just trigger a general UI update
+            // Deprecated - use UpdateWithStats instead
+            // Kept for compatibility but should be removed
             if (controller != null)
             {
                 controller.UpdateUI();
+            }
+        }
+
+        /// <summary>
+        /// New method to update UI with SessionStats
+        /// </summary>
+        public void UpdateWithStats(SessionStats stats)
+        {
+            if (controller != null)
+            {
+                controller.UpdateGameUI(stats);
+                controller.UpdatePlayerProfile(stats);
             }
         }
 

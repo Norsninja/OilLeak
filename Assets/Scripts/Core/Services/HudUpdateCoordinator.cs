@@ -56,18 +56,11 @@ namespace Core.Services
 
             var stats = GameCore.Session.GetStats();
 
-            // Update main HUD
+            // Update main HUD with unified SessionStats
             if (GameCore.HUD != null)
             {
-                GameCore.HUD.UpdateGameUI();
-
-                // Update specific elements
-                GameCore.HUD.UpdateTimer(stats.TimeElapsed);
-                GameCore.HUD.UpdateScore(stats.GallonsDelayed);
-                GameCore.HUD.UpdateOilLeaked(stats.GallonsEscaped);
-
-                // Update player profile to show current score
-                GameCore.HUD.UpdatePlayerProfile();
+                // Use new unified update method that passes SessionStats directly
+                GameCore.HUD.UpdateWithStats(stats);
             }
 
             // DevHUD is already updated in GameCore.Update(), but we could consolidate here later

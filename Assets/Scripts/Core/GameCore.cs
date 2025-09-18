@@ -40,6 +40,7 @@ public class GameCore : MonoBehaviour
     [Header("Service Configurations")]
     [SerializeField] private GameObject leakManagerPrefab; // For future spawning
     [SerializeField] private ItemPoolConfig itemPoolConfig;
+    [SerializeField] private ScoringConfig scoringConfig; // Dynamic scoring configuration
 
     // Debug settings
     [Header("Debug")]
@@ -98,7 +99,7 @@ public class GameCore : MonoBehaviour
 
         // Create game session with config
         Session = new GameSession();
-        Session.Initialize(rulesConfig);
+        Session.Initialize(rulesConfig, scoringConfig);
 
         // Create state machine
         Flow = new GameFlowStateMachine();

@@ -92,6 +92,42 @@ public class UIController : MonoBehaviour
         // currencyText.text = "Scrilla: " + playerProfile.totalCurrency; // Removed - futility simulator uses only score
     }
 
+    /// <summary>
+    /// New unified update method that takes SessionStats directly
+    /// Replaces dependency on ScriptableObjects
+    /// </summary>
+    public void UpdateGameUI(SessionStats stats)
+    {
+        // Format time as MM:SS for endless mode
+        int totalSeconds = Mathf.FloorToInt(stats.TimeElapsed);
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        timerText.text = $"Time: {minutes:00}:{seconds:00}";
+
+        // Show gallons delayed as main score
+        scoreText.text = $"Gallons Delayed: {stats.GallonsDelayed:N0}";
+
+        // Show current block value and multiplier
+        if (particlesBlockedText != null)
+        {
+            particlesBlockedText.text = $"Next Block: {stats.CurrentBlockValue} pts ({stats.ScoreMultiplier}x)";
+        }
+
+        // Show particles escaped as secondary stat
+        if (particlesEscapedText != null)
+        {
+            particlesEscapedText.text = $"Oil Escaped: {stats.GallonsEscaped:N0} gallons";
+        }
+    }
+
+    /// <summary>
+    /// Update player profile with SessionStats
+    /// </summary>
+    public void UpdatePlayerProfile(SessionStats stats)
+    {
+        profileTotalScoreText.text = "Total Score: " + stats.Score;
+    }
+
     public void SetGradeTextColor(char grade)
     {
         switch (grade)
