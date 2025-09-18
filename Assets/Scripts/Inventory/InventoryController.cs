@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Core;
 
-public class InventoryController : MonoBehaviour
+public class InventoryController : MonoBehaviour, IResettable
 {
     public List<Item> allPossibleItems;
     public Item defaultItem;
@@ -239,5 +240,31 @@ public class InventoryController : MonoBehaviour
         return itemsUsedThisRound;
     }
 
+    #region IResettable Implementation
+
+    /// <summary>
+    /// Reset inventory to initial state for game restart
+    /// </summary>
+    public void Reset()
+    {
+        // Reset inventory state
+        inventoryState.Reset();
+
+        // Reset round tracking
+        itemsUsedThisRound = 0;
+
+        // Reload default inventory
+        LoadInventory();
+
+        Debug.Log("[InventoryController] State reset - inventory cleared and reloaded");
+    }
+
+    /// <summary>
+    /// Verify the inventory is properly cleaned
+    /// </summary>
+    public bool IsClean => itemsUsedThisRound == 0 &&
+        (inventoryState.inventory.Count == 1 || inventoryState.inventory.Count == allPossibleItems.Count);
+
+    #endregion
 }
 

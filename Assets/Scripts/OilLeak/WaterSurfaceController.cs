@@ -30,8 +30,8 @@ public class WaterSurfaceController : MonoBehaviour
         // Check if the collided object is on the "OilSpill" layer
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
         {
-            // Increase the count of escaped particles
-            oilLeakData.particlesEscaped++;
+            // Remove ScriptableObject write - GameSession is the sole authority now
+            // oilLeakData.particlesEscaped++; // REMOVED - use GameCore.Session
             // Debug.Log("Escaped to the WaterSurface: " + oilLeakData.particlesEscaped);
 
             // Notify GameSession for failure tracking
@@ -40,10 +40,10 @@ public class WaterSurfaceController : MonoBehaviour
                 GameCore.Session.RecordParticleEscaped();
             }
 
-            // Notify DifficultyManager for rubber band system
-            if (DifficultyManager.Instance != null)
+            // Notify DifficultyService through GameCore (not singleton)
+            if (GameCore.Difficulty != null)
             {
-                DifficultyManager.Instance.OnParticleEscaped(1);
+                GameCore.Difficulty.OnParticleEscaped(1);
             }
 
             // Play the bubble sound with a varied pitch

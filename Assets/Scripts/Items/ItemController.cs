@@ -90,8 +90,15 @@ public class ItemController : MonoBehaviour
     {
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
         {
-            oilLeakData.particlesBlocked++;
-            // Debug.Log("Blocked with ItemController: " + oilLeakData.particlesBlocked);
+            // Update GameSession instead of ScriptableObject
+            if (GameCore.Session != null)
+            {
+                GameCore.Session.RecordParticleBlocked();
+                Debug.Log($"[ItemController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}");
+            }
+
+            // Remove ScriptableObject write - GameSession is the sole authority now
+            // oilLeakData.particlesBlocked++; // REMOVED - use GameCore.Session
 
             // Award points for blocking particles (continuous scoring)
             GameController gameController = GameController.Instance;
@@ -101,10 +108,10 @@ public class ItemController : MonoBehaviour
                 gameController.gameState.score += pointsPerParticle;
             }
 
-            // Notify DifficultyManager for rubber band system
-            if (DifficultyManager.Instance != null)
+            // Notify DifficultyService through GameCore (not singleton)
+            if (GameCore.Difficulty != null)
             {
-                DifficultyManager.Instance.OnParticleBlocked(1);
+                GameCore.Difficulty.OnParticleBlocked(1);
             }
 
             // Notify ItemDegradation about oil exposure

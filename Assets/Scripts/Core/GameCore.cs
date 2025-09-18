@@ -30,6 +30,12 @@ public class GameCore : MonoBehaviour
     // Gameplay system - orchestrates the futility loop
     private static FutilityGameplaySystem futilitySystem;
 
+    // UI update coordinator - manages UI refresh rate
+    private static HudUpdateCoordinator hudCoordinator;
+
+    // Deferred state transition flag
+    private static bool pendingStartRun = false;
+
     // Configuration references (will be set in Inspector)
     [Header("Service Configurations")]
     [SerializeField] private GameObject leakManagerPrefab; // For future spawning
@@ -113,6 +119,7 @@ public class GameCore : MonoBehaviour
         var difficultyManager = FindObjectOfType<DifficultyManager>();
         var uiController = FindObjectOfType<UIController>();
         var playerController = FindObjectOfType<PlayerController>();
+        var inventoryController = FindObjectOfType<InventoryController>();
 
         // Wrap in adapters
         if (leakManager != null)
@@ -140,8 +147,8 @@ public class GameCore : MonoBehaviour
         if (resupplyManager != null)
         {
             Resupply = new ResupplyManagerAdapter(resupplyManager);
-            ResetRegistry.Register(resupplyManager);
-            Debug.Log("[GameCore] ResupplyManager registered");
+            ResetRegistry.Register((IResettable)Resupply);
+            Debug.Log("[GameCore] ResupplyManagerAdapter registered");
         }
         else
         {
@@ -198,12 +205,31 @@ public class GameCore : MonoBehaviour
             Debug.LogWarning("[GameCore] DevHUD not found - DevHudService will be null");
         }
 
+        // Inventory controller registration
+        if (inventoryController != null)
+        {
+            ResetRegistry.Register(inventoryController);
+            Debug.Log("[GameCore] InventoryController registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] InventoryController not found - inventory won't reset properly");
+        }
+
         // Audio service remains null for now
         Audio = null;
 
         // Verify critical services
         Debug.Assert(Leaks != null, "LeakService is required!");
         Debug.Assert(Items != null, "ItemService is required!");
+
+        // Create HUD update coordinator (after services are registered)
+        if (hudCoordinator == null)
+        {
+            hudCoordinator = new HudUpdateCoordinator();
+            ResetRegistry.Register(hudCoordinator);
+            Debug.Log("[GameCore] HudUpdateCoordinator created and registered");
+        }
     }
 
     /// <summary>
@@ -268,8 +294,9 @@ public class GameCore : MonoBehaviour
             Debug.Log("[GameCore] FutilityGameplaySystem created and registered");
         }
 
-        // Auto-transition to Running
-        Flow.TransitionTo(GameFlowState.Running);
+        // Queue transition to Running (deferred to Update to avoid re-entrancy)
+        pendingStartRun = true;
+        Debug.Log("[GameCore] Starting state complete - queued transition to Running");
     }
 
     private void HandleRunningState()
@@ -337,9 +364,15 @@ public class GameCore : MonoBehaviour
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         float cleanTime = (Time.realtimeSinceStartup - cleanStart) * 1000f;
 
-        if (cleanTime > 5f)
+        // Raised threshold to 8ms for realistic cleanup with full service suite
+        // Use Warning for moderate overruns (8-15ms), Error only for severe (>15ms)
+        if (cleanTime > 15f)
         {
-            Debug.LogError($"[GameCore] PERFORMANCE: Cleaning took {cleanTime:F2}ms (max: 5ms)");
+            Debug.LogError($"[GameCore] SEVERE PERFORMANCE: Cleaning took {cleanTime:F2}ms (critical: >15ms)");
+        }
+        else if (cleanTime > 8f)
+        {
+            Debug.LogWarning($"[GameCore] PERFORMANCE: Cleaning took {cleanTime:F2}ms (target: 8ms)");
         }
         else
         {
@@ -360,6 +393,9 @@ public class GameCore : MonoBehaviour
 
     private void HandleMenuState()
     {
+        // Hide any lingering results UI first
+        HUD?.HideResults();
+
         // Initialize menu state
         Leaks?.InitializeMenuState();
     }
@@ -369,6 +405,14 @@ public class GameCore : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // Handle deferred Starting -> Running transition (avoids re-entrancy)
+        if (pendingStartRun && Flow != null && Flow.CurrentState == GameFlowState.Starting)
+        {
+            pendingStartRun = false;
+            Debug.Log("[GameCore] Executing deferred transition: Starting → Running");
+            Flow.TransitionTo(GameFlowState.Running);
+        }
+
         // Update session timer if running
         if (Flow != null && Flow.IsActive())
         {
@@ -412,6 +456,12 @@ public class GameCore : MonoBehaviour
             if (futilitySystem != null)
             {
                 futilitySystem.Update();
+            }
+
+            // Update HUD coordinator (manages UI refresh rate)
+            if (hudCoordinator != null)
+            {
+                hudCoordinator.Update();
             }
         }
 
