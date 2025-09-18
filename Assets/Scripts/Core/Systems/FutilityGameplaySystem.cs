@@ -216,10 +216,14 @@ namespace Core.Systems
             // Check for failure condition every frame
             if (GameCore.Session != null && GameCore.Session.IsFailing)
             {
-                Debug.Log($"[FutilitySystem] Failure threshold reached - {GameCore.Session.ParticlesEscaped} particles escaped");
-                // Trigger the end game transition
-                GameCore.Flow?.TransitionTo(GameFlowState.Ending);
-                return; // Don't process other updates once we're ending
+                // Only trigger end if we're still in Running state (avoid spam)
+                if (GameCore.Flow != null && GameCore.Flow.CurrentState == GameFlowState.Running)
+                {
+                    Debug.Log($"[FutilitySystem] Failure threshold reached - {GameCore.Session.ParticlesEscaped} particles escaped");
+                    // Use GameCore's API for state transitions (maintains guard rails and logging)
+                    GameCore.EndGame();
+                    return; // Don't process other updates once we're ending
+                }
             }
 
             // Update difficulty at 2Hz
