@@ -300,6 +300,9 @@ public class GameSession : IDisposable
             Score = CombinedScore,
             CurrentBlockValue = GetCurrentBlockValue(),
             ScoreMultiplier = scoringConfig != null ? scoringConfig.GetMultiplier(timeElapsed) : 1,
+            Integrity = GameCore.FutilitySystem?.GetIntegrity() ?? 100f,
+            IntegrityTier = GameCore.FutilitySystem?.GetIntegrityTier() ?? 5,
+            IntegrityTierName = GameCore.FutilitySystem?.GetIntegrityTierName() ?? "Pristine",
             IsNewRecord = CombinedScore > personalBestScore,
             PersonalBest = personalBestScore,
             PersonalBestTime = personalBestTime,
@@ -339,6 +342,9 @@ public struct SessionStats
     public int Score;
     public int CurrentBlockValue; // Value of next blocked particle
     public int ScoreMultiplier; // Current time-based multiplier
+    public float Integrity; // World integrity percentage (100 = pristine, 0 = dead)
+    public int IntegrityTier; // 5=Pristine, 4=Stable, 3=Damaged, 2=Critical, 1=Failing, 0=Collapsed
+    public string IntegrityTierName; // Human readable tier name
     public bool IsNewRecord;
     public int PersonalBest;
     public float PersonalBestTime;

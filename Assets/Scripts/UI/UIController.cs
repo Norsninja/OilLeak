@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
     // New futility mode UI elements
     public TextMeshProUGUI futilityMessageText;  // "You are Sisyphus..."
     public TextMeshProUGUI restartInstructionText;  // "Press R to Try Again"
+    public TextMeshProUGUI integrityText;  // Live ocean integrity display
     public TextMeshProUGUI peakDifficultyText;  // Shows highest difficulty reached
 
     public ScoringManager scoringManager;
@@ -83,6 +84,13 @@ public class UIController : MonoBehaviour
         {
             particlesEscapedText.text = $"Oil Escaped: {stats.GallonsEscaped:N0} gallons";
         }
+
+        // Show integrity live during gameplay
+        if (integrityText != null)
+        {
+            integrityText.text = $"Ocean: {stats.IntegrityTierName} ({stats.Integrity:F0}%)";
+            integrityText.color = GetIntegrityColor(stats.IntegrityTier);
+        }
     }
 
     /// <summary>
@@ -91,6 +99,27 @@ public class UIController : MonoBehaviour
     public void UpdatePlayerProfile(SessionStats stats)
     {
         profileTotalScoreText.text = "Total Score: " + stats.Score;
+    }
+
+    private Color GetIntegrityColor(int tier)
+    {
+        switch (tier)
+        {
+            case 5: // Pristine
+                return Color.green;
+            case 4: // Stable
+                return new Color(0.5f, 1f, 0); // Light green
+            case 3: // Damaged
+                return Color.yellow;
+            case 2: // Critical
+                return new Color(1f, 0.5f, 0); // Orange
+            case 1: // Failing
+                return Color.red;
+            case 0: // Collapsed
+                return new Color(0.5f, 0f, 0f); // Dark red
+            default:
+                return Color.white;
+        }
     }
 
     public void SetGradeTextColor(char grade)

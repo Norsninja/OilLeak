@@ -614,6 +614,11 @@ public class GameCore : MonoBehaviour
                $"Resupply: {Resupply != null}, Audio: {Audio != null}";
     }
 
+    /// <summary>
+    /// Get FutilityGameplaySystem for integrity queries
+    /// </summary>
+    public static FutilityGameplaySystem FutilitySystem => futilitySystem;
+
     #if UNITY_EDITOR
     /// <summary>
     /// Editor-only helper to reset all static state for Enter Play Mode without domain reload

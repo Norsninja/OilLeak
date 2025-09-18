@@ -29,6 +29,16 @@ namespace Core.Systems
         private int totalParticlesEscaped;
         private float peakDifficulty;
 
+        // Integrity tier system
+        private float currentIntegrity = 100f;
+        private int currentTier = 5; // 5=Pristine, 4=Damaged, 3=Critical, 2=Failing, 1=Collapsed
+        private readonly float[] tierThresholds = { 0f, 30f, 60f, 80f, 90f, 100f };
+        private readonly string[] tierNames = { "Collapsed", "Failing", "Critical", "Damaged", "Stable", "Pristine" };
+
+        // Events for integrity changes
+        public delegate void IntegrityTierChanged(int newTier, string tierName, float integrity);
+        public static event IntegrityTierChanged OnIntegrityTierChanged;
+
         public FutilityGameplaySystem()
         {
             // Create exponential curves for futility
@@ -227,6 +237,9 @@ namespace Core.Systems
                 }
             }
 
+            // Update integrity based on escaped particles
+            UpdateIntegrity();
+
             // Update difficulty at 2Hz
             if (GameCore.Difficulty != null && GameCore.Difficulty.TickIfDue())
             {
@@ -284,6 +297,10 @@ namespace Core.Systems
             gameStartTime = 0f;
             lastUpdateTime = 0f;
             isRunning = false;
+
+            // Reset integrity
+            currentIntegrity = 100f;
+            currentTier = 5; // Back to Pristine
         }
 
         private int CalculateFutilityScore(float survivalTime)
@@ -296,7 +313,83 @@ namespace Core.Systems
             return baseScore + timeBonus + difficultyBonus;
         }
 
+        private void UpdateIntegrity()
+        {
+            if (GameCore.Session == null) return;
+
+            // Calculate integrity based on escaped particles
+            // Every 100 particles escaped = 10% integrity loss
+            int particlesEscaped = GameCore.Session.ParticlesEscaped;
+            float integrityLoss = (particlesEscaped / 100f) * 10f;
+            currentIntegrity = Mathf.Clamp(100f - integrityLoss, 0f, 100f);
+
+            // Determine current tier
+            int newTier = CalculateIntegrityTier(currentIntegrity);
+
+            // Fire event if tier changed
+            if (newTier != currentTier)
+            {
+                currentTier = newTier;
+                string tierName = tierNames[currentTier];
+
+                Debug.Log($"[FutilitySystem] Integrity degraded to {tierName} ({currentIntegrity:F0}%)");
+                OnIntegrityTierChanged?.Invoke(currentTier, tierName, currentIntegrity);
+
+                // Show tier-specific messages
+                ShowIntegrityMessage(currentTier);
+            }
+        }
+
+        private int CalculateIntegrityTier(float integrity)
+        {
+            // Find which tier we're in (0=Collapsed through 5=Pristine)
+            for (int i = tierThresholds.Length - 1; i >= 0; i--)
+            {
+                if (integrity >= tierThresholds[i])
+                {
+                    return i;
+                }
+            }
+            return 0; // Collapsed
+        }
+
+        private void ShowIntegrityMessage(int tier)
+        {
+            if (GameCore.HUD == null) return;
+
+            switch (tier)
+            {
+                case 4: // Damaged (90% → 80%)
+                    GameCore.HUD.ShowMessage("The ocean is starting to turn...", 3f);
+                    break;
+                case 3: // Critical (80% → 60%)
+                    GameCore.HUD.ShowMessage("Wildlife is dying. The damage is spreading.", 4f);
+                    break;
+                case 2: // Failing (60% → 30%)
+                    GameCore.HUD.ShowMessage("Ecological collapse imminent!", 4f);
+                    break;
+                case 1: // Collapsed (30% → 0%)
+                    GameCore.HUD.ShowMessage("The Gulf is dead. You failed.", 5f);
+                    break;
+            }
+        }
+
         // GetFutilityMessage moved to UIController for better cohesion
+
+        /// <summary>
+        /// Get current integrity percentage for UI display
+        /// </summary>
+        public float GetIntegrity() => currentIntegrity;
+
+        /// <summary>
+        /// Get current integrity tier (0-5)
+        /// </summary>
+        public int GetIntegrityTier() => currentTier;
+
+        /// <summary>
+        /// Get integrity tier name for display
+        /// </summary>
+        public string GetIntegrityTierName() => tierNames[currentTier];
 
         #region IResettable Implementation
 
