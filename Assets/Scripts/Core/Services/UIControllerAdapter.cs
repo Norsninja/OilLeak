@@ -48,6 +48,14 @@ namespace Core.Services
             }
         }
 
+        public void ShowResults(SessionStats stats, float peakDifficulty)
+        {
+            if (controller != null)
+            {
+                controller.ShowRoundOverUI(stats, peakDifficulty);
+            }
+        }
+
         public void HideResults()
         {
             if (controller != null)
@@ -126,6 +134,7 @@ namespace Core.Services
 
             if (controller != null)
             {
+                // CRITICAL: Hide the round over screen when resetting
                 controller.HideRoundOverUI();
                 controller.UpdateUI();
             }

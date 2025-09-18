@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
     [SerializeField, HideInInspector] private TextMeshProUGUI currencyText; // Hidden for serialization compatibility
-    public TextMeshProUGUI gradeText;
+    [SerializeField, HideInInspector] public TextMeshProUGUI gradeText; // Hidden - no grades in futility mode
     public TextMeshProUGUI particlesBlockedText;
     public TextMeshProUGUI particlesEscapedText;
     public TextMeshProUGUI roundTotalScoreText;  // For round-over UI
@@ -23,6 +23,11 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI throwEfficiencyScoreText;
     public TextMeshProUGUI adjustedGradeScoreText;
     public TextMeshProUGUI bonusText;
+
+    // New futility mode UI elements
+    public TextMeshProUGUI futilityMessageText;  // "You are Sisyphus..."
+    public TextMeshProUGUI restartInstructionText;  // "Press R to Try Again"
+    public TextMeshProUGUI peakDifficultyText;  // Shows highest difficulty reached
 
     public ScoringManager scoringManager;
     public GameState gameState; // Reference to GameState ScriptableObject
@@ -153,6 +158,106 @@ public class UIController : MonoBehaviour
             bonusText.text = "Bonus: " + gameController.scoringManager.scoreSummary.bonus;
         }
     }
+    // New method that uses SessionStats instead of ScriptableObjects
+    public void ShowRoundOverUI(SessionStats stats, float peakDifficulty)
+    {
+        roundOverCanvas.SetActive(true);
+
+        // Calculate display values from SessionStats
+        int minutes = Mathf.FloorToInt(stats.TimeElapsed / 60f);
+        int seconds = Mathf.FloorToInt(stats.TimeElapsed % 60f);
+
+        // Set the futility message - the oil always wins
+        if (roundOverTitleText != null)
+        {
+            roundOverTitleText.text = "The Oil Won";
+        }
+
+        // Show what they accomplished before the inevitable
+        if (roundOverSubtitleText != null)
+        {
+            roundOverSubtitleText.text = $"You delayed {stats.GallonsDelayed:N0} gallons for {minutes:00}:{seconds:00}";
+        }
+
+        // Hide the grade system - no grades in futility mode
+        if (gradeText != null && gradeText.gameObject != null)
+        {
+            gradeText.gameObject.SetActive(false);
+        }
+
+        // Main stats - what matters in the futility simulator
+        if (roundTotalScoreText != null)
+            roundTotalScoreText.text = $"Survived: {minutes:00}:{seconds:00}";
+
+        // Show gallons instead of particles for impact
+        if (particlesBlockedText != null)
+            particlesBlockedText.text = $"Gallons Delayed: {stats.GallonsDelayed:N0}";
+
+        if (particlesEscapedText != null)
+            particlesEscapedText.text = $"Gallons Escaped: {stats.GallonsEscaped:N0}";
+
+        // Show peak difficulty reached
+        if (peakDifficultyText != null)
+            peakDifficultyText.text = $"Peak Difficulty: {peakDifficulty:F1}x";
+
+        // Show high score if it's a new record
+        if (highScoreText != null)
+        {
+            if (stats.IsNewRecord)
+                highScoreText.text = $"NEW HIGH SCORE: {stats.Score}";
+            else
+                highScoreText.text = $"High Score: {stats.PersonalBest}";
+        }
+
+        // Show futility message based on score
+        if (futilityMessageText != null)
+        {
+            futilityMessageText.text = GetFutilityMessage(stats.Score);
+        }
+
+        // Show restart instruction
+        if (restartInstructionText != null)
+        {
+            restartInstructionText.text = "Press R to Try Again";
+        }
+
+        // Hide old scoring UI elements
+        HideOldScoringElements();
+    }
+
+    // Helper method to generate futility messages
+    private string GetFutilityMessage(int score)
+    {
+        if (score < 500) return "You barely tried. The ocean weeps.";
+        if (score < 1000) return "A valiant effort. Still futile.";
+        if (score < 2000) return "You fought the tide. The tide won.";
+        if (score < 5000) return "Impressive! But oil companies don't care.";
+        return "You are Sisyphus. The oil is your boulder.";
+    }
+
+    // Helper to hide old UI elements that don't fit futility theme
+    private void HideOldScoringElements()
+    {
+        // Hide detailed scoring breakdown - not relevant for futility
+        if (maximumPossibleScoreText != null && maximumPossibleScoreText.gameObject != null)
+            maximumPossibleScoreText.gameObject.SetActive(false);
+
+        if (escapePenaltyText != null && escapePenaltyText.gameObject != null)
+            escapePenaltyText.gameObject.SetActive(false);
+
+        if (efficiencyScoreText != null && efficiencyScoreText.gameObject != null)
+            efficiencyScoreText.gameObject.SetActive(false);
+
+        if (throwEfficiencyScoreText != null && throwEfficiencyScoreText.gameObject != null)
+            throwEfficiencyScoreText.gameObject.SetActive(false);
+
+        if (adjustedGradeScoreText != null && adjustedGradeScoreText.gameObject != null)
+            adjustedGradeScoreText.gameObject.SetActive(false);
+
+        if (bonusText != null && bonusText.gameObject != null)
+            bonusText.gameObject.SetActive(false);
+    }
+
     public void HideRoundOverUI()
     {
         // Hide the "Game Over" UI here. This could be as simple as setting its GameObject to inactive.

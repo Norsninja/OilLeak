@@ -17,9 +17,16 @@ namespace Core.Services
         void UpdatePlayerProfile();
 
         /// <summary>
-        /// Show round over/results UI
+        /// Show round over/results UI (legacy)
         /// </summary>
         void ShowResults();
+
+        /// <summary>
+        /// Show round over/results UI with session data
+        /// </summary>
+        /// <param name="stats">Session statistics including time, particles, score</param>
+        /// <param name="peakDifficulty">Highest difficulty multiplier reached</param>
+        void ShowResults(SessionStats stats, float peakDifficulty);
 
         /// <summary>
         /// Hide round over/results UI

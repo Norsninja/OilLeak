@@ -53,8 +53,15 @@ public class RagdollController : MonoBehaviour
     {
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
         {
+            // Update GameSession instead of ScriptableObject
+            if (GameCore.Session != null)
+            {
+                GameCore.Session.RecordParticleBlocked();
+                Debug.Log($"[RagdollController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}");
+            }
+
+            // Keep updating ScriptableObject for backward compatibility (temporary)
             oilLeakData.particlesBlocked++;
-            // Debug.Log("Blocked with RagdollController: " + oilLeakData.particlesBlocked);
         }
     }
     // Function to apply throwing force to "Spine.002"

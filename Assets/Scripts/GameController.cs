@@ -23,7 +23,7 @@ public class GameController : MonoBehaviour
 
     // State tracking for input
     private bool gameStarted = false;
-    private bool restartPending = false;
+    private bool autoStartNextRun = false;  // Flag to auto-start after returning to menu
     private bool initialized = false; // Track if we've subscribed to GameCore
 
     void Awake()
@@ -110,26 +110,49 @@ public class GameController : MonoBehaviour
             }
         }
 
-        // Handle R to restart (only during Running or ShowingResults)
+        // Handle R to restart (only during Running, ShowingResults, or Menu with auto-start)
         if (Input.GetKeyDown(KeyCode.R))
         {
             var currentState = GameCore.Flow.CurrentState;
 
-            if (currentState == GameFlowState.Running || currentState == GameFlowState.ShowingResults)
+            if (currentState == GameFlowState.Running)
             {
-                if (!restartPending) // Prevent multiple restart calls
+                if (!autoStartNextRun) // Prevent multiple restart intents
                 {
-                    Debug.Log($"[GameController] R pressed - Restarting from {currentState}");
-                    restartPending = true;
+                    Debug.Log($"[GameController] R pressed in Running - Ending game with restart intent");
+                    autoStartNextRun = true;
+                    GameCore.EndGame(); // Will transition through Ending -> Cleaning -> ShowingResults -> Menu
+                }
+            }
+            else if (currentState == GameFlowState.ShowingResults)
+            {
+                // Set flag if not already set (might be pre-set from Running state)
+                if (!autoStartNextRun)
+                {
+                    Debug.Log("[GameController] R pressed in ShowingResults - Setting restart intent");
+                    autoStartNextRun = true;
+                }
+                else
+                {
+                    Debug.Log("[GameController] R pressed in ShowingResults - Restart intent already set from Running");
+                }
 
-                    // End current game first
-                    if (currentState == GameFlowState.Running)
-                    {
-                        GameCore.EndGame(); // Will transition through Ending -> Cleaning -> ShowingResults
-                    }
-
-                    // Return to menu (from ShowingResults or after EndGame completes)
-                    Invoke(nameof(ReturnToMenu), 2f); // Give time for transitions
+                // Always call RestartGame regardless of flag state
+                Debug.Log("[GameController] Returning to menu with auto-start");
+                GameCore.RestartGame(); // Transitions to Menu
+            }
+            else if (currentState == GameFlowState.Menu)
+            {
+                // Only allow R in Menu if we have auto-start intent (prevents conflict with E)
+                if (autoStartNextRun)
+                {
+                    Debug.Log("[GameController] R in Menu with auto-start flag - Starting game");
+                    autoStartNextRun = false; // Clear flag immediately
+                    GameCore.StartGame();
+                }
+                else
+                {
+                    Debug.Log("[GameController] R pressed in Menu but ignored (no auto-start intent)");
                 }
             }
             else
@@ -152,18 +175,17 @@ public class GameController : MonoBehaviour
                 GameCore.ResumeGame();
             }
         }
+
+        // Handle auto-start after returning to Menu (outside of event handler to avoid re-entrancy)
+        if (autoStartNextRun && GameCore.Flow.CurrentState == GameFlowState.Menu)
+        {
+            autoStartNextRun = false; // Clear flag immediately
+            Debug.Log($"[GameController] Auto-starting new run from Menu (deferred from event handler) - IsInit: {GameCore.IsInitialized}, Flow: {GameCore.Flow != null}");
+            GameCore.StartGame();
+            Debug.Log($"[GameController] After StartGame call - Current state: {GameCore.Flow?.CurrentState}");
+        }
     }
 
-    /// <summary>
-    /// Return to menu state and prepare for new game
-    /// </summary>
-    void ReturnToMenu()
-    {
-        Debug.Log("[GameController] Returning to menu");
-        GameCore.RestartGame(); // This transitions to Menu state
-        restartPending = false;
-        gameStarted = false;
-    }
 
     /// <summary>
     /// Track state changes for debugging
@@ -172,10 +194,11 @@ public class GameController : MonoBehaviour
     {
         Debug.Log($"[GameController] Observed state change: {oldState} → {newState}");
 
-        // Clear restart flag when we reach menu
-        if (newState == GameFlowState.Menu)
+        // Don't call StartGame from within the event handler - just note that we reached Menu
+        if (newState == GameFlowState.Menu && autoStartNextRun)
         {
-            restartPending = false;
+            Debug.Log("[GameController] Reached Menu with auto-start intent - will start game in Update");
+            // DON'T call StartGame here - let Update() handle it to avoid re-entrancy
         }
     }
 

@@ -198,11 +198,12 @@ namespace Core.Systems
             // Push final stats to UI
             if (GameCore.HUD != null && GameCore.Session != null)
             {
-                GameCore.HUD.ShowResults();
+                // Get session stats and pass to the new ShowResults overload
+                SessionStats stats = GameCore.Session.GetStats();
+                GameCore.HUD.ShowResults(stats, peakDifficulty);
 
-                // Show futility message based on performance
-                string message = GetFutilityMessage(GameCore.Session.CombinedScore);
-                GameCore.HUD.ShowMessage(message, 5f);
+                // The futility message is now handled in UIController
+                // No need to call ShowMessage separately
             }
         }
 
@@ -295,14 +296,7 @@ namespace Core.Systems
             return baseScore + timeBonus + difficultyBonus;
         }
 
-        private string GetFutilityMessage(int score)
-        {
-            if (score < 500) return "You barely tried. The ocean weeps.";
-            if (score < 1000) return "A valiant effort. Still futile.";
-            if (score < 2000) return "You fought the tide. The tide won.";
-            if (score < 5000) return "Impressive! But oil companies don't care.";
-            return "You are Sisyphus. The oil is your boulder.";
-        }
+        // GetFutilityMessage moved to UIController for better cohesion
 
         #region IResettable Implementation
 
