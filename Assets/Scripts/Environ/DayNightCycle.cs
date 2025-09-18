@@ -43,7 +43,24 @@ public class DayNightCycle : MonoBehaviour
     // Initialize variables at the start of the game
     private void Start()
     {
-        dayNightData.dayLength = gameTimerData.roundDuration; // Set day length based on game round duration
+        // Add null checks to prevent crashes
+        if (dayNightData == null)
+        {
+            Debug.LogError("DayNightCycle: dayNightData is not assigned in Inspector!");
+            enabled = false; // Disable this script
+            return;
+        }
+
+        if (gameTimerData == null)
+        {
+            Debug.LogWarning("DayNightCycle: gameTimerData is not assigned - using default day length");
+            dayNightData.dayLength = 300f; // Default 5 minutes
+        }
+        else
+        {
+            dayNightData.dayLength = gameTimerData.roundDuration; // Set day length based on game round duration
+        }
+
         dayNightData.currentTime = 0; // Reset current time to zero
     }
 

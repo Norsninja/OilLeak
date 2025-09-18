@@ -34,6 +34,12 @@ public class WaterSurfaceController : MonoBehaviour
             oilLeakData.particlesEscaped++;
             // Debug.Log("Escaped to the WaterSurface: " + oilLeakData.particlesEscaped);
 
+            // Notify GameSession for failure tracking
+            if (GameCore.Session != null)
+            {
+                GameCore.Session.RecordParticleEscaped();
+            }
+
             // Notify DifficultyManager for rubber band system
             if (DifficultyManager.Instance != null)
             {

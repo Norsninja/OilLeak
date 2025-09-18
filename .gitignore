@@ -87,3 +87,13 @@ Packages/manifest_backup.json
 
 # Temporary development notes (keep CLAUDE.md as it's identity)
 # CLAUDE.md is committed - it defines the AI assistant's role
+
+# Gemini documentation
+GEMINI.md
+
+# Windows null device
+nul
+
+# Build artifacts
+Assets/Scripts/bin.meta
+Assets/Scripts/obj.meta

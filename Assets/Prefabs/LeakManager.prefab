@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7161658605023176281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2188991958528280869}
+  - component: {fileID: 5894377938151754127}
+  m_Layer: 0
+  m_Name: LeakManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2188991958528280869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7161658605023176281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -16.74955, y: -22.7, z: 0.079453945}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5894377938151754127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7161658605023176281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d065db81cfdf8814dbcb6498df8b5918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: 0
+  debugStateChanges: 1
+  oilLeakPrefab: {fileID: 5618256530038719758, guid: 9c3233c0161ff234195c8bc7a7d4c54d,
+    type: 3}
+  maxLeaks: 3
+  minLeakSpacing: 5
+  leakSpawnAreaWidth: 20
+  baseLeakPosition: {x: 0, y: -27.9, z: 0}
+  ambientOffset: {x: 0, y: 0, z: 0}
+  useCustomRotation: 0
+  customLeakRotation: {x: -90, y: 0, z: 0}
+  secondLeakAtSec: 120
+  thirdLeakAtSec: 300
+  ambientRate: 9
+  enablePressureSystem: 1
+  pressureBuildupRate: 0.1
+  pressureReleaseThreshold: 5
+  burstEmissionMultiplier: 5
+  burstDuration: 5
+  burstExplosionRadius: 5
+  burstExplosionForce: 1000
+  burstUpwardModifier: 0.8
+  maxAffectedBodies: 20
+  burstCooldown: 9

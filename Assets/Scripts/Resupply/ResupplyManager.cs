@@ -5,8 +5,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Manages all resupply events (air-drops, barges, etc)
 /// Driven by LeakManager/EndlessMode lifecycle - not self-starting
+/// Implements IResettable for deterministic cleanup during state transitions
 /// </summary>
-public class ResupplyManager : MonoBehaviour
+public class ResupplyManager : MonoBehaviour, IResettable
 {
     [Header("Configuration")]
     [SerializeField] private ResupplyEventConfig airDropConfig;
@@ -486,13 +487,14 @@ public class ResupplyManager : MonoBehaviour
     // Helper to get game time (not Time.time which ignores pause)
     private float GetGameTime()
     {
-        // Use GameState timer (updated by EndlessMode)
-        if (gameController?.gameState != null)
+        // Use GameSession's elapsed time (properly tracked by GameCore)
+        if (GameCore.Session != null && GameCore.Session.IsActive)
         {
-            return gameController.gameState.timer;
+            return GameCore.Session.TimeElapsed;
         }
 
-        return Time.time; // Fallback
+        // Fallback to Time.time if session not available
+        return Time.time;
     }
 
     // Helper to get world edge positions (works for ortho and perspective)
@@ -588,5 +590,110 @@ public class ResupplyManager : MonoBehaviour
 
         activePackages.Clear();
         activeCrates.Clear();
+    }
+
+    // === IResettable Implementation ===
+
+    /// <summary>
+    /// Reset to initial state for game restart
+    /// Reuses existing EndResupply logic
+    /// </summary>
+    public void Reset()
+    {
+        // Stop all coroutines first
+        StopAllCoroutines();
+
+        // Use existing cleanup logic
+        EndResupply();
+
+        // Reset timing state
+        nextAirDropTime = 0f;
+        nextBargeTime = 0f;
+        lastRubberBandTime = 0f;
+        struggleStartTime = -1f;
+
+        // Ensure state is clean
+        isActive = false;
+    }
+
+    /// <summary>
+    /// Verify the manager is properly cleaned
+    /// </summary>
+    public bool IsClean
+    {
+        get
+        {
+            // Check no active vehicles
+            bool noVehicles = activeAircraft == null && activeBarge == null;
+
+            // Check no active packages or crates
+            bool noActiveItems = (activePackages == null || activePackages.Count == 0) &&
+                                  (activeCrates == null || activeCrates.Count == 0);
+
+            // Check not active
+            bool notActive = !isActive;
+
+            // Check pools are consistent (all pooled items should be inactive)
+            bool poolsClean = true;
+            foreach (var package in packagePool)
+            {
+                if (package != null && package.activeSelf)
+                {
+                    poolsClean = false;
+                    Debug.LogError($"[ResupplyManager] Active package found in pool during IsClean check");
+                    break;
+                }
+            }
+
+            if (poolsClean)
+            {
+                foreach (var crate in cratePool)
+                {
+                    if (crate != null && crate.activeSelf)
+                    {
+                        poolsClean = false;
+                        Debug.LogError($"[ResupplyManager] Active crate found in pool during IsClean check");
+                        break;
+                    }
+                }
+            }
+
+            return noVehicles && noActiveItems && notActive && poolsClean;
+        }
+    }
+
+    /// <summary>
+    /// Check if any major event is active (for telemetry)
+    /// </summary>
+    public bool IsMajorEventActive => activeAircraft != null || activeBarge != null;
+
+    /// <summary>
+    /// Get total count of active packages and crates (for service layer)
+    /// </summary>
+    public int ActivePackageCount => activePackages.Count + activeCrates.Count;
+
+    /// <summary>
+    /// Check if resupply system is active
+    /// </summary>
+    public bool IsActive => isActive;
+
+    /// <summary>
+    /// Get time until next air drop (for DevHUD)
+    /// </summary>
+    public float GetTimeToNextAirDrop()
+    {
+        if (!isActive) return -1;
+        float timeLeft = nextAirDropTime - GetGameTime();
+        return timeLeft > 0 ? timeLeft : -1;
+    }
+
+    /// <summary>
+    /// Get time until next barge (for DevHUD)
+    /// </summary>
+    public float GetTimeToNextBarge()
+    {
+        if (!isActive) return -1;
+        float timeLeft = nextBargeTime - GetGameTime();
+        return timeLeft > 0 ? timeLeft : -1;
     }
 }

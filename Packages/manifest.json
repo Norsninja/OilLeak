@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/UnityMcpBridge",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.render-pipelines.universal": "14.0.8",
     "com.unity.textmeshpro": "3.0.6",
