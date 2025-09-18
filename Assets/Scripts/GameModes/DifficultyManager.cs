@@ -265,4 +265,31 @@ public class DifficultyManager : MonoBehaviour
         gameStartTime = Time.time - (minutes * 60f);
         UpdateDifficulty();
     }
+
+    // Public setters for service layer
+    public void SetEmissionCurve(AnimationCurve curve, float baseRate, float maxRate)
+    {
+        if (curve != null)
+        {
+            emissionCurve = curve;
+            baseEmissionRate = baseRate;
+            maxEmissionRate = maxRate;
+            if (debugLogging) Debug.Log($"[DifficultyManager] Emission curve updated - base: {baseRate}, max: {maxRate}");
+        }
+    }
+
+    public void SetDifficultyMultiplierCurve(AnimationCurve curve)
+    {
+        if (curve != null)
+        {
+            difficultyMultiplierCurve = curve;
+            if (debugLogging) Debug.Log("[DifficultyManager] Difficulty multiplier curve updated");
+        }
+    }
+
+    public void SetRubberBandEnabled(bool enabled)
+    {
+        enableRubberBand = enabled;
+        if (debugLogging) Debug.Log($"[DifficultyManager] Rubber band {(enabled ? "enabled" : "disabled")}");
+    }
 }
