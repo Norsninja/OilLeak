@@ -130,6 +130,12 @@ namespace Core.Systems
             gameStartTime = Time.time;
             lastUpdateTime = Time.time;
 
+            // Log initial integrity state with dynamic threshold
+            int threshold = GameCore.Session?.GetMaxEscapedForDisplay() ?? 100;
+            Debug.Log($"[FutilitySystem] Game Starting - Integrity: {currentIntegrity:F1}%, Tier: {currentTier} ({tierNames[currentTier]})");
+            Debug.Log($"[FutilitySystem] Failure Threshold: {threshold} particles");
+            Debug.Log($"[FutilitySystem] Tier Thresholds: 90%=Stable, 80%=Damaged, 60%=Critical, 30%=Failing, <30%=Collapsed");
+
             // Enable player movement
             if (GameCore.Player != null)
             {
@@ -317,11 +323,24 @@ namespace Core.Systems
         {
             if (GameCore.Session == null) return;
 
-            // Calculate integrity based on escaped particles
-            // Every 100 particles escaped = 10% integrity loss
+            // Calculate integrity based on escaped particles relative to failure threshold
+            // This ensures integrity scales with whatever threshold we're using (100, 1000, etc)
             int particlesEscaped = GameCore.Session.ParticlesEscaped;
-            float integrityLoss = (particlesEscaped / 100f) * 10f;
-            currentIntegrity = Mathf.Clamp(100f - integrityLoss, 0f, 100f);
+            int threshold = GameCore.Session?.GetMaxEscapedForDisplay() ?? 100;
+
+            // Calculate percentage of threshold reached (0 to 1)
+            float escapedPercent = threshold > 0 ? (float)particlesEscaped / threshold : 1f;
+
+            // Convert to integrity percentage (100% = pristine, 0% = dead)
+            float newIntegrity = Mathf.Clamp01(1f - escapedPercent) * 100f;
+
+            // Log every 60 frames (approximately 1 second) to avoid spam
+            if (Time.frameCount % 60 == 0 && particlesEscaped > 0)
+            {
+                Debug.Log($"[FutilitySystem] Integrity: {particlesEscaped}/{threshold} escaped = {escapedPercent*100:F1}% of threshold = {newIntegrity:F1}% integrity");
+            }
+
+            currentIntegrity = newIntegrity;
 
             // Determine current tier
             int newTier = CalculateIntegrityTier(currentIntegrity);

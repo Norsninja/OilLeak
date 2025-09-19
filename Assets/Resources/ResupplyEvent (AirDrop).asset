@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventName: Air Drop
   type: 0
-  minInterval: 75
+  minInterval: 60
   maxInterval: 120
   cooldown: 90
   spawnWindow: 30
-  spawnHeight: 15
+  spawnHeight: 10
   vehicleSpeed: 8
   parachuteDescentSpeed: 2
-  horizontalDrift: 0.3
+  horizontalDrift: 0.4
   minDropCount: 1
   maxDropCount: 3
   despawnTime: 30
