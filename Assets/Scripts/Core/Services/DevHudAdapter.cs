@@ -36,13 +36,26 @@ namespace Core.Services
 
         #region IDevHudService Implementation
 
-        public void UpdateSessionStats(float timeElapsed, int particlesBlocked, int particlesEscaped, int maxEscaped)
+        public void UpdateSessionStats(SessionStats stats)
         {
-            sessionData.timeElapsed = timeElapsed;
-            sessionData.particlesBlocked = particlesBlocked;
-            sessionData.particlesEscaped = particlesEscaped;
-            sessionData.maxEscaped = maxEscaped;
-            sessionData.escapedPercent = maxEscaped > 0 ? (particlesEscaped * 100f / maxEscaped) : 0f;
+            // Core metrics
+            sessionData.timeElapsed = stats.TimeElapsed;
+            sessionData.particlesBlocked = stats.ParticlesBlocked;
+            sessionData.particlesEscaped = stats.ParticlesEscaped;
+            sessionData.maxEscaped = 100; // Legacy field, keeping for compatibility
+            sessionData.escapedPercent = stats.ParticlesEscaped; // Now just raw count
+
+            // Integrity metrics
+            sessionData.integrityPercent = stats.Integrity;
+            sessionData.integrityTier = stats.IntegrityTier;
+            sessionData.integrityTierName = stats.IntegrityTierName;
+
+            // Scoring metrics
+            sessionData.currentBlockValue = stats.CurrentBlockValue;
+            sessionData.scoreMultiplier = stats.ScoreMultiplier;
+            sessionData.runningBlockScore = GameCore.Session?.RunningBlockScore ?? 0;
+            sessionData.survivalBonus = GameCore.Session?.SurvivalBonus ?? 0;
+            sessionData.totalScore = stats.Score;
         }
 
         public void UpdateDifficulty(float emissionRate, float multiplier, float rubberBand)
@@ -123,11 +136,24 @@ namespace Core.Services
 
         public class SessionData
         {
+            // Core metrics
             public float timeElapsed;
             public int particlesBlocked;
             public int particlesEscaped;
-            public int maxEscaped = 100; // Default
+            public int maxEscaped = 100; // Legacy field
             public float escapedPercent;
+
+            // Integrity metrics
+            public float integrityPercent;
+            public int integrityTier;
+            public string integrityTierName = "Pristine";
+
+            // Scoring metrics
+            public int currentBlockValue;
+            public int scoreMultiplier;
+            public int runningBlockScore;
+            public int survivalBonus;
+            public int totalScore;
         }
 
         public class DifficultyData

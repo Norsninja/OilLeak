@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84915db9fb767e24c928a0f8d365a0db, type: 3}
   m_Name: ResupplyEvent (Barge)
   m_EditorClassIdentifier: 
-  eventName: Air Drop
+  eventName: Barge
   type: 1
-  minInterval: 75
-  maxInterval: 120
+  minInterval: 120
+  maxInterval: 300
   cooldown: 90
   spawnWindow: 30
   spawnHeight: 15

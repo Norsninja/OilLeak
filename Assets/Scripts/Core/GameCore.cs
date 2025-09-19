@@ -422,12 +422,9 @@ public class GameCore : MonoBehaviour
             // Push session data to DevHUD
             if (DevHud != null && Session != null)
             {
-                DevHud.UpdateSessionStats(
-                    Session.TimeElapsed,
-                    Session.ParticlesBlocked,
-                    Session.ParticlesEscaped,
-                    Session.GetMaxEscapedForDisplay()
-                );
+                // Get comprehensive stats and pass them to DevHUD
+                SessionStats stats = Session.GetStats();
+                DevHud.UpdateSessionStats(stats);
 
                 DevHud.UpdateGameState(Flow.CurrentState, true);
             }

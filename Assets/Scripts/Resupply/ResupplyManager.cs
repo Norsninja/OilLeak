@@ -573,8 +573,17 @@ public class ResupplyManager : MonoBehaviour, IResettable
         isActive = false;
 
         // Clean up all active objects
-        if (activeAircraft != null) Destroy(activeAircraft);
-        if (activeBarge != null) Destroy(activeBarge);
+        if (activeAircraft != null)
+        {
+            Destroy(activeAircraft);
+            activeAircraft = null; // Clear reference immediately for IsClean check
+        }
+
+        if (activeBarge != null)
+        {
+            Destroy(activeBarge);
+            activeBarge = null; // Clear reference immediately for IsClean check
+        }
 
         // Return all packages to pool
         foreach (var package in activePackages.ToArray())

@@ -4843,6 +4843,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oilLeakData: {fileID: 11400000, guid: 5201d926e9d95f542af240f2d62b1561, type: 2}
-  gameState: {fileID: 11400000, guid: 54fb44f3e47ef9f45a75e719c866121e, type: 2}
-  totalParticlesToEmit: 1000
   oilParticles: {fileID: 5048861239271921461}

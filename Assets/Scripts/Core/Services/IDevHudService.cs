@@ -1,4 +1,5 @@
 using UnityEngine;
+using Core; // For SessionStats
 
 namespace Core.Services
 {
@@ -9,9 +10,9 @@ namespace Core.Services
     public interface IDevHudService : IResettable
     {
         /// <summary>
-        /// Update session statistics (time, particles, score)
+        /// Update session statistics (time, particles, score, integrity, etc)
         /// </summary>
-        void UpdateSessionStats(float timeElapsed, int particlesBlocked, int particlesEscaped, int maxEscaped);
+        void UpdateSessionStats(SessionStats stats);
 
         /// <summary>
         /// Update difficulty display

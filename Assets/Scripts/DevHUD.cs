@@ -86,7 +86,7 @@ public class DevHUD : MonoBehaviour
         var stateData = adapter.GetStateData();
 
         // Calculate background size
-        int totalHeight = 600; // Approximate height for all sections
+        int totalHeight = 750; // Increased for new integrity and scoring sections
 
         // Background box
         GUI.Box(new Rect(10, 10, 340, totalHeight), "");
@@ -151,6 +151,53 @@ public class DevHUD : MonoBehaviour
                                sessionData.escapedPercent > 80 ? Color.yellow : Color.white;
         GUI.Label(new Rect(15, y, 330, lineHeight),
             $"Escaped: {sessionData.particlesEscaped}/{sessionData.maxEscaped} ({sessionData.escapedPercent:F1}%)", style);
+        y += lineHeight;
+        style.normal.textColor = Color.white;
+        y += sectionSpacing;
+
+        // === INTEGRITY SECTION ===
+        style.normal.textColor = Color.cyan;
+        GUI.Label(new Rect(15, y, 330, lineHeight), "-- Ocean Integrity --", headerStyle);
+        y += lineHeight;
+
+        // Tier with color coding
+        Color integrityColor = sessionData.integrityTier switch
+        {
+            5 => Color.green,     // Pristine
+            4 => Color.yellow,    // Stable
+            3 => new Color(1f, 0.5f, 0f), // Damaged (orange)
+            2 => Color.red,       // Critical
+            1 => Color.magenta,   // Failing
+            _ => Color.gray       // Collapsed
+        };
+        style.normal.textColor = integrityColor;
+        GUI.Label(new Rect(15, y, 330, lineHeight),
+            $"Tier: {sessionData.integrityTierName} ({sessionData.integrityPercent:F0}%)", style);
+        y += lineHeight;
+        style.normal.textColor = Color.white;
+        y += sectionSpacing;
+
+        // === SCORING SECTION ===
+        style.normal.textColor = Color.cyan;
+        GUI.Label(new Rect(15, y, 330, lineHeight), "-- Scoring --", headerStyle);
+        y += lineHeight;
+        style.normal.textColor = Color.white;
+
+        GUI.Label(new Rect(15, y, 330, lineHeight),
+            $"Block Value: {sessionData.currentBlockValue} x{sessionData.scoreMultiplier}", style);
+        y += lineHeight;
+
+        GUI.Label(new Rect(15, y, 330, lineHeight),
+            $"Block Score: {sessionData.runningBlockScore:N0}", style);
+        y += lineHeight;
+
+        GUI.Label(new Rect(15, y, 330, lineHeight),
+            $"Time Bonus: {sessionData.survivalBonus:N0}", style);
+        y += lineHeight;
+
+        style.normal.textColor = Color.yellow;
+        GUI.Label(new Rect(15, y, 330, lineHeight),
+            $"Total Score: {sessionData.totalScore:N0}", style);
         y += lineHeight;
         style.normal.textColor = Color.white;
         y += sectionSpacing;
