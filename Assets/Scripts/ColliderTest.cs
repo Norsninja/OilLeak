@@ -8,7 +8,7 @@ public class ColliderTest : MonoBehaviour
 
     void OnParticleCollision(GameObject other)
     {
-        Debug.Log("OnParticleCollision triggered with: " + other.name);
+        // Debug.Log("OnParticleCollision triggered with: " + other.name);  // Commented out - too spammy
         ragdollController.HandleParticleCollision(other);
     }
 

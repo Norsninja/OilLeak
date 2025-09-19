@@ -65,11 +65,11 @@ namespace Core.Services
 
             // DevHUD is already updated in GameCore.Update(), but we could consolidate here later
 
-            // Log every 10th update (every 2.5 seconds) for debugging
-            if (Random.Range(0, 10) == 0)
-            {
-                Debug.Log($"[HudUpdateCoordinator] UI Updated - Blocked: {stats.ParticlesBlocked}, Escaped: {stats.ParticlesEscaped}, Time: {stats.TimeElapsed:F1}s");
-            }
+            // Log every 10th update (every 2.5 seconds) for debugging - COMMENTED OUT
+            // if (Random.Range(0, 10) == 0)
+            // {
+            //     Debug.Log($"[HudUpdateCoordinator] UI Updated - Blocked: {stats.ParticlesBlocked}, Escaped: {stats.ParticlesEscaped}, Time: {stats.TimeElapsed:F1}s");
+            // }
         }
 
         /// <summary>

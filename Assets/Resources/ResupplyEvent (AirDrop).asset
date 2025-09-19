@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventName: Air Drop
   type: 0
-  minInterval: 60
+  minInterval: 45
   maxInterval: 120
   cooldown: 90
   spawnWindow: 30

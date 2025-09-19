@@ -94,7 +94,7 @@ public class ItemController : MonoBehaviour
             if (GameCore.Session != null)
             {
                 GameCore.Session.RecordParticleBlocked();
-                Debug.Log($"[ItemController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}");
+                // Debug.Log($"[ItemController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}");  // Commented out - too spammy
             }
 
             // Remove ScriptableObject write - GameSession is the sole authority now

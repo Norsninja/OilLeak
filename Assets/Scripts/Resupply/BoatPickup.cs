@@ -61,19 +61,17 @@ public class BoatPickup : MonoBehaviour
     // Called by trigger proxy when entering a trigger
     public void OnPickupTriggerEnter(Collider other)
     {
-        // Debug logging to diagnose pickup issues
-        Debug.Log($"[BoatPickup] Trigger detected: {other.gameObject.name} on layer {LayerMask.LayerToName(other.gameObject.layer)} (#{other.gameObject.layer})");
-
         // Check if it's a pickup item on the Pickups layer
         if (((1 << other.gameObject.layer) & pickupLayer) != 0)
         {
-            Debug.Log($"[BoatPickup] Valid pickup detected: {other.gameObject.name}");
             CollectCrate(other.gameObject, other);
         }
-        else
-        {
-            Debug.Log($"[BoatPickup] Not a valid pickup - Layer mismatch. Expected: Pickups, Got: {LayerMask.LayerToName(other.gameObject.layer)}");
-        }
+        // Uncomment below for debugging pickup issues:
+        // Debug.Log($"[BoatPickup] Trigger: {other.gameObject.name} on layer {LayerMask.LayerToName(other.gameObject.layer)}");
+        // if (((1 << other.gameObject.layer) & pickupLayer) == 0)
+        // {
+        //     Debug.Log($"[BoatPickup] Not a pickup - Expected: Pickups, Got: {LayerMask.LayerToName(other.gameObject.layer)}");
+        // }
     }
 
     private void CollectCrate(GameObject crate, Collider collider)
@@ -97,7 +95,7 @@ public class BoatPickup : MonoBehaviour
             Destroy(effect, 2f); // Clean up after 2 seconds
         }
 
-        Debug.Log($"Collected resupply crate at {crate.transform.position}");
+        // Debug.Log($"Collected resupply crate at {crate.transform.position}");  // Commented - working correctly
     }
 
     // Visual helper in editor

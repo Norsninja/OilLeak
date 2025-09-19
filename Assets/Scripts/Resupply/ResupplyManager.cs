@@ -43,6 +43,9 @@ public class ResupplyManager : MonoBehaviour, IResettable
     private Queue<GameObject> packagePool = new Queue<GameObject>();
     private Queue<GameObject> cratePool = new Queue<GameObject>();
 
+    // Coroutine tracking to prevent double-despawn
+    private Dictionary<GameObject, Coroutine> activeFloaters = new Dictionary<GameObject, Coroutine>();
+
     // References
     private GameController gameController;
     private InventoryController inventoryController;
@@ -235,15 +238,21 @@ public class ResupplyManager : MonoBehaviour, IResettable
         GameObject package = GetPackageFromPool();
         if (package == null) return;
 
-        package.transform.position = dropPosition;
-        package.SetActive(true);
-
-        // Set layer recursively for pickup detection (including all children)
-        int pickupLayer = LayerMask.NameToLayer("Pickups");
-        SetLayerRecursive(package, pickupLayer);
+        // CRITICAL: Prepare pickup BEFORE activation to prevent OnEnable overrides
+        PreparePickup(package, dropPosition);
 
         // Add to active list
         activePackages.Add(package);
+
+        // NOW it's safe to activate
+        package.SetActive(true);
+
+        // Debug: Check spawn state (uncomment if pickup issues return)
+        // Rigidbody packageRb = package.GetComponent<Rigidbody>();
+        // if (packageRb != null)
+        // {
+        //     Debug.Log($"[ResupplyManager] Package spawned - Sleeping: {packageRb.IsSleeping()}, Kinematic: {packageRb.isKinematic}");
+        // }
 
         // Start parachute descent
         StartCoroutine(ParachuteDescend(package));
@@ -280,8 +289,9 @@ public class ResupplyManager : MonoBehaviour, IResettable
         // Position at water surface
         package.transform.position = new Vector3(package.transform.position.x, waterSurfaceY, package.transform.position.z);
 
-        // Start floating behavior
-        StartCoroutine(FloatAndDespawn(package, true)); // true = is package
+        // Start floating behavior and track coroutine
+        Coroutine floater = StartCoroutine(FloatAndDespawn(package, true)); // true = is package
+        activeFloaters[package] = floater;
     }
 
     private IEnumerator FloatAndDespawn(GameObject floatingObject, bool isPackage)
@@ -294,21 +304,43 @@ public class ResupplyManager : MonoBehaviour, IResettable
         float bobHeight = 0.2f;
         Vector3 basePosition = floatingObject.transform.position;
 
+        // Get Rigidbody for physics-aware movement
+        Rigidbody rb = floatingObject.GetComponent<Rigidbody>();
+        bool usePhysicsMovement = rb != null;
+
         while (elapsed < floatDuration && floatingObject.activeSelf && isActive)
         {
             elapsed += Time.deltaTime;
 
-            // Bob up and down
+            // Calculate new position
             float yOffset = Mathf.Sin(elapsed * bobSpeed) * bobHeight;
-            floatingObject.transform.position = basePosition + Vector3.up * yOffset;
+            Vector3 newPosition = basePosition + Vector3.up * yOffset;
 
             // Slight drift
-            floatingObject.transform.position += Vector3.right * 0.1f * Time.deltaTime;
+            newPosition += Vector3.right * 0.1f * elapsed;
 
-            yield return null;
+            // Move using physics-aware method if Rigidbody exists
+            if (usePhysicsMovement)
+            {
+                // Use MovePosition for kinematic bodies - ensures physics detection
+                rb.MovePosition(newPosition);
+            }
+            else
+            {
+                // Fallback for objects without Rigidbody
+                floatingObject.transform.position = newPosition;
+            }
+
+            yield return new WaitForFixedUpdate(); // Use FixedUpdate for physics
         }
 
         // Despawn after timeout
+        // Remove from coroutine tracking since we're completing naturally
+        if (activeFloaters.ContainsKey(floatingObject))
+        {
+            activeFloaters.Remove(floatingObject);
+        }
+
         if (isPackage)
         {
             ReturnPackageToPool(floatingObject);
@@ -386,19 +418,25 @@ public class ResupplyManager : MonoBehaviour, IResettable
         GameObject crate = GetCrateFromPool();
         if (crate == null) return;
 
-        crate.transform.position = position + Vector3.down * 0.5f;
-        crate.SetActive(true);
-
-        // Set layer recursively for pickup detection (including all children)
-        int pickupLayer = LayerMask.NameToLayer("Pickups");
-        SetLayerRecursive(crate, pickupLayer);
-        Debug.Log($"[ResupplyManager] Spawned crate '{crate.name}' with layer {pickupLayer} (Pickups)");
+        // CRITICAL: Prepare pickup BEFORE activation to prevent OnEnable overrides
+        PreparePickup(crate, position + Vector3.down * 0.5f);
 
         // Add to active crates list
         activeCrates.Add(crate);
 
-        // Start floating
-        StartCoroutine(FloatAndDespawn(crate, false)); // false = is crate
+        // NOW it's safe to activate
+        crate.SetActive(true);
+
+        // Debug: Check spawn state (uncomment if pickup issues return)
+        // Rigidbody crateRb = crate.GetComponent<Rigidbody>();
+        // if (crateRb != null)
+        // {
+        //     Debug.Log($"[ResupplyManager] Crate spawned - Layer: {crate.layer}, Sleeping: {crateRb.IsSleeping()}, Kinematic: {crateRb.isKinematic}");
+        // }
+
+        // Start floating and track coroutine
+        Coroutine floater = StartCoroutine(FloatAndDespawn(crate, false)); // false = is crate
+        activeFloaters[crate] = floater;
     }
 
     private void CheckRubberBandTrigger()
@@ -445,6 +483,16 @@ public class ResupplyManager : MonoBehaviour, IResettable
     // Pickup handling - now with 3D Collider
     public void OnCratePickup(GameObject crate, Collider boatCollider)
     {
+        // Resolve to root GameObject in case we got a child collider
+        GameObject rootCrate = crate.transform.root.gameObject;
+
+        // Stop any active coroutine for this pickup
+        if (activeFloaters.ContainsKey(rootCrate))
+        {
+            StopCoroutine(activeFloaters[rootCrate]);
+            activeFloaters.Remove(rootCrate);
+        }
+
         // Award loot based on current tier
         LootTable currentLoot = GetCurrentLootTable();
         if (currentLoot != null && inventoryController != null)
@@ -466,13 +514,28 @@ public class ResupplyManager : MonoBehaviour, IResettable
         }
 
         // Return to appropriate pool
-        if (activePackages.Contains(crate))
+        if (activePackages.Contains(rootCrate))
         {
-            ReturnPackageToPool(crate);
+            ReturnPackageToPool(rootCrate);
         }
-        else if (activeCrates.Contains(crate))
+        else if (activeCrates.Contains(rootCrate))
         {
-            ReturnCrateToPool(crate);
+            ReturnCrateToPool(rootCrate);
+        }
+        else
+        {
+            // Failsafe: Item not in any list (orphaned), still clean it up
+            Debug.LogWarning($"[ResupplyManager] Orphaned pickup '{rootCrate.name}' - cleaning up anyway");
+            rootCrate.SetActive(false);
+            // Try to return to appropriate pool based on name
+            if (rootCrate.name.Contains("Package"))
+            {
+                ReturnPackageToPool(rootCrate);
+            }
+            else if (rootCrate.name.Contains("Crate"))
+            {
+                ReturnCrateToPool(rootCrate);
+            }
         }
     }
 
@@ -548,16 +611,100 @@ public class ResupplyManager : MonoBehaviour, IResettable
 
     private void ReturnPackageToPool(GameObject package)
     {
+        // Prevent double-enqueue
+        if (!package.activeSelf && packagePool.Contains(package))
+        {
+            Debug.LogWarning($"[ResupplyManager] Attempted to double-enqueue package '{package.name}'" );
+            return;
+        }
+
         package.SetActive(false);
         activePackages.Remove(package);
+
+        // Clean up coroutine tracking
+        if (activeFloaters.ContainsKey(package))
+        {
+            activeFloaters.Remove(package);
+        }
+
+        // Reset state for clean reuse
+        // Layer will be set again by PreparePickup on next use
+        package.transform.rotation = Quaternion.identity;
+
         packagePool.Enqueue(package);
     }
 
     private void ReturnCrateToPool(GameObject crate)
     {
+        // Prevent double-enqueue
+        if (!crate.activeSelf && cratePool.Contains(crate))
+        {
+            Debug.LogWarning($"[ResupplyManager] Attempted to double-enqueue crate '{crate.name}'" );
+            return;
+        }
+
         crate.SetActive(false);
         activeCrates.Remove(crate);
+
+        // Clean up coroutine tracking
+        if (activeFloaters.ContainsKey(crate))
+        {
+            activeFloaters.Remove(crate);
+        }
+
+        // Reset state for clean reuse
+        // Layer will be set again by PreparePickup on next use
+        crate.transform.rotation = Quaternion.identity;
+
         cratePool.Enqueue(crate);
+    }
+
+    /// <summary>
+    /// Prepares a pickup object with consistent state BEFORE activation
+    /// Must be called while object is inactive to prevent OnEnable conflicts
+    /// </summary>
+    private void PreparePickup(GameObject pickup, Vector3 position)
+    {
+        if (pickup == null) return;
+
+        // CRITICAL: Set all state while object is INACTIVE
+        // This prevents any OnEnable/Start methods from overriding our settings
+
+        // Set position
+        pickup.transform.position = position;
+
+        // Reset rotation (prevent weird tilted pickups)
+        pickup.transform.rotation = Quaternion.identity;
+
+        // Set layer recursively for all children
+        int pickupLayer = LayerMask.NameToLayer("Pickups");
+        SetLayerRecursive(pickup, pickupLayer);
+
+        // Ensure collider is a trigger
+        Collider col = pickup.GetComponent<Collider>();
+        if (col != null)
+        {
+            col.isTrigger = true;
+        }
+
+        // Reset rigidbody if present
+        Rigidbody rb = pickup.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // CRITICAL: Wake up the rigidbody so it re-enters physics solver
+            // This ensures trigger detection works immediately
+            rb.WakeUp();
+
+            // For dynamic bodies, set sleep threshold to 0 to prevent sleeping
+            // This keeps them active for trigger detection
+            if (!rb.isKinematic)
+            {
+                rb.sleepThreshold = 0f;
+            }
+        }
     }
 
     /// <summary>
