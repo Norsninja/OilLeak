@@ -238,8 +238,9 @@ public class ResupplyManager : MonoBehaviour, IResettable
         package.transform.position = dropPosition;
         package.SetActive(true);
 
-        // Set layer for pickup detection
-        package.layer = LayerMask.NameToLayer("Pickups");
+        // Set layer recursively for pickup detection (including all children)
+        int pickupLayer = LayerMask.NameToLayer("Pickups");
+        SetLayerRecursive(package, pickupLayer);
 
         // Add to active list
         activePackages.Add(package);
@@ -388,8 +389,10 @@ public class ResupplyManager : MonoBehaviour, IResettable
         crate.transform.position = position + Vector3.down * 0.5f;
         crate.SetActive(true);
 
-        // Set layer for pickup
-        crate.layer = LayerMask.NameToLayer("Pickups");
+        // Set layer recursively for pickup detection (including all children)
+        int pickupLayer = LayerMask.NameToLayer("Pickups");
+        SetLayerRecursive(crate, pickupLayer);
+        Debug.Log($"[ResupplyManager] Spawned crate '{crate.name}' with layer {pickupLayer} (Pickups)");
 
         // Add to active crates list
         activeCrates.Add(crate);
@@ -555,6 +558,21 @@ public class ResupplyManager : MonoBehaviour, IResettable
         crate.SetActive(false);
         activeCrates.Remove(crate);
         cratePool.Enqueue(crate);
+    }
+
+    /// <summary>
+    /// Recursively set layer for GameObject and all children
+    /// Fixes issue where child colliders don't get detected
+    /// </summary>
+    private void SetLayerRecursive(GameObject obj, int layer)
+    {
+        if (obj == null) return;
+
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursive(child.gameObject, layer);
+        }
     }
 
     // Lifecycle management - called by EndlessMode/LeakManager
