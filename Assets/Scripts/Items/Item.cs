@@ -34,6 +34,9 @@ public class Item : ScriptableObject
     [Tooltip("Number of particles to hit before fully Saturated")]
     public int particlesToSaturated = 80;  // Increased from 36
 
+    [Tooltip("Number of particles to hit before Sludge state")]
+    public int particlesToSludge = 120;  // New field for sludge transition
+
     [Tooltip("Exposure seconds added per particle hit")]
     public float exposurePerParticle = 0.3f;
 

@@ -142,8 +142,9 @@ public class ItemDegradation : MonoBehaviour
 
         // HYBRID APPROACH: Check both particle count AND exposure time
 
-        // Check for Sludge (exposure only for now)
-        if (exposureSeconds >= itemData.exposureToSludge && itemData.exposureToSludge > 0)
+        // Check for Sludge (particles OR exposure - whichever comes first)
+        if ((particlesBlockedCount >= itemData.particlesToSludge && itemData.particlesToSludge > 0) ||
+            (exposureSeconds >= itemData.exposureToSludge && itemData.exposureToSludge > 0))
         {
             currentState = DegradationState.Sludge;
         }
@@ -187,16 +188,23 @@ public class ItemDegradation : MonoBehaviour
             bool hitTimeThreshold = exposureSeconds >= itemData.exposureToSaturated;
             trigger = hitParticleThreshold ? " (PARTICLE threshold)" : " (TIME threshold)";
         }
+        else if (to == DegradationState.Sludge)
+        {
+            bool hitParticleThreshold = particlesBlockedCount >= itemData.particlesToSludge;
+            bool hitTimeThreshold = exposureSeconds >= itemData.exposureToSludge;
+            trigger = hitParticleThreshold ? " (PARTICLE threshold)" : " (TIME threshold)";
+        }
 
         Debug.Log($"[DEGRADE] {to}{trigger}: hits={particlesBlockedCount}, exposure={exposureSeconds:F1}s");
 
-        // Change layer when becoming porous
-        if (to >= DegradationState.Saturating && !hasChangedLayer)
+        // Change layer only when reaching Sludge state OR max capacity (fully degraded)
+        // Items continue blocking particles through Saturating and Saturated states
+        if ((to == DegradationState.Sludge || particlesBlockedCount >= itemData.blockCapacity) && !hasChangedLayer)
         {
             SetLayerRecursive(gameObject, LAYER_POROUS_DEBRIS);
             DisableForceFields();
             hasChangedLayer = true;
-            Debug.Log($"[DEGRADE] Layer changed to PorousDebris recursively - oil will pass through, force fields disabled");
+            Debug.Log($"[DEGRADE] Reached Sludge/Max capacity - now porous, oil passes through (particles: {particlesBlockedCount}, capacity: {itemData.blockCapacity})");
         }
 
         // Apply sinking if configured
