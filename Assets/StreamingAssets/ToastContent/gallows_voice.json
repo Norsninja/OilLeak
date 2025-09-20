@@ -1,0 +1,382 @@
+{
+  "version": "1.0",
+  "voiceId": "gallows",
+  "defaultHandle": "@PelicanLarry",
+  "defaultIconKey": "dark_humor_icon",
+  "defaultSoundKey": "notification_comic",
+  "acts": {
+    "act1": {
+      "integrityRange": [80, 100],
+      "messages": [
+        {
+          "id": "gallows_early_001",
+          "triggerId": "time_0_5",
+          "template": "30 seconds in and already failing. This is going to be worse than Katrina.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HopedaleLocal"
+        },
+        {
+          "id": "gallows_early_002",
+          "triggerId": "time_1",
+          "template": "One minute! At this rate, Cubans can walk to Miami by Tuesday.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LettermanFan"
+        },
+        {
+          "id": "gallows_hope_001",
+          "triggerId": "time_3",
+          "template": "{time} minutes of throwing sponges at Poseidon's revenge!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GulfDad"
+        },
+        {
+          "id": "gallows_hope_002",
+          "triggerId": "time_5",
+          "template": "Only {time} minutes! We've survived hurricanes longer!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@OptimisticShrimper"
+        },
+        {
+          "id": "gallows_hope_002b",
+          "triggerId": "time_5",
+          "template": "BP gonna convert me from a fisherman into a farmer just to feed my family",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@JJCreppel"
+        },
+        {
+          "id": "gallows_hope_003",
+          "triggerId": "time_8",
+          "template": "{time} minutes in. Cocktails now come with free oil sheen!",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@BeachBarOwner"
+        },
+        {
+          "id": "gallows_hope_004",
+          "triggerId": "gallons_10k",
+          "template": "Blocked {blocked} gallons with my pool noodles! Mom would be proud!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LocalHero"
+        },
+        {
+          "id": "gallows_hope_005",
+          "triggerId": "gallons_25k",
+          "template": "{blocked} gallons stopped! Take THAT, BP engineers!",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@DIYSavior"
+        },
+        {
+          "id": "gallows_hope_005b",
+          "triggerId": "gallons_25k",
+          "template": "It makes me sick. This is my livelihood and I see it going down the drain",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LasseigneFisherman"
+        },
+        {
+          "id": "gallows_hope_006",
+          "triggerId": "gallons_50k",
+          "template": "Donated 50 pounds of hair! {blocked} gallons can't beat fashion!",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@HairSalonArmy"
+        },
+        {
+          "id": "gallows_hope_007",
+          "triggerId": "special_kevin_costner",
+          "template": "Kevin Costner's here with centrifuges! We're saved! (Narrator: They weren't)",
+          "weight": 2,
+          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 300}],
+          "handleOverride": "@HollywoodSavior",
+          "iconKey": "waterworld"
+        },
+        {
+          "id": "gallows_hope_008",
+          "triggerId": "resupply_first_drop",
+          "template": "Supply drop! Is it golf balls? Please be golf balls!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GolfBallBeliever"
+        }
+      ]
+    },
+    "act2": {
+      "integrityRange": [60, 80],
+      "messages": [
+        {
+          "id": "gallows_dark_001",
+          "triggerId": "time_10",
+          "template": "{time} minutes in. Caught something. Not sure what species anymore",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@3EyedFisherman"
+        },
+        {
+          "id": "gallows_dark_002",
+          "triggerId": "time_15",
+          "template": "Hour {time}. New business model - disaster tourism is booming!",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@ToxicReefTours"
+        },
+        {
+          "id": "gallows_dark_003",
+          "triggerId": "time_20",
+          "template": "{time} minutes of this. Started a betting pool on which species goes first",
+          "weight": 7,
+          "prerequisites": []
+        },
+        {
+          "id": "gallows_dark_004",
+          "triggerId": "gallons_100k",
+          "template": "{escaped} gallons in the water. Shrimp now come pre-marinated!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ShrimpBoatShane"
+        },
+        {
+          "id": "gallows_dark_004b",
+          "triggerId": "gallons_100k",
+          "template": "Tony Hayward wants his life back. I want my 4th generation fishing business back.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@RobertCampo"
+        },
+        {
+          "id": "gallows_dark_005",
+          "triggerId": "gallons_250k",
+          "template": "{blocked} gallons blocked! Sisyphus would be SO proud of us",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@BayouBilly"
+        },
+        {
+          "id": "gallows_dark_006",
+          "triggerId": "gallons_500k",
+          "template": "{escaped} gallons later - our catches provide their own lighting!",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@GlowingFishCo"
+        },
+        {
+          "id": "gallows_dark_007",
+          "triggerId": "integrity_60",
+          "template": "Ocean at {integrity}%. Fish are evolving. Darwin would be fascinated!",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "gallows_dark_008",
+          "triggerId": "special_thoughts_prayers",
+          "template": "Thoughts and prayers shipment arrived! (Contents: literally nothing)",
+          "weight": 3,
+          "prerequisites": [],
+          "handleOverride": "@ThoughtsAndPrayersHQ",
+          "iconKey": "empty_box"
+        },
+        {
+          "id": "gallows_dark_009",
+          "triggerId": "special_item_sludge_50",
+          "template": "50 items turned to sludge. I'm basically Midas but worse!",
+          "weight": 3,
+          "prerequisites": [{"type": "items_degraded", "op": ">=", "value": 50}],
+          "handleOverride": "@SludgeKing"
+        },
+        {
+          "id": "gallows_dark_010",
+          "triggerId": "resupply_emergency",
+          "template": "Emergency supplies! The ocean is like root beer and oil is ice cream - giant float!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BPGlobalPR_Parody"
+        }
+      ]
+    },
+    "act3": {
+      "integrityRange": [30, 60],
+      "messages": [
+        {
+          "id": "gallows_surreal_001",
+          "triggerId": "time_25",
+          "template": "{time} minutes in. The waves are on fire but the surf's up! 🏄‍♂️🔥",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@ApocalypseSurfer"
+        },
+        {
+          "id": "gallows_surreal_002",
+          "triggerId": "time_30",
+          "template": "Day {time}. Restaurant review: 'Unique texture, excessive eyes'",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@MutantSeafood"
+        },
+        {
+          "id": "gallows_surreal_003",
+          "triggerId": "time_45",
+          "template": "{time} minutes. My boat melted but the sunset is pretty!",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@LastBoatStanding"
+        },
+        {
+          "id": "gallows_surreal_004",
+          "triggerId": "gallons_1m",
+          "template": "At {escaped} gallons, notes of extinction with hints of corporate greed",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@OilSommelier"
+        },
+        {
+          "id": "gallows_surreal_005",
+          "triggerId": "gallons_2m",
+          "template": "{escaped} gallons! My fishing license now requires a hazmat cert",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@RadioactiveBayou"
+        },
+        {
+          "id": "gallows_surreal_006",
+          "triggerId": "gallons_5m",
+          "template": "{escaped} gallons creates stunning color patterns! #NoFilter needed",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@ChemicalRainbow"
+        },
+        {
+          "id": "gallows_surreal_007",
+          "triggerId": "integrity_30",
+          "template": "{integrity}% integrity. Started selling 'Last Fish Ever' t-shirts",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "gallows_surreal_008",
+          "triggerId": "integrity_40",
+          "template": "Ocean at {integrity}%. My kids think oil slicks are normal water color",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@GenerationOil"
+        },
+        {
+          "id": "gallows_surreal_009",
+          "triggerId": "special_item_sludge_100",
+          "template": "100 items to sludge! I AM become sludge, destroyer of items",
+          "weight": 2,
+          "prerequisites": [{"type": "items_degraded", "op": ">=", "value": 100}],
+          "handleOverride": "@SludgeKing",
+          "soundKey": "achievement_dark"
+        },
+        {
+          "id": "gallows_surreal_010",
+          "triggerId": "resupply_delayed",
+          "template": "Supply chain disrupted. I have to keep good spirits. What should I do? Shoot myself?",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DarkResilience"
+        },
+        {
+          "id": "gallows_surreal_011",
+          "triggerId": "resupply_failed",
+          "template": "Resupply failed. We're not killing animals, we're creating fossils! #Perspective",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BPGlobalPR_Parody"
+        }
+      ]
+    },
+    "act4": {
+      "integrityRange": [0, 30],
+      "messages": [
+        {
+          "id": "gallows_posthumous_001",
+          "triggerId": "time_60",
+          "template": "From beyond - {time} minutes and y'all still trying? That's sweet",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@DeadPelicanGhost"
+        },
+        {
+          "id": "gallows_posthumous_002",
+          "triggerId": "time_90",
+          "template": "{time} minutes late but thanks for trying, hun",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@GhostOfTheGulf"
+        },
+        {
+          "id": "gallows_posthumous_003",
+          "triggerId": "time_120",
+          "template": "{time} minutes to delete us. New speedrun record!",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@ExtinctSpecies404"
+        },
+        {
+          "id": "gallows_posthumous_004",
+          "triggerId": "gallons_10m",
+          "template": "{escaped} gallons killed me but I'm still tweeting somehow",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@ZombieDolphin"
+        },
+        {
+          "id": "gallows_posthumous_005",
+          "triggerId": "gallons_20m",
+          "template": "{escaped} gallons! *chef's kiss* Perfect ecosystem elimination!",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@TheVoid"
+        },
+        {
+          "id": "gallows_posthumous_006",
+          "triggerId": "gallons_50m",
+          "template": "{escaped} gallons. We had a good run. See you in Valhalla!",
+          "weight": 3,
+          "prerequisites": [],
+          "handleOverride": "@SpiritOfShrimp"
+        },
+        {
+          "id": "gallows_posthumous_007",
+          "triggerId": "integrity_10",
+          "template": "{integrity}% left. The void is warm and accepts Venmo",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "gallows_posthumous_008",
+          "triggerId": "integrity_20",
+          "template": "At {integrity}%, even the bacteria are giving up",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@LastMicrobe"
+        },
+        {
+          "id": "gallows_posthumous_009",
+          "triggerId": "special_mike_2010",
+          "template": "Still got those oil sponges in my trunk. 15 years later. We tried.",
+          "weight": 1,
+          "prerequisites": [{"type": "time_elapsed", "op": "==", "value": 2010}],
+          "handleOverride": "@MikeFromCalifornia",
+          "iconKey": "sponge_memorial",
+          "soundKey": "memorial_chime"
+        },
+        {
+          "id": "gallows_posthumous_010",
+          "triggerId": "special_final_joke",
+          "template": "On the bright side, no more hurricane season!",
+          "weight": 2,
+          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 5}],
+          "handleOverride": "@SilverLining"
+        }
+      ]
+    }
+  }
+}

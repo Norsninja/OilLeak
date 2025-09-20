@@ -1,0 +1,308 @@
+{
+  "version": "1.0",
+  "voiceId": "reality",
+  "defaultHandle": "@MarineBiologist",
+  "defaultIconKey": "science_icon",
+  "defaultSoundKey": "notification_alert",
+  "acts": {
+    "act1": {
+      "integrityRange": [80, 100],
+      "messages": [
+        {
+          "id": "reality_warning_001",
+          "triggerId": "time_3",
+          "template": "{time} minutes in. Detecting subsurface plumes BP claims don't exist",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NOAA_OceanSci"
+        },
+        {
+          "id": "reality_warning_002",
+          "triggerId": "time_5",
+          "template": "Early samples after {time} minutes show concerning toxicity levels",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_warning_003",
+          "triggerId": "time_8",
+          "template": "{time} minutes elapsed. Actual flow rate 10x BP's estimates",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@CoastGuardActual"
+        },
+        {
+          "id": "reality_warning_004",
+          "triggerId": "gallons_10k",
+          "template": "{escaped} gallons detected in Loop Current. Heading for coral reefs",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@EPA_Emergency"
+        },
+        {
+          "id": "reality_warning_005",
+          "triggerId": "gallons_25k",
+          "template": "{blocked} gallons contained but {escaped} already in the water column",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MarineVet"
+        },
+        {
+          "id": "reality_warning_006",
+          "triggerId": "gallons_50k",
+          "template": "At {escaped} gallons, we're approaching irreversible tipping points",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@OceanographyProf"
+        },
+        {
+          "id": "reality_warning_007",
+          "triggerId": "integrity_80",
+          "template": "Ocean integrity dropped to {integrity}%. First species showing stress",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_warning_008",
+          "triggerId": "resupply_first_drop",
+          "template": "Dispersants in that shipment more toxic than the oil itself",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@ToxicologyLab"
+        }
+      ]
+    },
+    "act2": {
+      "integrityRange": [60, 80],
+      "messages": [
+        {
+          "id": "reality_damage_001",
+          "triggerId": "time_10",
+          "template": "Day {time}. Found 47 oiled pelicans. Saved 3.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@WildlifeRescue"
+        },
+        {
+          "id": "reality_damage_002",
+          "triggerId": "time_15",
+          "template": "{time} minutes in. Dolphin mortality up 400%",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_damage_003",
+          "triggerId": "time_20",
+          "template": "Hour {time}. Dead zone expanding exponentially",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NOAA_OceanSci"
+        },
+        {
+          "id": "reality_damage_004",
+          "triggerId": "gallons_100k",
+          "template": "{escaped} gallons reached the nursery. 20 years of growth gone",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@CoralExpert"
+        },
+        {
+          "id": "reality_damage_005",
+          "triggerId": "gallons_250k",
+          "template": "{escaped} gallons = 10,000 fishing jobs lost",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@FisheryScience"
+        },
+        {
+          "id": "reality_damage_006",
+          "triggerId": "gallons_500k",
+          "template": "Can't wash {escaped} gallons from their lungs",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@MarineVet"
+        },
+        {
+          "id": "reality_damage_007",
+          "triggerId": "integrity_60",
+          "template": "Integrity at {integrity}%. Mass die-offs beginning",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@OceanHealth"
+        },
+        {
+          "id": "reality_damage_008",
+          "triggerId": "integrity_70",
+          "template": "{integrity}% integrity. Detecting three-eyed shrimp. Not a joke.",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@ToxicologyLab",
+          "iconKey": "mutant_shrimp"
+        },
+        {
+          "id": "reality_damage_009",
+          "triggerId": "special_corexit",
+          "template": "Corexit dispersant breaking oil into microplastics. Worse than surface slick",
+          "weight": 3,
+          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 600}]
+        }
+      ]
+    },
+    "act3": {
+      "integrityRange": [30, 60],
+      "messages": [
+        {
+          "id": "reality_catastrophe_001",
+          "triggerId": "time_25",
+          "template": "{time} minutes. 12 species haven't been seen since this started",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@ExtinctionWatch"
+        },
+        {
+          "id": "reality_catastrophe_002",
+          "triggerId": "time_30",
+          "template": "Hour {time}. The seafloor is covered in dead creatures",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MarineCemetery"
+        },
+        {
+          "id": "reality_catastrophe_003",
+          "triggerId": "time_45",
+          "template": "{time} minutes. Oil found at depths we thought impossible",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@DeepSeaLab"
+        },
+        {
+          "id": "reality_catastrophe_004",
+          "triggerId": "gallons_1m",
+          "template": "{escaped} gallons. My grandfather's waters are dead",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@LastFisherman"
+        },
+        {
+          "id": "reality_catastrophe_005",
+          "triggerId": "gallons_2m",
+          "template": "{escaped} gallons. Started with 1,847 species. Counting survivors...",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_catastrophe_006",
+          "triggerId": "gallons_5m",
+          "template": "{escaped} gallons. 40% of Louisiana wetlands saturated",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@WetlandsWatch"
+        },
+        {
+          "id": "reality_catastrophe_007",
+          "triggerId": "integrity_30",
+          "template": "{integrity}% integrity. Food chain collapsing from bottom up",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_catastrophe_008",
+          "triggerId": "integrity_40",
+          "template": "Integrity at {integrity}%. Oxygen levels critical. Dead zone permanent",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_catastrophe_009",
+          "triggerId": "special_mutation",
+          "template": "DNA mutations detected in 73% of sampled organisms",
+          "weight": 3,
+          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 45}],
+          "handleOverride": "@GeneticistOnSite"
+        }
+      ]
+    },
+    "act4": {
+      "integrityRange": [0, 30],
+      "messages": [
+        {
+          "id": "reality_testimony_001",
+          "triggerId": "time_60",
+          "template": "For the record - {time} minutes to kill the Gulf of Mexico",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_testimony_002",
+          "triggerId": "time_90",
+          "template": "{time} minutes. We warned you. Every single minute.",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@LastScientist"
+        },
+        {
+          "id": "reality_testimony_003",
+          "triggerId": "time_120",
+          "template": "Time of death - {time} minutes after first leak",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@OceanMemorial"
+        },
+        {
+          "id": "reality_testimony_004",
+          "triggerId": "gallons_10m",
+          "template": "{escaped} gallons. The number that ended commercial fishing",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@FinalCount"
+        },
+        {
+          "id": "reality_testimony_005",
+          "triggerId": "gallons_20m",
+          "template": "{escaped} gallons. Display this number in the extinction museum",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@MuseumRecord"
+        },
+        {
+          "id": "reality_testimony_006",
+          "triggerId": "gallons_50m",
+          "template": "{escaped} gallons was all it took. gg humans",
+          "weight": 3,
+          "prerequisites": [],
+          "handleOverride": "@TheOcean"
+        },
+        {
+          "id": "reality_testimony_007",
+          "triggerId": "integrity_10",
+          "template": "{integrity}% integrity. Below recovery threshold. It's over.",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_testimony_008",
+          "triggerId": "integrity_20",
+          "template": "Final reading: {integrity}%. Recommend immediate evacuation",
+          "weight": 8,
+          "prerequisites": [],
+          "handleOverride": "@EmergencyBroadcast"
+        },
+        {
+          "id": "reality_testimony_009",
+          "triggerId": "special_final_science",
+          "template": "Last sample contained 0% living organisms. Recording for posterity.",
+          "weight": 3,
+          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 5400}]
+        },
+        {
+          "id": "reality_testimony_010",
+          "triggerId": "special_epitaph",
+          "template": "Here lies the Gulf. Cause of death: Shareholder value.",
+          "weight": 2,
+          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 5}],
+          "iconKey": "tombstone"
+        }
+      ]
+    }
+  }
+}

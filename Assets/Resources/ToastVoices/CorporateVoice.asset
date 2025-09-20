@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e71d3a0b31cc8ef4cbfa6c318d806820, type: 3}
+  m_Name: CorporateVoice
+  m_EditorClassIdentifier: 
+  voiceId: corporate
+  defaultHandle: '@BPSocialTeam'
+  defaultAvatar: {fileID: 0}
+  borderColor: {r: 1, g: 0.84313726, b: 0, a: 1}
+  defaultNotificationSound: {fileID: 0}
+  audioOverrides: []
+  iconOverrides: []
+  messagesJsonFile: {fileID: 0}
+  useStreamingAssets: 1
+  streamingAssetFileName: corporate_voice.json

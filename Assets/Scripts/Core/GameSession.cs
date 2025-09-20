@@ -46,8 +46,14 @@ public class GameSession : IDisposable
     // Debug override for testing
     public static int DebugMaxEscapedOverride = 0; // If > 0, overrides config value
 
-    // Events will be added in Phase 2
-    // For now, direct data access only
+    // Events for toast system integration
+    public event Action<float> OnTimeUpdated; // Fires once per second
+    public event Action<int> OnGallonsBlockedChanged;
+    public event Action<int> OnGallonsEscapedChanged;
+    public event Action<int> OnItemsThrownChanged;
+
+    // Track last reported second for throttling time events
+    private int lastReportedSecond = -1;
 
     /// <summary>
     /// Initialize session with config and saved personal best
@@ -131,6 +137,14 @@ public class GameSession : IDisposable
         if (!IsActive) return;
 
         timeElapsed += deltaTime;
+
+        // Fire time event once per second (throttled)
+        int currentSecond = Mathf.FloorToInt(timeElapsed);
+        if (currentSecond != lastReportedSecond)
+        {
+            lastReportedSecond = currentSecond;
+            OnTimeUpdated?.Invoke(timeElapsed);
+        }
     }
 
     /// <summary>
@@ -154,6 +168,9 @@ public class GameSession : IDisposable
             }
             #endif
         }
+
+        // Fire event for gallons blocked change
+        OnGallonsBlockedChanged?.Invoke(GallonsDelayed);
     }
 
     /// <summary>
@@ -163,6 +180,9 @@ public class GameSession : IDisposable
     {
         if (!IsActive) return;
         particlesEscaped++;
+
+        // Fire event for gallons escaped change
+        OnGallonsEscapedChanged?.Invoke(GallonsEscaped);
     }
 
     /// <summary>
@@ -172,6 +192,9 @@ public class GameSession : IDisposable
     {
         if (!IsActive) return;
         itemsThrown++;
+
+        // Fire event for items thrown change
+        OnItemsThrownChanged?.Invoke(itemsThrown);
     }
 
     /// <summary>
@@ -214,7 +237,14 @@ public class GameSession : IDisposable
         particlesEscaped = 0;
         itemsThrown = 0;
         runningBlockScore = 0;
+        lastReportedSecond = -1;
         IsActive = false;
+
+        // Fire events with zero values on reset
+        OnTimeUpdated?.Invoke(0f);
+        OnGallonsBlockedChanged?.Invoke(0);
+        OnGallonsEscapedChanged?.Invoke(0);
+        OnItemsThrownChanged?.Invoke(0);
 
         Debug.Log("GameSession reset to initial state");
     }
@@ -323,7 +353,12 @@ public class GameSession : IDisposable
         Application.wantsToQuit -= OnApplicationWantsToQuit;
         #endif
 
-        // Events will be nulled here in Phase 2
+        // Clear all event subscriptions
+        OnTimeUpdated = null;
+        OnGallonsBlockedChanged = null;
+        OnGallonsEscapedChanged = null;
+        OnItemsThrownChanged = null;
+
         Debug.Log("GameSession disposed");
     }
 }

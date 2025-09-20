@@ -3,6 +3,7 @@ using System;
 using Core;
 using Core.Services;
 using Core.Systems;
+using OilLeak.Toast.Services;
 
 /// <summary>
 /// Central service locator for all game services
@@ -22,6 +23,10 @@ public class GameCore : MonoBehaviour
     public static IHUDService HUD { get; private set; }
     public static IPlayerMovementService Player { get; private set; }
     public static IDevHudService DevHud { get; private set; }
+
+    // Toast system services
+    public static IGameStateProvider ToastState { get; private set; }
+    public static IToastService Toasts { get; private set; }
 
     // Core game systems
     public static GameFlowStateMachine Flow { get; private set; }
@@ -220,6 +225,39 @@ public class GameCore : MonoBehaviour
         // Audio service remains null for now
         Audio = null;
 
+        // Register Toast system services
+        if (Session != null)
+        {
+            // Create the state provider that connects game systems to toasts
+            ToastState = new ToastGameStateProvider(Session);
+            ResetRegistry.Register((IResettable)ToastState);
+            Debug.Log("[GameCore] ToastGameStateProvider created and registered");
+
+            // Create the toast manager with the provider
+            var toastManager = new ToastManager(ToastState);
+
+            // Initialize with voice profiles (will log errors if loading fails)
+            toastManager.Initialize();
+
+            // Only set as active service if initialization succeeded
+            if (toastManager.IsReady)
+            {
+                Toasts = toastManager;
+                Debug.Log("[GameCore] ToastManager initialized and ready");
+            }
+            else
+            {
+                Debug.LogWarning("[GameCore] ToastManager failed to initialize - toasts disabled");
+                Toasts = null;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] Session not available - Toast services will be null");
+            ToastState = null;
+            Toasts = null;
+        }
+
         // Verify critical services
         Debug.Assert(Leaks != null, "LeakService is required!");
         Debug.Assert(Items != null, "ItemService is required!");
@@ -251,7 +289,7 @@ public class GameCore : MonoBehaviour
                 break;
 
             case GameFlowState.Running:
-                HandleRunningState();
+                HandleRunningState(oldState);
                 break;
 
             case GameFlowState.Paused:
@@ -281,6 +319,9 @@ public class GameCore : MonoBehaviour
         // Reset session
         Session.Reset();
 
+        // Stop toasts for fresh run
+        Toasts?.StopToasting();
+
         // Reset services (when they exist)
         Leaks?.Reset();
         Items?.Reset();
@@ -300,7 +341,7 @@ public class GameCore : MonoBehaviour
         Debug.Log("[GameCore] Starting state complete - queued transition to Running");
     }
 
-    private void HandleRunningState()
+    private void HandleRunningState(GameFlowState fromState)
     {
         // Start session
         Session.StartSession();
@@ -308,6 +349,18 @@ public class GameCore : MonoBehaviour
         // Start services (when they exist)
         Leaks?.StartLeaks();
         Resupply?.StartResupply();
+
+        // Start or resume toasts based on previous state
+        if (fromState == GameFlowState.Starting)
+        {
+            // Fresh run - start toasting
+            Toasts?.StartToasting();
+        }
+        else if (fromState == GameFlowState.Paused)
+        {
+            // Resuming from pause
+            Toasts?.ResumeToasting();
+        }
 
         // FutilitySystem responds to state changes automatically
         // No need to explicitly start it
@@ -319,6 +372,7 @@ public class GameCore : MonoBehaviour
         Leaks?.PauseLeaks();
         Resupply?.PauseResupply();
         Audio?.PauseAll();
+        Toasts?.PauseToasting();
     }
 
     private void HandleEndingState()
@@ -332,6 +386,7 @@ public class GameCore : MonoBehaviour
         // Stop services (when they exist)
         Leaks?.EndLeaks();
         Resupply?.EndResupply();
+        Toasts?.StopToasting();
 
         // Transition to cleaning
         Flow.TransitionTo(GameFlowState.Cleaning);
@@ -342,6 +397,10 @@ public class GameCore : MonoBehaviour
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         float cleanStart = Time.realtimeSinceStartup;
         #endif
+
+        // Stop toasts and reset state provider
+        Toasts?.StopToasting();
+        (ToastState as IResettable)?.Reset();
 
         // FutilitySystem handles its own cleanup via IResettable
 
@@ -639,6 +698,19 @@ public class GameCore : MonoBehaviour
         if (Difficulty != null) { Difficulty = null; hadState = true; }
         if (HUD != null) { HUD = null; hadState = true; }
         if (Player != null) { Player = null; hadState = true; }
+        if (DevHud != null) { DevHud = null; hadState = true; }
+
+        // Clear toast services
+        if (ToastState != null)
+        {
+            if (ToastState is IDisposable disposableState)
+            {
+                disposableState.Dispose();
+            }
+            ToastState = null;
+            hadState = true;
+        }
+        if (Toasts != null) { Toasts = null; hadState = true; }
 
         // Clear core systems
         if (Flow != null)

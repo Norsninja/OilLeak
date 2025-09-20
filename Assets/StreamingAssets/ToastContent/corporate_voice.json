@@ -1,0 +1,311 @@
+{
+  "version": "1.0",
+  "voiceId": "corporate",
+  "defaultHandle": "@BPSocialTeam",
+  "defaultIconKey": "corporate_logo",
+  "defaultSoundKey": "notification_corporate",
+  "acts": {
+    "act1": {
+      "integrityRange": [80, 100],
+      "messages": [
+        {
+          "id": "corp_denial_001",
+          "triggerId": "time_3",
+          "template": "Our world-class response team has everything under control. {time} minutes of excellence!",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_002",
+          "triggerId": "time_5",
+          "template": "Minor operational variance detected. Shareholder confidence remains at 100%",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_003",
+          "triggerId": "time_8",
+          "template": "The environmental impact will be very, very modest",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@TonyHayward"
+        },
+        {
+          "id": "corp_denial_004",
+          "triggerId": "gallons_10k",
+          "template": "Successfully managing {blocked} gallons of recoverable petroleum product",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_005",
+          "triggerId": "gallons_25k",
+          "template": "Current containment represents 0.0001% of Gulf volume. Perspective matters!",
+          "weight": 8,
+          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 180}]
+        },
+        {
+          "id": "corp_denial_006",
+          "triggerId": "gallons_50k",
+          "template": "Our patented collection methods have recovered {blocked} gallons of valuable crude",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_007",
+          "triggerId": "resupply_first_drop",
+          "template": "Exciting news! Corporate has approved additional containment resources",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_008",
+          "triggerId": "resupply_barge",
+          "template": "Our logistics team delivers again! Efficiency rating: AAA+",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_denial_009",
+          "triggerId": "integrity_80",
+          "template": "Ocean status remains within operational parameters",
+          "weight": 5,
+          "prerequisites": []
+        }
+      ]
+    },
+    "act2": {
+      "integrityRange": [60, 80],
+      "messages": [
+        {
+          "id": "corp_passive_001",
+          "triggerId": "time_10",
+          "template": "After {time} minutes, we'd like to thank the small people for their concern",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@CarlHenricSvanberg"
+        },
+        {
+          "id": "corp_passive_002",
+          "triggerId": "time_15",
+          "template": "Regulatory delays have extended response time to {time} minutes",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_003",
+          "triggerId": "time_20",
+          "template": "Despite media exaggeration, we've maintained operations for {time} minutes",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_004",
+          "triggerId": "gallons_100k",
+          "template": "{blocked} gallons contained despite interference from 'helpful' volunteers",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_005",
+          "triggerId": "gallons_250k",
+          "template": "Legal has reclassified {blocked} gallons as 'managed petroleum redistribution'",
+          "weight": 7,
+          "prerequisites": [],
+          "handleOverride": "@LegalCompliance"
+        },
+        {
+          "id": "corp_passive_006",
+          "triggerId": "gallons_500k",
+          "template": "Third-party disruptions haven't stopped us from managing {blocked} gallons",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_007",
+          "triggerId": "integrity_60",
+          "template": "Ocean integrity at {integrity}% - within acceptable deviation parameters",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_008",
+          "triggerId": "integrity_70",
+          "template": "Minor ecosystem adjustments detected. Nature is remarkably adaptable!",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_009",
+          "triggerId": "resupply_emergency",
+          "template": "Supply chain operating despite unnecessary government oversight",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_passive_010",
+          "triggerId": "special_junk_shot",
+          "template": "Golf balls can withstand 2,000 pounds of force. Engineering excellence!",
+          "weight": 3,
+          "prerequisites": [],
+          "iconKey": "golf_ball_icon",
+          "soundKey": "failure_ding"
+        }
+      ]
+    },
+    "act3": {
+      "integrityRange": [30, 60],
+      "messages": [
+        {
+          "id": "corp_frantic_001",
+          "triggerId": "time_25",
+          "template": "I'd like my life back too, but here we are at {time} minutes",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@TonyHayward"
+        },
+        {
+          "id": "corp_frantic_002",
+          "triggerId": "time_30",
+          "template": "{time} minutes of this? The real tragedy is the damage to our reputation",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_003",
+          "triggerId": "time_45",
+          "template": "Government interference has prolonged this situation to {time} minutes",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_004",
+          "triggerId": "gallons_1m",
+          "template": "Without regulatory obstacles, we'd have contained twice the {blocked} gallons",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_005",
+          "triggerId": "gallons_2m",
+          "template": "{blocked} gallons recovered. Imagine if environmentalists hadn't interfered!",
+          "weight": 7,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_006",
+          "triggerId": "gallons_5m",
+          "template": "Despite managing {blocked} gallons, activists continue their attacks",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_007",
+          "triggerId": "resupply_delayed",
+          "template": "Supply chain disrupted by excessive safety regulations. Your government at work!",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_008",
+          "triggerId": "resupply_failed",
+          "template": "Materials delayed due to 'environmental impact studies.' The irony.",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_009",
+          "triggerId": "integrity_30",
+          "template": "Integrity at {integrity}%. Blame rests entirely with third-party interference",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_frantic_010",
+          "triggerId": "integrity_40",
+          "template": "Current conditions caused by factors beyond corporate control",
+          "weight": 10,
+          "prerequisites": []
+        }
+      ]
+    },
+    "act4": {
+      "integrityRange": [0, 30],
+      "messages": [
+        {
+          "id": "corp_unhinged_001",
+          "triggerId": "time_60",
+          "template": "After {time} minutes, we're declaring this a natural phenomenon",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_002",
+          "triggerId": "time_90",
+          "template": "Q3 profits up 12% despite {time} minutes of minor complications!",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@ShareholderFirst"
+        },
+        {
+          "id": "corp_unhinged_003",
+          "triggerId": "time_120",
+          "template": "The oil is actually beneficial to marine ecosystems. {time} minutes of enrichment!",
+          "weight": 3,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_004",
+          "triggerId": "gallons_10m",
+          "template": "Congratulations! Your {blocked} gallons contributed to a $65B tax write-off!",
+          "weight": 5,
+          "prerequisites": [],
+          "handleOverride": "@AccountingDept"
+        },
+        {
+          "id": "corp_unhinged_005",
+          "triggerId": "gallons_20m",
+          "template": "{escaped} gallons distributed. Shareholders approve 3:1!",
+          "weight": 5,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_006",
+          "triggerId": "gallons_50m",
+          "template": "We've successfully transformed the Gulf into a petroleum reserve!",
+          "weight": 3,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_007",
+          "triggerId": "integrity_10",
+          "template": "Ocean integrity at {integrity}%. Insurance claim approved!",
+          "weight": 8,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_008",
+          "triggerId": "integrity_20",
+          "template": "At {integrity}% integrity, we're pivoting to 'disaster capitalism' mode",
+          "weight": 7,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_unhinged_009",
+          "triggerId": "special_end_times",
+          "template": "The Gulf was unprofitable anyway. Next quarter looks promising!",
+          "weight": 5,
+          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 15}]
+        },
+        {
+          "id": "corp_unhinged_010",
+          "triggerId": "special_final_denial",
+          "template": "For the record: this was an act of God. See you in court!",
+          "weight": 3,
+          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 7200}],
+          "handleOverride": "@LegalTeam"
+        }
+      ]
+    }
+  }
+}
