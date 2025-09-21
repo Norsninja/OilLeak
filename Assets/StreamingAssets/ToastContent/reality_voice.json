@@ -9,9 +9,25 @@
       "integrityRange": [80, 100],
       "messages": [
         {
+          "id": "reality_opening_001",
+          "triggerId": "time_0_5",
+          "template": "30 seconds. Flow rate already 58x their estimates. Here we go again.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@EmergencyResponse"
+        },
+        {
+          "id": "reality_opening_002",
+          "triggerId": "time_1",
+          "template": "One minute. Detecting subsurface plumes they'll deny for months.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MarineScience"
+        },
+        {
           "id": "reality_warning_001",
           "triggerId": "time_3",
-          "template": "{time} minutes in. Detecting subsurface plumes BP claims don't exist",
+          "template": "{time} minutes in. Found those plumes that are merely resting. Not dead. Resting.",
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@NOAA_OceanSci"
@@ -26,7 +42,7 @@
         {
           "id": "reality_warning_003",
           "triggerId": "time_8",
-          "template": "{time} minutes elapsed. Actual flow rate 10x BP's estimates",
+          "template": "{time} minutes elapsed. Flow rate exceeds estimates by a factor of 'whoopsie-daisy'",
           "weight": 8,
           "prerequisites": [],
           "handleOverride": "@CoastGuardActual"
@@ -78,7 +94,7 @@
         {
           "id": "reality_damage_001",
           "triggerId": "time_10",
-          "template": "Day {time}. Found 47 oiled pelicans. Saved 3.",
+          "template": "Day {time}. 47 oiled pelicans auditioned for the Norwegian Blue. 3 got callbacks.",
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@WildlifeRescue"
@@ -133,7 +149,7 @@
         {
           "id": "reality_damage_008",
           "triggerId": "integrity_70",
-          "template": "{integrity}% integrity. Detecting three-eyed shrimp. Not a joke.",
+          "template": "{integrity}% integrity. Three-eyed shrimp confirmed. Still tastes better than airline food.",
           "weight": 5,
           "prerequisites": [],
           "handleOverride": "@ToxicologyLab",
@@ -267,7 +283,7 @@
         {
           "id": "reality_testimony_006",
           "triggerId": "gallons_50m",
-          "template": "{escaped} gallons was all it took. gg humans",
+          "template": "{escaped} gallons was all it took. The ocean rates this experience 0/10. Would not recommend.",
           "weight": 3,
           "prerequisites": [],
           "handleOverride": "@TheOcean"

@@ -152,51 +152,86 @@ namespace OilLeak.Toast.Editor
         {
             validTriggerIds.Clear();
 
-            // Time triggers
-            validTriggerIds.Add("time_3");
-            validTriggerIds.Add("time_5");
-            validTriggerIds.Add("time_8");
-            validTriggerIds.Add("time_10");
-            validTriggerIds.Add("time_15");
-            validTriggerIds.Add("time_20");
-            validTriggerIds.Add("time_25");
-            validTriggerIds.Add("time_30");
-            validTriggerIds.Add("time_45");
-            validTriggerIds.Add("time_60");
-            validTriggerIds.Add("time_90");
-            validTriggerIds.Add("time_120");
+            // Dynamically load trigger IDs from actual ToastTrigger ScriptableObjects
+            // This ensures we always have the current list of valid triggers
+            var triggers = Resources.LoadAll<ToastTrigger>("ToastTriggers");
 
-            // Gallon triggers
-            validTriggerIds.Add("gallons_10k");
-            validTriggerIds.Add("gallons_25k");
-            validTriggerIds.Add("gallons_50k");
-            validTriggerIds.Add("gallons_100k");
-            validTriggerIds.Add("gallons_250k");
-            validTriggerIds.Add("gallons_500k");
-            validTriggerIds.Add("gallons_1m");
-            validTriggerIds.Add("gallons_2m");
-            validTriggerIds.Add("gallons_5m");
-            validTriggerIds.Add("gallons_10m");
-            validTriggerIds.Add("gallons_20m");
-            validTriggerIds.Add("gallons_50m");
+            if (triggers != null && triggers.Length > 0)
+            {
+                foreach (var trigger in triggers)
+                {
+                    if (trigger != null && !string.IsNullOrEmpty(trigger.Id))
+                    {
+                        validTriggerIds.Add(trigger.Id);
+                    }
+                }
 
-            // Integrity triggers
-            validTriggerIds.Add("integrity_80");
-            validTriggerIds.Add("integrity_70");
-            validTriggerIds.Add("integrity_60");
-            validTriggerIds.Add("integrity_40");
-            validTriggerIds.Add("integrity_30");
-            validTriggerIds.Add("integrity_20");
-            validTriggerIds.Add("integrity_10");
+                Debug.Log($"[ToastValidator] Loaded {validTriggerIds.Count} trigger IDs from ToastTrigger assets");
+            }
+            else
+            {
+                Debug.LogWarning("[ToastValidator] No ToastTrigger assets found in Resources/ToastTriggers. Using fallback list.");
 
-            // Resupply triggers
-            validTriggerIds.Add("resupply_first_drop");
-            validTriggerIds.Add("resupply_barge");
-            validTriggerIds.Add("resupply_emergency");
-            validTriggerIds.Add("resupply_delayed");
-            validTriggerIds.Add("resupply_failed");
+                // Fallback to essential triggers if assets aren't generated yet
+                // This includes our new time_0_5 and time_1 triggers
+                validTriggerIds.Add("time_0_5");
+                validTriggerIds.Add("time_1");
+                validTriggerIds.Add("time_3");
+                validTriggerIds.Add("time_5");
+                validTriggerIds.Add("time_8");
+                validTriggerIds.Add("time_10");
+                validTriggerIds.Add("time_15");
+                validTriggerIds.Add("time_20");
+                validTriggerIds.Add("time_25");
+                validTriggerIds.Add("time_30");
+                validTriggerIds.Add("time_45");
+                validTriggerIds.Add("time_60");
+                validTriggerIds.Add("time_90");
+                validTriggerIds.Add("time_120");
 
-            // Special triggers
+                // Gallon triggers
+                validTriggerIds.Add("gallons_10k");
+                validTriggerIds.Add("gallons_25k");
+                validTriggerIds.Add("gallons_50k");
+                validTriggerIds.Add("gallons_100k");
+                validTriggerIds.Add("gallons_250k");
+                validTriggerIds.Add("gallons_500k");
+                validTriggerIds.Add("gallons_1m");
+                validTriggerIds.Add("gallons_2m");
+                validTriggerIds.Add("gallons_5m");
+                validTriggerIds.Add("gallons_10m");
+                validTriggerIds.Add("gallons_20m");
+                validTriggerIds.Add("gallons_50m");
+
+                // Integrity triggers
+                validTriggerIds.Add("integrity_80");
+                validTriggerIds.Add("integrity_70");
+                validTriggerIds.Add("integrity_60");
+                validTriggerIds.Add("integrity_40");
+                validTriggerIds.Add("integrity_30");
+                validTriggerIds.Add("integrity_20");
+                validTriggerIds.Add("integrity_10");
+
+                // Resupply triggers
+                validTriggerIds.Add("resupply_first_drop");
+                validTriggerIds.Add("resupply_barge");
+                validTriggerIds.Add("resupply_emergency");
+                validTriggerIds.Add("resupply_delayed");
+                validTriggerIds.Add("resupply_failed");
+
+                // Special triggers that were in the original list
+                validTriggerIds.Add("special_junk_shot");
+                validTriggerIds.Add("special_top_kill");
+                validTriggerIds.Add("special_prayer_circle");
+                validTriggerIds.Add("special_corexit");
+                validTriggerIds.Add("special_mutation");
+                validTriggerIds.Add("special_final_science");
+                validTriggerIds.Add("special_epitaph");
+                validTriggerIds.Add("game_start");
+                validTriggerIds.Add("resupply_first");
+            }
+
+            // Always add special triggers (they might not be in Resources yet)
             validTriggerIds.Add("special_junk_shot");
             validTriggerIds.Add("special_kevin_costner");
             validTriggerIds.Add("special_thoughts_prayers");

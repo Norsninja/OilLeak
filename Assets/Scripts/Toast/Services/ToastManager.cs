@@ -305,7 +305,7 @@ namespace OilLeak.Toast.Services
             // Log every 10 seconds to see if we're getting time updates
             if (Mathf.FloorToInt(time) % 10 == 0 && Mathf.Approximately(time % 1f, 0f))
             {
-                Debug.Log($"[ToastManager] Time update: {time:F0}s, Active: {isActive}, Triggers: {triggers.Count}");
+                // Removed per-frame time update log - was spamming console
             }
             #endif
 
@@ -412,7 +412,9 @@ namespace OilLeak.Toast.Services
             // Log first few evaluations to see what's happening
             if (pendingEvaluations.Count < 5)
             {
+                #if UNITY_EDITOR && TOAST_DEBUG
                 Debug.Log($"[ToastManager] Queuing trigger '{trigger.Id}' for evaluation with value {value:F1}");
+                #endif
             }
             #endif
 
@@ -449,7 +451,9 @@ namespace OilLeak.Toast.Services
             if (pendingEvaluations.Count == 0) return;
 
             #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            #if UNITY_EDITOR && TOAST_DEBUG
             Debug.Log($"[ToastManager] Processing batch with {pendingEvaluations.Count} pending evaluations");
+            #endif
             #endif
 
             int maxToProcess = config?.maxTriggersPerBatch ?? 5;
@@ -498,7 +502,9 @@ namespace OilLeak.Toast.Services
 
             #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // Temporary logging to diagnose trigger evaluation
+            #if UNITY_EDITOR && TOAST_DEBUG
             Debug.Log($"[ToastManager] Trigger '{eval.trigger.Id}' passed conditions. Value: {eval.value:F1}");
+            #endif
             #endif
 
             // Check thresholds
@@ -507,7 +513,9 @@ namespace OilLeak.Toast.Services
                 var nextThreshold = state.GetNextThreshold(eval.trigger.Thresholds, eval.value);
 
                 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                #if UNITY_EDITOR && TOAST_DEBUG
                 Debug.Log($"[ToastManager] Trigger '{eval.trigger.Id}' threshold check - Next: {nextThreshold}, Current: {eval.value:F1}");
+                #endif
                 #endif
 
                 if (!nextThreshold.HasValue || eval.value < nextThreshold.Value)

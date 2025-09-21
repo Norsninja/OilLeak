@@ -169,16 +169,24 @@ namespace OilLeak.Editor
                 return info;
             }
 
-            // Gallons patterns: gallons_10k, gallons_25k, etc.
-            var gallonsMatch = Regex.Match(triggerId, @"^gallons_(\d+)k?$");
+            // Gallons patterns: gallons_10, gallons_10k, gallons_10m, etc.
+            var gallonsMatch = Regex.Match(triggerId, @"^gallons_(\d+)([km])?$");
             if (gallonsMatch.Success)
             {
                 info.type = TriggerType.Gallons;
                 float gallons = float.Parse(gallonsMatch.Groups[1].Value);
-                if (triggerId.Contains("k"))
+                string suffix = gallonsMatch.Groups[2].Value;
+
+                // Apply suffix multiplier
+                if (suffix == "k")
                 {
-                    gallons *= 1000f;
+                    gallons *= 1000f;  // Thousands
                 }
+                else if (suffix == "m")
+                {
+                    gallons *= 1000000f;  // Millions
+                }
+
                 info.thresholds = new float[] { gallons };
                 info.conditionType = "gallons_blocked";
                 info.conditionOp = ">=";
@@ -276,7 +284,17 @@ namespace OilLeak.Editor
                 return info;
             }
 
-            // Default fallback
+            // Special narrative triggers - treated as markers with no conditions
+            if (triggerId.StartsWith("special_"))
+            {
+                info.type = TriggerType.Special;
+                info.thresholds = new float[] { 0f };  // Neutral threshold - always ready
+                info.isValid = true;  // These are valid, just narrative markers
+                // No conditions - content JSON controls when they fire
+                return info;
+            }
+
+            // Default fallback for truly unknown patterns
             info.type = TriggerType.Special;
             info.thresholds = new float[] { 0f };
             info.isValid = false;

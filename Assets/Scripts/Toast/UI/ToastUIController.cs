@@ -90,7 +90,9 @@ namespace OilLeak.Toast.UI
                 }
 
                 retryCount++;
+                #if UNITY_EDITOR && TOAST_DEBUG
                 Debug.Log($"[ToastUIController] Waiting for GameCore initialization (attempt {retryCount}/{maxRetries})");
+                #endif
                 yield return new WaitForSeconds(retryDelay);
             }
 
@@ -99,7 +101,9 @@ namespace OilLeak.Toast.UI
             if (!ConnectToService())
             {
                 // In editor, create a mock for testing
+                #if UNITY_EDITOR
                 Debug.Log("[ToastUIController] Creating mock toast service for editor testing after retries");
+                #endif
                 var mockProvider = new MockGameStateProvider();
                 toastService = new ToastManager(mockProvider);
                 toastService.Initialize();
@@ -116,7 +120,9 @@ namespace OilLeak.Toast.UI
             // Try to get the service from GameCore
             if (GameCore.Toasts != null)
             {
+                #if UNITY_EDITOR && TOAST_DEBUG
                 Debug.Log("[ToastUIController] Using toast service from GameCore");
+                #endif
                 toastService = GameCore.Toasts;
                 SubscribeToEvents();
                 return true;
@@ -132,7 +138,9 @@ namespace OilLeak.Toast.UI
                 toastService.OnToastQueued += HandleToastQueued;
                 toastService.OnToastDisplayed += HandleToastDisplayed;
                 toastService.OnToastDismissed += HandleToastDismissed;
+                #if UNITY_EDITOR && TOAST_DEBUG
                 Debug.Log("[ToastUIController] Subscribed to toast service events");
+                #endif
             }
         }
 
@@ -150,7 +158,9 @@ namespace OilLeak.Toast.UI
         {
             if (payload == null) return;
 
+            #if UNITY_EDITOR && TOAST_DEBUG
             UnityEngine.Debug.Log($"[ToastUIController] Toast queued! ID: {payload.id}, Text: {payload.interpolatedText}");
+            #endif
             pendingToasts.Enqueue(payload);
 
             if (!isProcessing && !isPaused)

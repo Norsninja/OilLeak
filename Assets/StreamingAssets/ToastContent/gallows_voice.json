@@ -43,7 +43,7 @@
         {
           "id": "gallows_hope_002b",
           "triggerId": "time_5",
-          "template": "BP gonna convert me from a fisherman into a farmer just to feed my family",
+          "template": "Looks like I'm switching from fisherman to farmer. Oil-resistant crops, anyone?",
           "weight": 8,
           "prerequisites": [],
           "handleOverride": "@JJCreppel"
@@ -67,7 +67,7 @@
         {
           "id": "gallows_hope_005",
           "triggerId": "gallons_25k",
-          "template": "{blocked} gallons stopped! Take THAT, BP engineers!",
+          "template": "{blocked} gallons stopped! Take THAT, corporate engineers!",
           "weight": 8,
           "prerequisites": [],
           "handleOverride": "@DIYSavior"
@@ -144,7 +144,7 @@
         {
           "id": "gallows_dark_004b",
           "triggerId": "gallons_100k",
-          "template": "Tony Hayward wants his life back. I want my 4th generation fishing business back.",
+          "template": "Big Oil wants their profits back. I just want fish without extra eyeballs.",
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@RobertCampo"
@@ -195,7 +195,7 @@
           "template": "Emergency supplies! The ocean is like root beer and oil is ice cream - giant float!",
           "weight": 10,
           "prerequisites": [],
-          "handleOverride": "@BPGlobalPR_Parody"
+          "handleOverride": "@OilPRParody"
         }
       ]
     },
@@ -277,7 +277,7 @@
         {
           "id": "gallows_surreal_010",
           "triggerId": "resupply_delayed",
-          "template": "Supply chain disrupted. I have to keep good spirits. What should I do? Shoot myself?",
+          "template": "Supply chain disrupted. Staying positive - my fish now glow in the dark!",
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@DarkResilience"
@@ -288,7 +288,7 @@
           "template": "Resupply failed. We're not killing animals, we're creating fossils! #Perspective",
           "weight": 10,
           "prerequisites": [],
-          "handleOverride": "@BPGlobalPR_Parody"
+          "handleOverride": "@OilPRParody"
         }
       ]
     },

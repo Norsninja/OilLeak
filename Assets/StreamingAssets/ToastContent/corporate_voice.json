@@ -1,13 +1,27 @@
 {
   "version": "1.0",
   "voiceId": "corporate",
-  "defaultHandle": "@BPSocialTeam",
+  "defaultHandle": "@OilOfficials",
   "defaultIconKey": "corporate_logo",
   "defaultSoundKey": "notification_corporate",
   "acts": {
     "act1": {
       "integrityRange": [80, 100],
       "messages": [
+        {
+          "id": "corp_opening_001",
+          "triggerId": "time_0_5",
+          "template": "Attention: Temporary petroleum reallocation in progress. Expected duration: 48 hours maximum.",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "corp_opening_002",
+          "triggerId": "time_1",
+          "template": "One minute update: Minor variance contained to 0.0001% of ocean volume. Situation nominal.",
+          "weight": 10,
+          "prerequisites": []
+        },
         {
           "id": "corp_denial_001",
           "triggerId": "time_3",
@@ -28,7 +42,7 @@
           "template": "The environmental impact will be very, very modest",
           "weight": 5,
           "prerequisites": [],
-          "handleOverride": "@TonyHayward"
+          "handleOverride": "@OilExecCEO"
         },
         {
           "id": "corp_denial_004",
@@ -162,7 +176,7 @@
           "template": "I'd like my life back too, but here we are at {time} minutes",
           "weight": 5,
           "prerequisites": [],
-          "handleOverride": "@TonyHayward"
+          "handleOverride": "@OilExecCEO"
         },
         {
           "id": "corp_frantic_002",
