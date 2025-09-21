@@ -26,17 +26,12 @@ public class LeakManager : MonoBehaviour, IResettable
 
     [Header("Leak Configuration")]
     [SerializeField] private GameObject oilLeakPrefab; // REQUIRED: Prefab with ParticleSystem and OilController
-    [SerializeField] private int maxLeaks = 3;
-    [SerializeField] private float minLeakSpacing = 5f; // Minimum distance between leaks
-    [SerializeField] private float leakSpawnAreaWidth = 20f; // Width of spawn area
     [SerializeField] private Vector3 baseLeakPosition = new Vector3(0, -27.9f, 0); // Ocean floor position
     [SerializeField] private Vector3 ambientOffset = Vector3.zero; // Optional offset for menu ambient leak
     [SerializeField] private bool useCustomRotation = false; // Override prefab rotation if needed
     [SerializeField] private Vector3 customLeakRotation = new Vector3(-90f, 0f, 0f); // Custom rotation if override enabled
 
     [Header("Timing")]
-    [SerializeField] private float secondLeakAtSec = 120f; // 2 minutes for second leak
-    [SerializeField] private float thirdLeakAtSec = 300f; // 5 minutes for third leak
     [SerializeField] private float ambientRate = 9f; // Low rate for menu aesthetics
 
     [Header("Pressure System")]
@@ -53,11 +48,16 @@ public class LeakManager : MonoBehaviour, IResettable
     [SerializeField] private int maxAffectedBodies = 20;
     [SerializeField] private float burstCooldown = 12f; // Minimum time between bursts
 
+    // Particle budget management
+    [Header("Performance")]
+    [SerializeField] private int maxParticlesWebGL = 500;
+    [SerializeField] private int maxParticlesDesktop = 1000;
+    private int currentParticleBudget;
+
     // State management
     private List<OilController> managedLeaks = new List<OilController>(); // Running state leaks
     private OilController ambientLeak; // Menu state leak
     private float runStartTime;
-    private float nextLeakSpawnTime;
 
     // Pressure state
     private float currentPressure = 0f;
@@ -78,8 +78,7 @@ public class LeakManager : MonoBehaviour, IResettable
     private float lastUpdateTime = 0f;
     private float updateInterval = 0.5f; // 2Hz update rate
 
-    // Events
-    public static event System.Action<int> OnNewLeakCreated;
+    // Events (removed OnNewLeakCreated - single leak system)
     public static event System.Action<float> OnPressureBurst;
 
     void OnValidate()
@@ -114,6 +113,14 @@ public class LeakManager : MonoBehaviour, IResettable
             Destroy(gameObject);
             return;
         }
+
+        // Set particle budget based on platform
+        #if UNITY_WEBGL
+        currentParticleBudget = maxParticlesWebGL;
+        #else
+        currentParticleBudget = maxParticlesDesktop;
+        #endif
+        Debug.Log($"[LeakManager] Particle budget set to {currentParticleBudget}");
 
         // Validate prefab at runtime
         if (oilLeakPrefab == null)
@@ -166,19 +173,7 @@ public class LeakManager : MonoBehaviour, IResettable
         // Only process game logic when running
         if (currentState != LeakManagerState.Running) return;
 
-        float elapsed = Time.time - runStartTime;
-
-        // Spawn additional leaks based on time
-        if (managedLeaks.Count == 1 && elapsed >= secondLeakAtSec)
-        {
-            Debug.Log($"Creating second leak at {elapsed:F1} seconds");
-            SpawnAdditionalManagedLeak();
-        }
-        else if (managedLeaks.Count == 2 && elapsed >= thirdLeakAtSec)
-        {
-            Debug.Log($"Creating third leak at {elapsed:F1} seconds");
-            SpawnAdditionalManagedLeak();
-        }
+        // Single leak system - no additional spawning needed
 
         // Throttle pressure updates to 2Hz
         if (Time.time - lastUpdateTime >= updateInterval)
@@ -276,7 +271,6 @@ public class LeakManager : MonoBehaviour, IResettable
 
         // Reset timers
         runStartTime = Time.time;
-        nextLeakSpawnTime = runStartTime + secondLeakAtSec;
 
         // Reset pressure/burst state
         currentPressure = 0f;
@@ -289,7 +283,6 @@ public class LeakManager : MonoBehaviour, IResettable
             SetEmissionRate(DifficultyManager.Instance.GetCurrentEmissionRate());
         }
 
-        OnNewLeakCreated?.Invoke(managedLeaks.Count);
         Debug.Log("LeakManager: Started run with initial managed leak");
     }
 
@@ -394,8 +387,28 @@ public class LeakManager : MonoBehaviour, IResettable
         // Only apply to managed leaks during Running state
         if (currentState != LeakManagerState.Running || managedLeaks.Count == 0) return;
 
+        // Check particle budget and clamp emission if needed
+        int currentParticles = GetTotalActiveParticles();
+        if (currentParticles >= currentParticleBudget)
+        {
+            // At or over budget - stop emitting
+            foreach (var leak in managedLeaks)
+            {
+                if (leak != null)
+                {
+                    leak.ApplyEmission(0f);
+                }
+            }
+            Debug.LogWarning($"[LeakManager] Particle budget exceeded ({currentParticles}/{currentParticleBudget}), stopping emission");
+            return;
+        }
+
+        // Calculate safe emission rate based on remaining budget
+        float budgetUsage = (float)currentParticles / currentParticleBudget;
+        float budgetMultiplier = Mathf.Clamp01(1f - budgetUsage); // Reduce emission as we approach budget
+
         // Divide the total emission budget across all active leaks
-        float perLeakRate = totalRate / managedLeaks.Count;
+        float perLeakRate = (totalRate * budgetMultiplier) / managedLeaks.Count;
 
         // Apply burst multiplier if bursting
         float actualRate = isBursting ? perLeakRate * burstEmissionMultiplier : perLeakRate;
@@ -470,60 +483,9 @@ public class LeakManager : MonoBehaviour, IResettable
         managedLeaks.Clear();
     }
 
-    private void SpawnAdditionalManagedLeak()
-    {
-        if (managedLeaks.Count >= maxLeaks) return;
+    // Removed SpawnAdditionalManagedLeak - single leak system
 
-        Vector3 position = FindSpacedLeakPosition();
-        // Use the prefab's authored rotation (preserves Shape module orientation)
-        GameObject leak = Instantiate(oilLeakPrefab, position, GetLeakRotation());
-        leak.name = $"ManagedOilLeak_{managedLeaks.Count + 1}";
-
-        OilController controller = leak.GetComponent<OilController>();
-        if (controller != null)
-        {
-            managedLeaks.Add(controller);
-            controller.EnableCollisions(true, collisionMask); // Items and Surface layers
-            controller.EnableEmission(true);
-        }
-
-        // Redistribute emission budget
-        if (DifficultyManager.Instance != null)
-        {
-            SetEmissionRate(DifficultyManager.Instance.GetCurrentEmissionRate());
-        }
-
-        OnNewLeakCreated?.Invoke(managedLeaks.Count);
-        Debug.Log($"Created managed leak {managedLeaks.Count} at position {position}");
-    }
-
-    private Vector3 FindSpacedLeakPosition()
-    {
-        int maxAttempts = 10;
-        for (int i = 0; i < maxAttempts; i++)
-        {
-            float xOffset = Random.Range(-leakSpawnAreaWidth / 2, leakSpawnAreaWidth / 2);
-            Vector3 candidatePos = baseLeakPosition + new Vector3(xOffset, 0, 0);
-
-            bool validPosition = true;
-            foreach (var leak in managedLeaks)
-            {
-                if (Vector3.Distance(leak.transform.position, candidatePos) < minLeakSpacing)
-                {
-                    validPosition = false;
-                    break;
-                }
-            }
-
-            if (validPosition)
-            {
-                return candidatePos;
-            }
-        }
-
-        // Fallback: offset from base position
-        return baseLeakPosition + new Vector3(managedLeaks.Count * minLeakSpacing, 0, 0);
-    }
+    // Removed FindSpacedLeakPosition - single leak system
 
     private void UpdatePressureSystem()
     {
@@ -623,6 +585,8 @@ public class LeakManager : MonoBehaviour, IResettable
     public float GetCurrentPressure() => currentPressure;
     public float GetPressurePercentage() => pressureReleaseThreshold > 0 ? currentPressure / pressureReleaseThreshold : 0f;
     public bool IsBursting() => isBursting;
+    public int GetParticleBudget() => currentParticleBudget;
+    public float GetParticleBudgetUsage() => (float)GetTotalActiveParticles() / currentParticleBudget;
 
     public int GetTotalActiveParticles()
     {

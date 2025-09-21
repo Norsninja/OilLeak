@@ -53,14 +53,14 @@ public class EndlessMode : IGameMode
             difficultyManager = managerObj.AddComponent<DifficultyManager>();
         }
 
-        leakManager = LeakManager.Instance; // Use singleton
+        // LeakManager must exist in scene via prefab
+        leakManager = LeakManager.Instance;
         if (leakManager == null)
         {
             leakManager = GameObject.FindObjectOfType<LeakManager>();
             if (leakManager == null)
             {
-                GameObject managerObj = new GameObject("LeakManager");
-                leakManager = managerObj.AddComponent<LeakManager>();
+                Debug.LogError("[EndlessMode] LeakManager not found! It should be placed via prefab in GameScene.");
             }
         }
 

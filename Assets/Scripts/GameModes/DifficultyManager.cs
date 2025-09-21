@@ -70,13 +70,11 @@ public class DifficultyManager : MonoBehaviour
         lastUpdateTime = Time.time;
         performanceWindowStart = Time.time;
 
-        // Find references
+        // Find references - LeakManager must exist in scene
         leakManager = FindObjectOfType<LeakManager>();
         if (leakManager == null)
         {
-            Debug.LogWarning("DifficultyManager: LeakManager not found, creating one");
-            GameObject leakManagerObj = new GameObject("LeakManager");
-            leakManager = leakManagerObj.AddComponent<LeakManager>();
+            Debug.LogError("[DifficultyManager] LeakManager not found in scene! It should be placed via prefab in GameScene.");
         }
 
         // Find OilLeakData
@@ -86,12 +84,8 @@ public class DifficultyManager : MonoBehaviour
             oilLeakData = oilController.oilLeakData;
         }
 
-        // Set particle cap based on platform
-        #if UNITY_WEBGL
-        SetParticleCap(maxParticlesWebGL);
-        #else
-        SetParticleCap(maxParticlesDesktop);
-        #endif
+        // Particle cap is now managed by LeakManager directly
+        // LeakManager will enforce the appropriate cap based on platform
 
         // Set initial emission rate
         currentEmissionRate = baseEmissionRate;
@@ -193,21 +187,8 @@ public class DifficultyManager : MonoBehaviour
         performanceWindowStart = Time.time;
     }
 
-    private void SetParticleCap(int maxParticles)
-    {
-        ParticleSystem[] allParticleSystems = FindObjectsOfType<ParticleSystem>();
-        foreach (var ps in allParticleSystems)
-        {
-            // Check by name only since OilSpill tag doesn't exist
-            if (ps.name.Contains("Oil") || ps.gameObject.layer == LayerMask.NameToLayer("OilSpill"))
-            {
-                var main = ps.main;
-                main.maxParticles = maxParticles;
-            }
-        }
-
-        Debug.Log($"Particle cap set to {maxParticles}");
-    }
+    // Removed SetParticleCap - particle budget is now managed by LeakManager
+    // LeakManager enforces the cap through emission control, not by modifying particle systems
 
     // Called by game systems to track performance
     public void OnParticleBlocked(int count)
