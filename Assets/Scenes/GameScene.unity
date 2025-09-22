@@ -977,15 +977,10 @@ MonoBehaviour:
   debugStateChanges: 1
   oilLeakPrefab: {fileID: 5618256530038719758, guid: 9c3233c0161ff234195c8bc7a7d4c54d,
     type: 3}
-  maxLeaks: 3
-  minLeakSpacing: 5
-  leakSpawnAreaWidth: 20
   baseLeakPosition: {x: 0, y: -27.9, z: 0}
   ambientOffset: {x: 0, y: 0, z: 0}
   useCustomRotation: 0
   customLeakRotation: {x: -90, y: 0, z: 0}
-  secondLeakAtSec: 120
-  thirdLeakAtSec: 300
   ambientRate: 9
   enablePressureSystem: 1
   pressureBuildupRate: 0.1
@@ -995,8 +990,10 @@ MonoBehaviour:
   burstExplosionRadius: 5
   burstExplosionForce: 1000
   burstUpwardModifier: 0.8
-  maxAffectedBodies: 20
+  maxAffectedBodies: 300
   burstCooldown: 9
+  maxParticlesWebGL: 500
+  maxParticlesDesktop: 1000
 --- !u!4 &306300371
 Transform:
   m_ObjectHideFlags: 0
@@ -1814,6 +1811,7 @@ GameObject:
   m_Component:
   - component: {fileID: 397155154}
   - component: {fileID: 397155156}
+  - component: {fileID: 397155157}
   m_Layer: 7
   m_Name: UnderWaterCameraProper
   m_TagString: Untagged
@@ -1887,6 +1885,23 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &397155157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397155153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: 84e05a3849a1a074ba78db1caa8c6830, type: 2}
+  isGlobal: 0
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &458150196
 GameObject:
   m_ObjectHideFlags: 0
@@ -5303,6 +5318,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  boostSpeed: 10
+  boostDuration: 2
+  boostCooldown: 3
   inventoryController: {fileID: 31301412}
 --- !u!54 &1595044524
 Rigidbody:

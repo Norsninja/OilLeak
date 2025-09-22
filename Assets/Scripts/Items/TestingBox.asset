@@ -46,7 +46,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  blockCapacity: 50
+  blockCapacity: 31
   particlesToSaturating: 5
   particlesToSaturated: 10
   particlesToSludge: 15

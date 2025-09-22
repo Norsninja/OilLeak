@@ -36,6 +36,16 @@ public class RagdollController : MonoBehaviour
                 continue;
             }
 
+            // Clamp velocities to prevent glitching
+            if (rbPart.velocity.magnitude > 50f) // Max 50 units/second
+            {
+                rbPart.velocity = rbPart.velocity.normalized * 50f;
+            }
+            if (rbPart.angularVelocity.magnitude > 30f) // Max 30 rad/second
+            {
+                rbPart.angularVelocity = rbPart.angularVelocity.normalized * 30f;
+            }
+
             if (rbPart.transform.position.y < 0 && !hasHitGround)
             {
                 rbPart.useGravity = false;
@@ -49,6 +59,11 @@ public class RagdollController : MonoBehaviour
         }
     }
 
+    // NOTE: OnParticleCollision is intentionally NOT implemented here.
+    // Individual bones have ColliderTest components that call HandleParticleCollision.
+    // Having OnParticleCollision here would cause double-counting since particles
+    // hit multiple bones, each triggering a collision event.
+
     public void HandleParticleCollision(GameObject other)
     {
         if (other.layer == LayerMask.NameToLayer("OilSpill"))
@@ -57,11 +72,25 @@ public class RagdollController : MonoBehaviour
             if (GameCore.Session != null)
             {
                 GameCore.Session.RecordParticleBlocked();
-                Debug.Log($"[RagdollController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}");
+                // Debug.Log($"[RagdollController] Particle blocked! Total: {GameCore.Session.ParticlesBlocked}"); // Commented - too spammy
             }
 
             // Keep updating ScriptableObject for backward compatibility (temporary)
             oilLeakData.particlesBlocked++;
+
+            // Award points for blocking particles (matching ItemController)
+            GameController gameController = GameController.Instance;
+            if (gameController != null && gameController.gameState != null)
+            {
+                int pointsPerParticle = 10; // Base points for each particle blocked
+                gameController.gameState.score += pointsPerParticle;
+            }
+
+            // Notify DifficultyService through GameCore (matching ItemController)
+            if (GameCore.Difficulty != null)
+            {
+                GameCore.Difficulty.OnParticleBlocked(1);
+            }
         }
     }
     // Function to apply throwing force to "Spine.002"
