@@ -31,7 +31,7 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   gradingMode:
-    overrideState: 0
+    overrideState: 1
     value: 1
   externalLut:
     overrideState: 0
@@ -66,11 +66,11 @@ MonoBehaviour:
     overrideState: 0
     value: 1
   temperature:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 1
   tint:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 11
   colorFilter:
     overrideState: 1
     value: {r: 0, g: 0.0063233282, b: 0.24528301, a: 1}

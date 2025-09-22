@@ -20,5 +20,10 @@ MonoBehaviour:
     minQuantity: 20
     maxQuantity: 30
     weight: 0
+  - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+    dropChance: 0.62
+    minQuantity: 20
+    maxQuantity: 30
+    weight: 0
   quantityMultiplier: 1
   minimumTotalItems: 5
