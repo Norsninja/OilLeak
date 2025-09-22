@@ -108,3 +108,9 @@ nul
 # Build artifacts
 Assets/Scripts/bin.meta
 Assets/Scripts/obj.meta
+
+# .NET build artifacts
+**/bin/
+**/obj/
+*.csproj
+*.sln
