@@ -168,7 +168,7 @@ public class UIController : MonoBehaviour
         // Show what they accomplished before the inevitable
         if (roundOverSubtitleText != null)
         {
-            roundOverSubtitleText.text = $"You delayed {minutes:00}:{seconds:00} and blocked {gallonsDelayed:N0} gallons";
+            roundOverSubtitleText.text = $"You delayed {minutes:00}:{seconds:00} and blocked {gallonsDelayed:N0} gallons\n\n<size=20>Press R to try again (it won't help)</size>";
         }
 
         // Update round-over UI components
@@ -214,7 +214,7 @@ public class UIController : MonoBehaviour
         // Show what they accomplished before the inevitable
         if (roundOverSubtitleText != null)
         {
-            roundOverSubtitleText.text = $"You delayed {stats.GallonsDelayed:N0} gallons for {minutes:00}:{seconds:00}";
+            roundOverSubtitleText.text = $"You delayed {stats.GallonsDelayed:N0} gallons for {minutes:00}:{seconds:00}\n\n<size=20>Press R to try again (it won't help)</size>";
         }
 
         // Hide the grade system - no grades in futility mode

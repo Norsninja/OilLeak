@@ -17,6 +17,27 @@ public class ItemController : MonoBehaviour
         rotationSpeed = new Vector3(0, 30, 0);
     }
 
+    void OnEnable()
+    {
+        // Reset state when reused from pool
+        hasHitGround = false;
+
+        // Ensure we have rigidbody (might be null on first enable before Start)
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        // Zero out physics state
+        if (rb != null)
+        {
+            Debug.Log($"[ItemController] Resetting physics at position {transform.position}");
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false; // Start with custom gravity handling
+        }
+    }
+
     void FixedUpdate()
     {
         if (transform.position.y < 0 && !hasHitGround)

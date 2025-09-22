@@ -16,34 +16,34 @@ public class ItemDegradation : MonoBehaviour
     }
 
     [Header("Current State")]
-    [SerializeField] private DegradationState currentState = DegradationState.Dry;
+    [SerializeField] protected DegradationState currentState = DegradationState.Dry;
     [SerializeField] private float exposureSeconds = 0f;
     [SerializeField] private int particlesBlockedCount = 0;
 
     [Header("Configuration")]
-    [SerializeField] private Item itemData; // Reference to Item ScriptableObject
+    [SerializeField] protected Item itemData; // Reference to Item ScriptableObject - protected for subclass access
 
-    // Components
-    private Renderer itemRenderer;
-    private MaterialPropertyBlock propertyBlock;
-    private ItemController itemController;
-    private RagdollController ragdollController;
+    // Components - protected for subclass access
+    protected Renderer itemRenderer;
+    protected MaterialPropertyBlock propertyBlock;
+    protected ItemController itemController;
+    protected RagdollController ragdollController;
     private ItemPooler itemPooler;
 
     // State tracking
     private float lastOilContactTime = 0f;
     private bool hasChangedLayer = false;
-    private Vector3 originalPosition;
+    protected Vector3 originalPosition;  // Protected for subclass access
 
-    // Layer references - using names to avoid index drift
-    private int LAYER_ITEMS_SOLID;
-    private int LAYER_POROUS_DEBRIS;
+    // Layer references - protected for subclass access
+    protected int LAYER_ITEMS_SOLID;
+    protected int LAYER_POROUS_DEBRIS;
 
-    // Shader property IDs for performance
-    private static readonly int ColorProperty = Shader.PropertyToID("_Color");
-    private static readonly int TintProperty = Shader.PropertyToID("_TintColor");
+    // Shader property IDs - protected for subclass access
+    protected static readonly int ColorProperty = Shader.PropertyToID("_Color");
+    protected static readonly int TintProperty = Shader.PropertyToID("_TintColor");
 
-    void Awake()
+    protected virtual void Awake()
     {
         // Get layer indices by name to avoid hardcoding
         LAYER_ITEMS_SOLID = LayerMask.NameToLayer("Items");
@@ -60,6 +60,13 @@ public class ItemDegradation : MonoBehaviour
             LAYER_POROUS_DEBRIS = 11; // Fallback to expected index
         }
 
+        // Delegate component initialization to virtual method
+        InitializeComponents();
+    }
+
+    // Virtual method for component initialization - can be overridden by subclasses
+    protected virtual void InitializeComponents()
+    {
         // Cache components once
         itemRenderer = GetComponentInChildren<Renderer>();
         itemController = GetComponent<ItemController>();
@@ -84,7 +91,7 @@ public class ItemDegradation : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         Debug.Log($"[DEGRADE] OnEnable at position {transform.position}");
 
@@ -92,7 +99,20 @@ public class ItemDegradation : MonoBehaviour
         ResetState();
 
         // Store position now that item is properly positioned before activation
+        OnPositionSet();
+    }
+
+    // Virtual method called when position is set - can be overridden
+    protected virtual void OnPositionSet()
+    {
         originalPosition = transform.position;
+    }
+
+    // Virtual method for cleanup - can be overridden
+    protected virtual void OnDisable()
+    {
+        // Subclasses can override this for cleanup
+        // Base ItemDegradation doesn't subscribe to any events
     }
 
     void Update()
@@ -201,7 +221,7 @@ public class ItemDegradation : MonoBehaviour
         // Items continue blocking particles through Saturating and Saturated states
         if ((to == DegradationState.Sludge || particlesBlockedCount >= itemData.blockCapacity) && !hasChangedLayer)
         {
-            SetLayerRecursive(gameObject, LAYER_POROUS_DEBRIS);
+            OnLayerChange(LAYER_POROUS_DEBRIS);  // Route through virtual method
             DisableForceFields();
             hasChangedLayer = true;
             Debug.Log($"[DEGRADE] Reached Sludge/Max capacity - now porous, oil passes through (particles: {particlesBlockedCount}, capacity: {itemData.blockCapacity})");
@@ -216,7 +236,7 @@ public class ItemDegradation : MonoBehaviour
 
     private void UpdateVisuals()
     {
-        if (itemRenderer == null || propertyBlock == null || itemData == null) return;
+        if (itemData == null) return;
 
         Color targetColor = Color.white;
 
@@ -248,6 +268,15 @@ public class ItemDegradation : MonoBehaviour
             targetColor.a = Mathf.Lerp(1f, 0.7f, porosity);
         }
 
+        // Delegate visual application to virtual method
+        ApplyDegradationVisuals(targetColor);
+    }
+
+    // Virtual method for applying visuals - can be overridden for multi-renderer support
+    protected virtual void ApplyDegradationVisuals(Color targetColor)
+    {
+        if (itemRenderer == null || propertyBlock == null) return;
+
         // Apply color via MaterialPropertyBlock (avoids material instancing)
         itemRenderer.GetPropertyBlock(propertyBlock);
         propertyBlock.SetColor(ColorProperty, targetColor);
@@ -271,7 +300,7 @@ public class ItemDegradation : MonoBehaviour
         hasChangedLayer = false;
 
         // Reset to solid layer (recursively)
-        SetLayerRecursive(gameObject, LAYER_ITEMS_SOLID);
+        OnLayerChange(LAYER_ITEMS_SOLID);  // Route through virtual method
 
         // Re-enable force fields for fresh items
         EnableForceFields();
@@ -318,10 +347,16 @@ public class ItemDegradation : MonoBehaviour
 
         if (state >= DegradationState.Saturating)
         {
-            SetLayerRecursive(gameObject, LAYER_POROUS_DEBRIS);
+            OnLayerChange(LAYER_POROUS_DEBRIS);  // Route through virtual method
             DisableForceFields();
             hasChangedLayer = true;
         }
+    }
+
+    // Virtual method for layer changes - can be overridden for smart layer management
+    protected virtual void OnLayerChange(int newLayer)
+    {
+        SetLayerRecursive(gameObject, newLayer);
     }
 
     /// <summary>

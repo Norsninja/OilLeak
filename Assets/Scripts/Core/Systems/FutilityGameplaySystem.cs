@@ -143,11 +143,25 @@ namespace Core.Systems
                 Debug.Log("[FutilitySystem] Player movement enabled - game is running");
             }
 
+            // CRITICAL: Start leak system for gameplay
+            if (GameCore.Leaks != null)
+            {
+                GameCore.Leaks.StartLeaks();
+                Debug.Log("[FutilitySystem] Leak system started - oil will flow");
+            }
+
             // Kick off the exponential escalation
             if (GameCore.Difficulty != null)
             {
                 // Start the difficulty ticker
                 Debug.Log("[FutilitySystem] Futility escalation begun - you cannot win");
+            }
+
+            // Start resupply system
+            if (GameCore.Resupply != null)
+            {
+                GameCore.Resupply.StartResupply();
+                Debug.Log("[FutilitySystem] Resupply system started - false hope activated");
             }
 
             // Show encouraging message (that will age poorly)
@@ -173,6 +187,20 @@ namespace Core.Systems
             {
                 GameCore.Player.EnableMovement(false);
                 Debug.Log("[FutilitySystem] Player movement disabled - game ending");
+            }
+
+            // CRITICAL: Stop leak system
+            if (GameCore.Leaks != null)
+            {
+                GameCore.Leaks.EndLeaks();
+                Debug.Log("[FutilitySystem] Leak system stopped - oil flow ended");
+            }
+
+            // Stop resupply system
+            if (GameCore.Resupply != null)
+            {
+                GameCore.Resupply.EndResupply();
+                Debug.Log("[FutilitySystem] Resupply system stopped");
             }
 
             // Stop difficulty updates
@@ -203,6 +231,13 @@ namespace Core.Systems
             if (GameCore.Player != null)
             {
                 GameCore.Player.EnableMovement(false);
+            }
+
+            // CRITICAL: Return leaks to menu state (aesthetic only)
+            if (GameCore.Leaks != null)
+            {
+                GameCore.Leaks.InitializeMenuState();
+                Debug.Log("[FutilitySystem] Leak system reset to menu state (aesthetic only, no collisions)");
             }
 
             // Clear any lingering subscriptions
