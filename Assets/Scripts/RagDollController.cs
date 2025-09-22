@@ -10,6 +10,11 @@ public class RagdollController : MonoBehaviour
     public OilLeakData oilLeakData; // Reference to oil leak data
     public Rigidbody spineRigidBody; // Reference to the specific rigid body for "Spine.002"
     private bool hasHitGround = false;
+
+    // Bind pose storage for proper pooling reset
+    private System.Collections.Generic.Dictionary<Transform, Vector3> bindPoseLocalPositions;
+    private System.Collections.Generic.Dictionary<Transform, Quaternion> bindPoseLocalRotations;
+    private bool bindPoseStored = false;
     void Start()
     {
         // Fetch all rigid bodies of the ragdoll
@@ -21,9 +26,98 @@ public class RagdollController : MonoBehaviour
             return;
         }
 
+        // Store bind pose for all child transforms
+        StoreBindPose();
 
         buoyancy = item.buoyancy;
         rotationSpeed = new Vector3(0, 30, 0);
+    }
+
+    private void StoreBindPose()
+    {
+        if (bindPoseStored) return;
+
+        bindPoseLocalPositions = new System.Collections.Generic.Dictionary<Transform, Vector3>();
+        bindPoseLocalRotations = new System.Collections.Generic.Dictionary<Transform, Quaternion>();
+
+        Transform[] allBones = GetComponentsInChildren<Transform>();
+        foreach (Transform bone in allBones)
+        {
+            // Skip the root transform itself
+            if (bone == transform) continue;
+
+            bindPoseLocalPositions[bone] = bone.localPosition;
+            bindPoseLocalRotations[bone] = bone.localRotation;
+        }
+
+        bindPoseStored = true;
+        Debug.Log($"[RagdollController] Stored bind pose for {allBones.Length - 1} bones");
+    }
+
+    void OnEnable()
+    {
+        hasHitGround = false;
+
+        // Ensure rigidbodies are cached
+        if (ragdollRigidbodies == null || ragdollRigidbodies.Length == 0)
+        {
+            ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
+        }
+
+        // Ensure bind pose is stored (for runtime-spawned ragdolls)
+        if (!bindPoseStored)
+        {
+            StoreBindPose();
+        }
+
+        // Step 1: Set all rigidbodies to kinematic to prevent physics conflicts
+        foreach (Rigidbody rbPart in ragdollRigidbodies)
+        {
+            if (rbPart != null)
+            {
+                rbPart.isKinematic = true;
+                rbPart.velocity = Vector3.zero;
+                rbPart.angularVelocity = Vector3.zero;
+            }
+        }
+
+        // Step 2: Restore all bones to bind pose
+        if (bindPoseLocalPositions != null)
+        {
+            foreach (var kvp in bindPoseLocalPositions)
+            {
+                if (kvp.Key != null)
+                {
+                    kvp.Key.localPosition = kvp.Value;
+                }
+            }
+        }
+
+        if (bindPoseLocalRotations != null)
+        {
+            foreach (var kvp in bindPoseLocalRotations)
+            {
+                if (kvp.Key != null)
+                {
+                    kvp.Key.localRotation = kvp.Value;
+                }
+            }
+        }
+
+        // Step 3: Sync transforms with physics engine
+        Physics.SyncTransforms();
+
+        // Step 4: Re-enable physics simulation
+        foreach (Rigidbody rbPart in ragdollRigidbodies)
+        {
+            if (rbPart != null)
+            {
+                rbPart.isKinematic = false;
+                rbPart.WakeUp();
+            }
+        }
+
+        Debug.Log($"[RagdollController] Reset complete - restored {bindPoseLocalPositions?.Count ?? 0} bones to bind pose");
     }
 
     void FixedUpdate()
@@ -59,10 +153,15 @@ public class RagdollController : MonoBehaviour
         }
     }
 
-    // NOTE: OnParticleCollision is intentionally NOT implemented here.
-    // Individual bones have ColliderTest components that call HandleParticleCollision.
-    // Having OnParticleCollision here would cause double-counting since particles
-    // hit multiple bones, each triggering a collision event.
+    // OnParticleCollision handles particles hitting the ragdoll root
+    // ColliderTest components on bones are optional for additional collision detection
+    void OnParticleCollision(GameObject other)
+    {
+        if (other.layer == LayerMask.NameToLayer("OilSpill"))
+        {
+            HandleParticleCollision(other);
+        }
+    }
 
     public void HandleParticleCollision(GameObject other)
     {
@@ -90,6 +189,13 @@ public class RagdollController : MonoBehaviour
             if (GameCore.Difficulty != null)
             {
                 GameCore.Difficulty.OnParticleBlocked(1);
+            }
+
+            // CRITICAL: Notify ItemDegradation about oil exposure for ragdoll degradation
+            ItemDegradation degradation = GetComponent<ItemDegradation>();
+            if (degradation != null)
+            {
+                degradation.RegisterOilExposure();
             }
         }
     }
