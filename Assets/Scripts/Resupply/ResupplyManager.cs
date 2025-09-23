@@ -611,15 +611,18 @@ public class ResupplyManager : MonoBehaviour, IResettable
 
     private void ReturnPackageToPool(GameObject package)
     {
-        // Prevent double-enqueue
-        if (!package.activeSelf && packagePool.Contains(package))
+        // Always deactivate first
+        package.SetActive(false);
+
+        // Remove from active list
+        activePackages.Remove(package);
+
+        // Prevent double-enqueue (check if already in pool)
+        if (packagePool.Contains(package))
         {
-            Debug.LogWarning($"[ResupplyManager] Attempted to double-enqueue package '{package.name}'" );
+            Debug.LogWarning($"[ResupplyManager] Package '{package.name}' already in pool, skipping enqueue");
             return;
         }
-
-        package.SetActive(false);
-        activePackages.Remove(package);
 
         // Clean up coroutine tracking
         if (activeFloaters.ContainsKey(package))
@@ -636,15 +639,18 @@ public class ResupplyManager : MonoBehaviour, IResettable
 
     private void ReturnCrateToPool(GameObject crate)
     {
-        // Prevent double-enqueue
-        if (!crate.activeSelf && cratePool.Contains(crate))
+        // Always deactivate first
+        crate.SetActive(false);
+
+        // Remove from active list
+        activeCrates.Remove(crate);
+
+        // Prevent double-enqueue (check if already in pool)
+        if (cratePool.Contains(crate))
         {
-            Debug.LogWarning($"[ResupplyManager] Attempted to double-enqueue crate '{crate.name}'" );
+            Debug.LogWarning($"[ResupplyManager] Crate '{crate.name}' already in pool, skipping enqueue");
             return;
         }
-
-        crate.SetActive(false);
-        activeCrates.Remove(crate);
 
         // Clean up coroutine tracking
         if (activeFloaters.ContainsKey(crate))
@@ -788,6 +794,25 @@ public class ResupplyManager : MonoBehaviour, IResettable
 
         // Ensure state is clean
         isActive = false;
+
+        // Extra cleanup - ensure all pooled items are inactive
+        foreach (var package in packagePool)
+        {
+            if (package != null && package.activeSelf)
+            {
+                Debug.LogWarning($"[ResupplyManager] Found active package in pool during Reset, deactivating");
+                package.SetActive(false);
+            }
+        }
+
+        foreach (var crate in cratePool)
+        {
+            if (crate != null && crate.activeSelf)
+            {
+                Debug.LogWarning($"[ResupplyManager] Found active crate in pool during Reset, deactivating");
+                crate.SetActive(false);
+            }
+        }
     }
 
     /// <summary>
