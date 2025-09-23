@@ -30,6 +30,16 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI integrityText;  // Live ocean integrity display
     public TextMeshProUGUI peakDifficultyText;  // Shows highest difficulty reached
 
+    [Header("Pause UI")]
+    public GameObject pauseCanvas;  // Full screen pause overlay
+    public TextMeshProUGUI pausedText;  // "PAUSED" title
+    public TextMeshProUGUI pauseInstructionsText;  // "Press ESC to Resume"
+
+    [Header("Restart Progress UI")]
+    public GameObject restartProgressCanvas;  // Hold-to-restart indicator
+    public UnityEngine.UI.Image restartProgressBar;  // Fill bar (use Filled image type)
+    public TextMeshProUGUI restartProgressText;  // "Hold R to Restart"
+
     public ScoringManager scoringManager;
     public GameState gameState; // Reference to GameState ScriptableObject
     public GameTimerData gameTimerData; // Reference to GameTimerData ScriptableObject
@@ -316,6 +326,79 @@ public class UIController : MonoBehaviour
         // Hide the "Game Over" UI here. This could be as simple as setting its GameObject to inactive.
         // For example:
         roundOverCanvas.SetActive(false);
+    }
+
+    // === Pause UI Methods ===
+
+    public void ShowPauseUI()
+    {
+        if (pauseCanvas != null)
+        {
+            pauseCanvas.SetActive(true);
+
+            // Update instruction text if needed
+            if (pauseInstructionsText != null)
+            {
+                pauseInstructionsText.text = "Press ESC to Resume • Hold R to Restart";
+            }
+        }
+    }
+
+    public void HidePauseUI()
+    {
+        if (pauseCanvas != null)
+        {
+            pauseCanvas.SetActive(false);
+        }
+    }
+
+    // === Restart Progress UI Methods ===
+
+    public void ShowRestartProgress(float progress)
+    {
+        if (restartProgressCanvas != null)
+        {
+            // Show canvas if not visible
+            if (!restartProgressCanvas.activeSelf && progress > 0f)
+            {
+                restartProgressCanvas.SetActive(true);
+            }
+
+            // Update progress bar fill
+            if (restartProgressBar != null)
+            {
+                restartProgressBar.fillAmount = progress;
+
+                // Optional: Change color based on progress
+                if (progress < 0.33f)
+                    restartProgressBar.color = Color.yellow;
+                else if (progress < 0.66f)
+                    restartProgressBar.color = new Color(1f, 0.5f, 0f); // Orange
+                else
+                    restartProgressBar.color = Color.red;
+            }
+
+            // Update text if needed
+            if (restartProgressText != null && progress > 0f)
+            {
+                restartProgressText.text = $"Hold R to Restart ({Mathf.RoundToInt(progress * 100)}%)";
+            }
+        }
+    }
+
+    public void HideRestartProgress()
+    {
+        if (restartProgressCanvas != null)
+        {
+            restartProgressCanvas.SetActive(false);
+
+            // Reset bar
+            if (restartProgressBar != null)
+            {
+                restartProgressBar.fillAmount = 0f;
+                restartProgressBar.color = Color.yellow;
+            }
+        }
     }
 }
 

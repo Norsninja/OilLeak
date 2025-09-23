@@ -277,22 +277,24 @@ namespace Core.Systems
 
         private void UpdateRestartProgress(float progress)
         {
-            // Update HUD with restart progress
-            // For now, just log it - UI will be added next
-            if (progress > 0f && progress < 1f)
+            // Update UI with restart progress
+            var uiController = FindObjectOfType<UIController>();
+            if (uiController != null)
             {
-                // TODO: Call HUD service to show progress bar
-                // GameCore.HUD?.ShowRestartProgress(progress);
-
-                if (debugLogging && Mathf.Approximately(progress % 0.25f, 0f))
+                if (progress > 0f && progress < 1f)
                 {
-                    LogDebug($"Restart progress: {progress:P0}");
+                    uiController.ShowRestartProgress(progress);
+                }
+                else if (progress == 0f)
+                {
+                    uiController.HideRestartProgress();
                 }
             }
-            else if (progress == 0f)
+
+            // Debug logging
+            if (debugLogging && progress > 0f && Mathf.Approximately(progress % 0.25f, 0f))
             {
-                // TODO: Hide progress bar
-                // GameCore.HUD?.HideRestartProgress();
+                LogDebug($"Restart progress: {progress:P0}");
             }
         }
 

@@ -346,20 +346,33 @@ public class GameCore : MonoBehaviour
         // Start session
         Session.StartSession();
 
-        // Start services (when they exist)
-        Leaks?.StartLeaks();
-        Resupply?.StartResupply();
-
-        // Start or resume toasts based on previous state
+        // Handle services based on where we're coming from
         if (fromState == GameFlowState.Starting)
         {
-            // Fresh run - start toasting
+            // Fresh run - start all services
+            Leaks?.StartLeaks();
+            Resupply?.StartResupply();
             Toasts?.StartToasting();
+            Player?.EnableMovement(true);
+            Debug.Log("[GameCore] Starting fresh run - all services started");
         }
         else if (fromState == GameFlowState.Paused)
         {
-            // Resuming from pause
+            // Resuming from pause - resume services (don't restart)
+            Leaks?.ResumeLeaks();
+            Resupply?.ResumeResupply();
             Toasts?.ResumeToasting();
+            Player?.EnableMovement(true);
+
+            // Hide pause UI
+            var uiController = FindObjectOfType<UIController>();
+            uiController?.HidePauseUI();
+
+            Debug.Log("[GameCore] Resuming from pause - services resumed");
+        }
+        else
+        {
+            Debug.LogWarning($"[GameCore] HandleRunningState called from unexpected state: {fromState}");
         }
 
         // FutilitySystem responds to state changes automatically
@@ -373,6 +386,13 @@ public class GameCore : MonoBehaviour
         Resupply?.PauseResupply();
         Audio?.PauseAll();
         Toasts?.PauseToasting();
+        Player?.EnableMovement(false);
+
+        // Show pause UI
+        var uiController = FindObjectOfType<UIController>();
+        uiController?.ShowPauseUI();
+
+        Debug.Log("[GameCore] Paused - all services paused, player movement disabled");
     }
 
     private void HandleEndingState()
