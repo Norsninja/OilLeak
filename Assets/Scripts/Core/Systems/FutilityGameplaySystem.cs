@@ -136,32 +136,15 @@ namespace Core.Systems
             Debug.Log($"[FutilitySystem] Failure Threshold: {threshold} particles");
             Debug.Log($"[FutilitySystem] Tier Thresholds: 90%=Stable, 80%=Damaged, 60%=Critical, 30%=Failing, <30%=Collapsed");
 
-            // Enable player movement
-            if (GameCore.Player != null)
-            {
-                GameCore.Player.EnableMovement(true);
-                Debug.Log("[FutilitySystem] Player movement enabled - game is running");
-            }
+            // GameCore.HandleRunningState() now handles all service starts/resumes
+            // based on fromState (Starting vs Paused). Services are started there.
+            // Player movement, Leaks, and Resupply are all managed by GameCore.
 
-            // CRITICAL: Start leak system for gameplay
-            if (GameCore.Leaks != null)
-            {
-                GameCore.Leaks.StartLeaks();
-                Debug.Log("[FutilitySystem] Leak system started - oil will flow");
-            }
-
-            // Kick off the exponential escalation
+            // Kick off the exponential escalation (FutilitySystem still owns difficulty)
             if (GameCore.Difficulty != null)
             {
                 // Start the difficulty ticker
                 Debug.Log("[FutilitySystem] Futility escalation begun - you cannot win");
-            }
-
-            // Start resupply system
-            if (GameCore.Resupply != null)
-            {
-                GameCore.Resupply.StartResupply();
-                Debug.Log("[FutilitySystem] Resupply system started - false hope activated");
             }
 
             // Show encouraging message (that will age poorly)
@@ -182,26 +165,8 @@ namespace Core.Systems
         {
             isRunning = false;
 
-            // Disable player movement
-            if (GameCore.Player != null)
-            {
-                GameCore.Player.EnableMovement(false);
-                Debug.Log("[FutilitySystem] Player movement disabled - game ending");
-            }
-
-            // CRITICAL: Stop leak system
-            if (GameCore.Leaks != null)
-            {
-                GameCore.Leaks.EndLeaks();
-                Debug.Log("[FutilitySystem] Leak system stopped - oil flow ended");
-            }
-
-            // Stop resupply system
-            if (GameCore.Resupply != null)
-            {
-                GameCore.Resupply.EndResupply();
-                Debug.Log("[FutilitySystem] Resupply system stopped");
-            }
+            // GameCore.HandleEndingState() now handles all service stops
+            // Player movement, Leaks, and Resupply are all managed by GameCore
 
             // Stop difficulty updates
             Debug.Log($"[FutilitySystem] Game ended - Peak difficulty: {peakDifficulty:F1}x");

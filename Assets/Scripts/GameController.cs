@@ -21,9 +21,7 @@ public class GameController : MonoBehaviour
     public bool useEndlessMode = true;
     public ScoringManager scoringManager;
 
-    // State tracking for input
-    private bool gameStarted = false;
-    private bool autoStartNextRun = false;  // Flag to auto-start after returning to menu
+    // State tracking
     private bool initialized = false; // Track if we've subscribed to GameCore
 
     void Awake()
@@ -87,103 +85,8 @@ public class GameController : MonoBehaviour
             }
         }
 
-        // Now we can handle input
-        if (!GameCore.IsInitialized)
-        {
-            // This shouldn't happen after initialization
-            Debug.LogError("[GameController] Lost GameCore after initialization!");
-            return;
-        }
-
-        // Handle E to start (only from Menu state)
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (GameCore.Flow.CurrentState == GameFlowState.Menu)
-            {
-                Debug.Log("[GameController] E pressed - Starting game via GameCore");
-                GameCore.StartGame();
-                gameStarted = true;
-            }
-            else
-            {
-                Debug.Log($"[GameController] E pressed but ignored - Current state: {GameCore.Flow.CurrentState}");
-            }
-        }
-
-        // Handle R to restart (only during Running, ShowingResults, or Menu with auto-start)
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            var currentState = GameCore.Flow.CurrentState;
-
-            if (currentState == GameFlowState.Running)
-            {
-                if (!autoStartNextRun) // Prevent multiple restart intents
-                {
-                    Debug.Log($"[GameController] R pressed in Running - Ending game with restart intent");
-                    autoStartNextRun = true;
-                    GameCore.EndGame(); // Will transition through Ending -> Cleaning -> ShowingResults -> Menu
-                }
-            }
-            else if (currentState == GameFlowState.ShowingResults)
-            {
-                // Set flag if not already set (might be pre-set from Running state)
-                if (!autoStartNextRun)
-                {
-                    Debug.Log("[GameController] R pressed in ShowingResults - Setting restart intent");
-                    autoStartNextRun = true;
-                }
-                else
-                {
-                    Debug.Log("[GameController] R pressed in ShowingResults - Restart intent already set from Running");
-                }
-
-                // Always call RestartGame regardless of flag state
-                Debug.Log("[GameController] Returning to menu with auto-start");
-                GameCore.RestartGame(); // Transitions to Menu
-            }
-            else if (currentState == GameFlowState.Menu)
-            {
-                // Only allow R in Menu if we have auto-start intent (prevents conflict with E)
-                if (autoStartNextRun)
-                {
-                    Debug.Log("[GameController] R in Menu with auto-start flag - Starting game");
-                    autoStartNextRun = false; // Clear flag immediately
-                    GameCore.StartGame();
-                }
-                else
-                {
-                    Debug.Log("[GameController] R pressed in Menu but ignored (no auto-start intent)");
-                }
-            }
-            else
-            {
-                Debug.Log($"[GameController] R pressed but ignored - Current state: {currentState}");
-            }
-        }
-
-        // Handle P to pause/unpause (only during Running)
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (GameCore.Flow.CurrentState == GameFlowState.Running)
-            {
-                Debug.Log("[GameController] P pressed - Pausing game");
-                GameCore.PauseGame();
-            }
-            else if (GameCore.Flow.CurrentState == GameFlowState.Paused)
-            {
-                Debug.Log("[GameController] P pressed - Resuming game");
-                GameCore.ResumeGame();
-            }
-        }
-
-        // Handle auto-start after returning to Menu (outside of event handler to avoid re-entrancy)
-        if (autoStartNextRun && GameCore.Flow.CurrentState == GameFlowState.Menu)
-        {
-            autoStartNextRun = false; // Clear flag immediately
-            Debug.Log($"[GameController] Auto-starting new run from Menu (deferred from event handler) - IsInit: {GameCore.IsInitialized}, Flow: {GameCore.Flow != null}");
-            GameCore.StartGame();
-            Debug.Log($"[GameController] After StartGame call - Current state: {GameCore.Flow?.CurrentState}");
-        }
+        // Input handling has been moved to FlowInputController
+        // GameController now only handles initialization and singleton management
     }
 
 
@@ -193,13 +96,7 @@ public class GameController : MonoBehaviour
     void OnGameStateChanged(GameFlowState oldState, GameFlowState newState)
     {
         Debug.Log($"[GameController] Observed state change: {oldState} → {newState}");
-
-        // Don't call StartGame from within the event handler - just note that we reached Menu
-        if (newState == GameFlowState.Menu && autoStartNextRun)
-        {
-            Debug.Log("[GameController] Reached Menu with auto-start intent - will start game in Update");
-            // DON'T call StartGame here - let Update() handle it to avoid re-entrancy
-        }
+        // Auto-start logic has been moved to FlowInputController
     }
 
     // Legacy methods kept for compatibility
