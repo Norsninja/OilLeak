@@ -1,5 +1,7 @@
 using UnityEngine;
 using Player;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Items
 {
@@ -13,14 +15,20 @@ namespace Items
         [Header("Configuration")]
         [SerializeField] private float buoyancyStrength = 50f; // Optional buoyancy force
         [SerializeField] private bool useYConstraint = true; // Use constraint vs buoyancy
-        [SerializeField] private float sinkDelay = 5f; // Time before returning to pool after detach
+        [SerializeField] private float fallbackSeafloorY = -30f; // Fallback if no seafloor ref provided
 
         // State
         private Rigidbody rb;
         private BoatAttachmentManager attachedTo;
         private bool isDetached = false;
+        private bool hasSettled = false;
         private float waterlineY = 0f;
+        private float seafloorY = -30f;
         private Vector3 initialConstraints;
+
+        // Static debris tracking
+        private static Queue<BoomController> sunkenBooms = new Queue<BoomController>();
+        private const int MAX_SUNKEN_BOOMS = 4;
 
         void Awake()
         {
@@ -46,12 +54,18 @@ namespace Items
             {
                 ApplyBuoyancy();
             }
+
+            // Check for settling when detached but not yet settled
+            if (isDetached && !hasSettled)
+            {
+                CheckForSettling();
+            }
         }
 
         /// <summary>
         /// Attach this boom to a boat
         /// </summary>
-        public void AttachTo(BoatAttachmentManager manager, float waterY)
+        public void AttachTo(BoatAttachmentManager manager, float waterY, float floorY = -30f)
         {
             if (manager == null)
             {
@@ -61,10 +75,17 @@ namespace Items
 
             attachedTo = manager;
             waterlineY = waterY;
+            seafloorY = floorY;
             isDetached = false;
+            hasSettled = false;
 
-            // Cancel any pending return to pool
-            CancelInvoke("ReturnToPool");
+            // Remove from sunken queue if it was there
+            if (sunkenBooms.Contains(this))
+            {
+                var tempList = sunkenBooms.ToList();
+                tempList.Remove(this);
+                sunkenBooms = new Queue<BoomController>(tempList);
+            }
 
             // Configure physics for attached state
             rb.useGravity = false; // No gravity while attached
@@ -117,8 +138,7 @@ namespace Items
             // Add some downward velocity to start sinking
             rb.velocity = new Vector3(rb.velocity.x, -1f, rb.velocity.z);
 
-            // Schedule return to pool
-            Invoke("ReturnToPool", sinkDelay);
+            // Do NOT return to pool - let it sink and settle
         }
 
         /// <summary>
@@ -132,10 +152,85 @@ namespace Items
 
             isDetached = true;
             attachedTo = null;
+            hasSettled = false;
 
-            // Immediately return to pool
-            CancelInvoke("ReturnToPool");
-            ReturnToPool();
+            // Immediately settle (don't return to pool)
+            Settle();
+        }
+
+        /// <summary>
+        /// Check if boom has reached seafloor and should settle
+        /// </summary>
+        private void CheckForSettling()
+        {
+            // Safety check - if fallen too far below seafloor, settle immediately
+            if (transform.position.y < seafloorY - 5f)
+            {
+                Debug.LogWarning($"[BoomController] Boom fell too far ({transform.position.y}), settling at seafloor");
+                Vector3 safePos = transform.position;
+                safePos.y = seafloorY;
+                transform.position = safePos;
+                Settle();
+                return;
+            }
+
+            // Check if reached seafloor
+            if (transform.position.y <= seafloorY)
+            {
+                // Clamp to seafloor
+                Vector3 pos = transform.position;
+                pos.y = seafloorY;
+                transform.position = pos;
+                Settle();
+            }
+        }
+
+        /// <summary>
+        /// Settle boom on seafloor as permanent debris
+        /// </summary>
+        private void Settle()
+        {
+            if (hasSettled) return;
+
+            Debug.Log("[BoomController] Boom settling on seafloor");
+            hasSettled = true;
+
+            // Make kinematic to save physics cost
+            rb.isKinematic = true;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // Add to sunken queue
+            sunkenBooms.Enqueue(this);
+
+            // Check debris cap
+            if (sunkenBooms.Count > MAX_SUNKEN_BOOMS)
+            {
+                Debug.Log($"[BoomController] Debris cap exceeded ({MAX_SUNKEN_BOOMS}), removing oldest boom");
+                BoomController oldestBoom = sunkenBooms.Dequeue();
+                if (oldestBoom != null && oldestBoom != this)
+                {
+                    oldestBoom.ReturnToPool();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle collision with seafloor
+        /// </summary>
+        void OnCollisionEnter(Collision collision)
+        {
+            // Check if we hit the seafloor while sinking
+            if (isDetached && !hasSettled)
+            {
+                // Check if it's the ground/terrain layer
+                if (collision.gameObject.name == "GroundHorizontal" ||
+                    collision.gameObject.layer == LayerMask.NameToLayer("Terrain"))
+                {
+                    Debug.Log("[BoomController] Boom hit seafloor, settling");
+                    Settle();
+                }
+            }
         }
 
         /// <summary>
@@ -178,16 +273,24 @@ namespace Items
             rb.useGravity = true;
             rb.constraints = RigidbodyConstraints.None;
 
-            // Return to ItemPooler
-            var pooler = ItemPooler.Instance;
-            if (pooler != null)
+            // Return to pool via GameCore adapter
+            if (GameCore.Items != null)
             {
-                pooler.ReturnItem(gameObject);
+                GameCore.Items.ReturnToPool(gameObject);
             }
             else
             {
-                // Fallback: just deactivate
-                gameObject.SetActive(false);
+                // Fallback: try to find ItemPooler directly
+                var pooler = FindObjectOfType<ItemPooler>();
+                if (pooler != null)
+                {
+                    pooler.ReturnToPool(gameObject);
+                }
+                else
+                {
+                    // Last resort: just deactivate
+                    gameObject.SetActive(false);
+                }
             }
         }
 
@@ -197,8 +300,8 @@ namespace Items
         void OnDisable()
         {
             // Ensure clean state when disabled
-            CancelInvoke("ReturnToPool");
             isDetached = false;
+            hasSettled = false;
             attachedTo = null;
 
             // Reset physics

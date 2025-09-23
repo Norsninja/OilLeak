@@ -10,10 +10,11 @@ namespace Items
     {
         [Header("Boom Settings")]
         [SerializeField] private bool detachOnPorous = true; // Detach when oil can pass through
-        [SerializeField] private bool detachOnSludge = false; // Alternative: detach only when fully degraded
 
         private BoomController boomController;
         private bool hasDetached = false;
+        private Color originalColor = Color.white; // Store boom's original color
+        private bool hasStoredOriginalColor = false;
 
         protected override void Awake()
         {
@@ -45,11 +46,6 @@ namespace Items
                     shouldDetach = true;
                     Debug.Log("[BoomDegradation] Boom became porous - detaching");
                 }
-                else if (detachOnSludge && newLayer == LAYER_SLUDGE)
-                {
-                    shouldDetach = true;
-                    Debug.Log("[BoomDegradation] Boom became sludge - detaching");
-                }
 
                 // Perform detachment
                 if (shouldDetach)
@@ -61,31 +57,60 @@ namespace Items
         }
 
         /// <summary>
-        /// Override state transition for additional detachment trigger
-        /// </summary>
-        protected override void TransitionToState(ItemState newState)
-        {
-            base.TransitionToState(newState);
-
-            // Additional check for sludge state if using that trigger
-            if (!hasDetached && detachOnSludge && newState == ItemState.Sludge)
-            {
-                if (boomController != null && boomController.IsAttached)
-                {
-                    hasDetached = true;
-                    boomController.DetachFromBoat();
-                    Debug.Log("[BoomDegradation] Boom reached sludge state - detaching");
-                }
-            }
-        }
-
-        /// <summary>
         /// Reset detachment flag when boom is reset
         /// </summary>
         protected override void OnEnable()
         {
+            // Store original color before base reset
+            if (!hasStoredOriginalColor && itemRenderer != null)
+            {
+                if (itemRenderer.sharedMaterial != null && itemRenderer.sharedMaterial.HasProperty(ColorProperty))
+                {
+                    originalColor = itemRenderer.sharedMaterial.GetColor(ColorProperty);
+                    hasStoredOriginalColor = true;
+                    Debug.Log($"[BoomDegradation] Stored original color: {originalColor}");
+                }
+            }
+
+            // Call base (will set to white temporarily)
             base.OnEnable();
+
+            // Restore original color after base reset
+            if (hasStoredOriginalColor && itemRenderer != null && propertyBlock != null)
+            {
+                itemRenderer.GetPropertyBlock(propertyBlock);
+                propertyBlock.SetColor(ColorProperty, originalColor);
+                itemRenderer.SetPropertyBlock(propertyBlock);
+                Debug.Log("[BoomDegradation] Restored original boom color");
+            }
+
             hasDetached = false;
+        }
+
+        /// <summary>
+        /// Override visual application to preserve boom's original color
+        /// </summary>
+        protected override void ApplyDegradationVisuals(Color targetColor)
+        {
+            if (itemRenderer == null || propertyBlock == null) return;
+
+            Color finalColor;
+
+            // Preserve original color for dry state
+            if (currentState == DegradationState.Dry)
+            {
+                finalColor = originalColor;
+            }
+            else
+            {
+                // Blend degradation tint with original color
+                // This preserves the yellow while adding oil darkness
+                finalColor = originalColor * targetColor;
+            }
+
+            itemRenderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetColor(ColorProperty, finalColor);
+            itemRenderer.SetPropertyBlock(propertyBlock);
         }
 
         /// <summary>
@@ -93,13 +118,8 @@ namespace Items
         /// </summary>
         public float GetDegradationPercent()
         {
-            if (itemData == null) return 0f;
-
-            // Calculate based on particle exposure
-            float maxExposure = itemData.particlesToSludge;
-            if (maxExposure <= 0) return 0f;
-
-            return Mathf.Clamp01(oilExposure / maxExposure);
+            // Use the base class GetPorosity() which returns 0-1 for degradation
+            return GetPorosity();
         }
 
         /// <summary>
@@ -107,8 +127,7 @@ namespace Items
         /// </summary>
         public bool IsEffective()
         {
-            return gameObject.layer != LAYER_POROUS_DEBRIS &&
-                   gameObject.layer != LAYER_SLUDGE;
+            return gameObject.layer != LAYER_POROUS_DEBRIS;
         }
 
 #if UNITY_EDITOR

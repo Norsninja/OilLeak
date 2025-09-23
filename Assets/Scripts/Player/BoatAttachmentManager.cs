@@ -13,11 +13,13 @@ namespace Player
         [SerializeField] private Transform boomAnchor; // Rear attachment point on boat
         [SerializeField] private Transform waterSurfaceRef; // Reference to water plane object
         [SerializeField] private float fallbackWaterlineY = 0f; // Fallback if no water surface ref
+        [SerializeField] private Transform seafloorRef; // Reference to GroundHorizontal (ocean floor)
+        [SerializeField] private float fallbackSeafloorY = -30f; // Fallback if no seafloor ref
 
         [Header("Joint Settings")]
-        [SerializeField] private float trailingDistance = 4f; // How far boom trails behind
-        [SerializeField] private float springStrength = 50f;
-        [SerializeField] private float springDamper = 8f;
+        [SerializeField] private float trailingDistance = 8f; // How far boom trails behind
+        [SerializeField] private float springStrength = 30f; // Looser connection
+        [SerializeField] private float springDamper = 10f; // More damping to reduce bouncing
         [SerializeField] private float ySpringStrength = 100f; // Stiffer vertical
         [SerializeField] private float ySpringDamper = 10f;
 
@@ -53,7 +55,7 @@ namespace Player
                 Debug.LogWarning("[BoatAttachmentManager] No boom anchor set, creating default");
                 GameObject anchorObj = new GameObject("BoomAnchor");
                 anchorObj.transform.parent = transform;
-                anchorObj.transform.localPosition = new Vector3(0, 0, -3f); // Behind boat
+                anchorObj.transform.localPosition = new Vector3(-6f, 0, 0); // Behind boat on X axis (left side)
                 boomAnchor = anchorObj.transform;
             }
 
@@ -100,6 +102,15 @@ namespace Player
             }
 
             currentBoom = boom;
+
+            // Configure boom Rigidbody for stable physics
+            Rigidbody boomRb = boom.GetComponent<Rigidbody>();
+            if (boomRb != null)
+            {
+                boomRb.interpolation = RigidbodyInterpolation.Interpolate;
+                boomRb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                Debug.Log("[BoatAttachmentManager] Configured boom RB: Interpolate + Continuous collision");
+            }
 
             // Position boom at anchor point and waterline
             boom.transform.position = new Vector3(
@@ -153,11 +164,17 @@ namespace Player
             joint.projectionDistance = 0.2f;
             joint.projectionAngle = 10f;
 
+            // Enable collision between connected bodies (boat and boom)
+            // This allows natural physics interaction to prevent clipping
+            joint.enableCollision = true;
+
             // Notify boom it's attached
             var boomController = boom.GetComponent<Items.BoomController>();
             if (boomController != null)
             {
-                boomController.AttachTo(this, waterlineY);
+                // Determine seafloor Y from reference or fallback
+                float seafloorY = seafloorRef != null ? seafloorRef.position.y : fallbackSeafloorY;
+                boomController.AttachTo(this, waterlineY, seafloorY);
             }
 
             Debug.Log("[BoatAttachmentManager] Boom attached successfully");

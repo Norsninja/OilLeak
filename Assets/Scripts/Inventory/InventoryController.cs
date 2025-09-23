@@ -86,49 +86,92 @@ public class InventoryController : MonoBehaviour, IResettable
             // Find the Item object based on the equippedItem name
             Item itemToDrop = allPossibleItems.Find(item => item.itemName == inventoryState.equippedItem);
 
-            
+
         if (itemToDrop != null)
         {
-            Vector3 dropPosition = boatTransform.position + itemDropOffset;
-            Debug.Log($"[INV] Requesting item at position {dropPosition}");
-
-            // Get pooled item with position set (will be activated by pooler)
-            GameObject droppedItem = itemPooler.GetPooledItem(itemToDrop.itemPrefab, dropPosition, Quaternion.identity);
-            Debug.Log($"[INV] Item activated at {droppedItem.transform.position}");
-
-            // Reset rigidbody state after activation
-            Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
-            if (rb != null)
+            // Check if this item should attach to the boat
+            if (itemToDrop.assemblesOnBoat)
             {
-                rb.velocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-            }
+                // Get BoatAttachmentManager from the boat
+                var attachmentManager = boatTransform.GetComponent<Player.BoatAttachmentManager>();
+                if (attachmentManager == null)
+                {
+                    Debug.LogError("[INV] No BoatAttachmentManager found on boat!");
+                    return;
+                }
 
-            // Check if the dropped item is a ragdoll
-            if (itemToDrop.isRagdoll)  // Assume isRagdoll is a boolean flag in your Item class
-            {
-                RagdollController ragdollController = droppedItem.GetComponent<RagdollController>();
-                ragdollController.item = itemToDrop;
-                
-                float boatRotationY = boatTransform.rotation.eulerAngles.y;
-                Vector3 tossDirection = boatRotationY == 0 ? new Vector3(1, 1, 0) : new Vector3(-1, 1, 0);
-                ragdollController.Throw(tossDirection, tossForce);  // Use the Throw method from RagdollController
+                // Check if boom already attached
+                if (attachmentManager.HasAttachedBoom())
+                {
+                    Debug.LogWarning("[INV] Boom already attached to boat!");
+                    return;
+                }
+
+                // Get boom anchor position from attachment manager
+                Vector3 spawnPosition = boatTransform.position + itemDropOffset; // Default position
+
+                // Get pooled boom at anchor position
+                GameObject pooledBoom = itemPooler.GetPooledItem(itemToDrop.itemPrefab, spawnPosition, Quaternion.identity);
+                Debug.Log($"[INV] Boom spawned at {pooledBoom.transform.position}, attaching to boat");
+
+                // Attach boom to boat
+                attachmentManager.AttachBoom(pooledBoom);
+
+                // Set item data on boom controller if available
+                var boomController = pooledBoom.GetComponent<Items.BoomController>();
+                if (boomController != null)
+                {
+                    var itemController = pooledBoom.GetComponent<ItemController>();
+                    if (itemController != null)
+                    {
+                        itemController.item = itemToDrop;
+                    }
+                }
             }
             else
             {
-                ItemController itemController = droppedItem.GetComponent<ItemController>();
-                itemController.item = itemToDrop;
+                // Normal throw behavior for non-boom items
+                Vector3 dropPosition = boatTransform.position + itemDropOffset;
+                Debug.Log($"[INV] Requesting item at position {dropPosition}");
 
-                // rb was already retrieved above, reuse it
+                // Get pooled item with position set (will be activated by pooler)
+                GameObject droppedItem = itemPooler.GetPooledItem(itemToDrop.itemPrefab, dropPosition, Quaternion.identity);
+                Debug.Log($"[INV] Item activated at {droppedItem.transform.position}");
+
+                // Reset rigidbody state after activation
+                Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
+                    rb.velocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                }
+
+                // Check if the dropped item is a ragdoll
+                if (itemToDrop.isRagdoll)  // Assume isRagdoll is a boolean flag in your Item class
+                {
+                    RagdollController ragdollController = droppedItem.GetComponent<RagdollController>();
+                    ragdollController.item = itemToDrop;
+
                     float boatRotationY = boatTransform.rotation.eulerAngles.y;
                     Vector3 tossDirection = boatRotationY == 0 ? new Vector3(1, 1, 0) : new Vector3(-1, 1, 0);
-                    rb.AddForce(tossDirection.normalized * tossForce, ForceMode.Impulse);
+                    ragdollController.Throw(tossDirection, tossForce);  // Use the Throw method from RagdollController
                 }
                 else
                 {
-                    Debug.LogError("Rigidbody not found on the dropped item.");
+                    ItemController itemController = droppedItem.GetComponent<ItemController>();
+                    itemController.item = itemToDrop;
+
+                    // rb was already retrieved above, reuse it
+                    if (rb != null)
+                    {
+                        float boatRotationY = boatTransform.rotation.eulerAngles.y;
+                        Vector3 tossDirection = boatRotationY == 0 ? new Vector3(1, 1, 0) : new Vector3(-1, 1, 0);
+                        rb.AddForce(tossDirection.normalized * tossForce, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        Debug.LogError("Rigidbody not found on the dropped item.");
+                    }
                 }
             }
 

@@ -10,6 +10,7 @@ public class Item : ScriptableObject
     public int cost;
     public GameObject itemPrefab;  // Reference to the item's prefab
     public bool isRagdoll;         // Flag to identify if the item is a ragdoll
+    public bool assemblesOnBoat;   // Flag to identify if item attaches to boat instead of throwing
 
     [Header("Degradation - Exposure Based")]
     [Tooltip("Seconds of oil exposure before item starts becoming porous")]

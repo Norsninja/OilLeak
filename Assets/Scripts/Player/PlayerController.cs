@@ -4,6 +4,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float speed = 5f;
+    [SerializeField] private float rotationSpeed = 720f; // Degrees per second (2 full rotations/sec = fast but smooth)
 
     [Header("Boost Settings")]
     [SerializeField] private float boostSpeed = 10f;       // 2x normal speed
@@ -51,14 +52,18 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(horizontalInput * currentSpeed * Time.fixedDeltaTime, 0, 0);
         boatRb.MovePosition(boatRb.position + movement);
 
-        // Rotate the boat based on direction
+        // Smoothly rotate the boat based on direction
         if (horizontalInput > 0)
         {
-            boatRb.rotation = Quaternion.Euler(0, 0, 0);
+            // Facing right
+            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+            boatRb.rotation = Quaternion.RotateTowards(boatRb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
         else if (horizontalInput < 0)
         {
-            boatRb.rotation = Quaternion.Euler(0, 180, 0);
+            // Facing left
+            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
+            boatRb.rotation = Quaternion.RotateTowards(boatRb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
     }
 
