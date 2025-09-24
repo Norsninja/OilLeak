@@ -6,7 +6,10 @@
   "defaultSoundKey": "notification_corporate",
   "acts": {
     "act1": {
-      "integrityRange": [80, 100],
+      "integrityRange": [
+        80,
+        100
+      ],
       "messages": [
         {
           "id": "corp_opening_001",
@@ -56,7 +59,13 @@
           "triggerId": "gallons_25k",
           "template": "Current containment represents 0.0001% of Gulf volume. Perspective matters!",
           "weight": 8,
-          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 180}]
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": ">=",
+              "value": 180
+            }
+          ]
         },
         {
           "id": "corp_denial_006",
@@ -85,11 +94,94 @@
           "template": "Ocean status remains within operational parameters",
           "weight": 5,
           "prerequisites": []
+        },
+        {
+          "id": "corp_tp_hope_1_act1",
+          "triggerId": "tp_hope_1",
+          "template": "Initializing spiritual response protocols!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SynergyDept"
+        },
+        {
+          "id": "corp_tp_hope_2_act1",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer task force assembled! Overtime not approved.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ThoughtLeadership"
+        },
+        {
+          "id": "corp_tp_hope_3_act1",
+          "triggerId": "tp_hope_3",
+          "template": "Leveraging divine synergies for optimal outcomes!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ChiefFeelsOfficer"
+        },
+        {
+          "id": "corp_tp_cascade_1_act1",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer metrics show 200% quarter-over-quarter growth!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@KPIAngels"
+        },
+        {
+          "id": "corp_tp_cascade_2_act1",
+          "triggerId": "tp_cascade_2",
+          "template": "Pivoting to blockchain-enabled prayer solutions",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DisruptHeaven"
+        },
+        {
+          "id": "corp_tp_cascade_3_act1",
+          "triggerId": "tp_cascade_3",
+          "template": "AI-powered thoughts achieving peak efficiency!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MLPrayers"
+        },
+        {
+          "id": "corp_tp_cascade_4_act1",
+          "triggerId": "tp_cascade_4",
+          "template": "Stakeholder deity engagement at all-time high!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyROI"
+        },
+        {
+          "id": "corp_tp_cascade_5_act1",
+          "triggerId": "tp_cascade_5",
+          "template": "PRAYER PRODUCTIVITY MAXIMIZED! ANGELS IMPRESSED!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SixSigmaSaints"
+        },
+        {
+          "id": "corp_tp_cascade_6_act1",
+          "triggerId": "tp_cascade_6",
+          "template": "ACHIEVING PRAYER-MARKET FIT! DISRUPTING REALITY!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@UnicornPrayers"
+        },
+        {
+          "id": "corp_tp_anticlimax_act1",
+          "triggerId": "tp_anticlimax",
+          "template": "Minor setback: Oil continues. Prayers in beta testing.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MinorGlitch"
         }
       ]
     },
     "act2": {
-      "integrityRange": [60, 80],
+      "integrityRange": [
+        60,
+        80
+      ],
       "messages": [
         {
           "id": "corp_passive_001",
@@ -164,11 +256,94 @@
           "prerequisites": [],
           "iconKey": "golf_ball_icon",
           "soundKey": "failure_ding"
+        },
+        {
+          "id": "corp_tp_hope_1_act2",
+          "triggerId": "tp_hope_1",
+          "template": "Initializing spiritual response protocols!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SynergyDept"
+        },
+        {
+          "id": "corp_tp_hope_2_act2",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer task force assembled! Overtime not approved.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ThoughtLeadership"
+        },
+        {
+          "id": "corp_tp_hope_3_act2",
+          "triggerId": "tp_hope_3",
+          "template": "Leveraging divine synergies for optimal outcomes!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ChiefFeelsOfficer"
+        },
+        {
+          "id": "corp_tp_cascade_1_act2",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer metrics show 200% quarter-over-quarter growth!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@KPIAngels"
+        },
+        {
+          "id": "corp_tp_cascade_2_act2",
+          "triggerId": "tp_cascade_2",
+          "template": "Pivoting to blockchain-enabled prayer solutions",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DisruptHeaven"
+        },
+        {
+          "id": "corp_tp_cascade_3_act2",
+          "triggerId": "tp_cascade_3",
+          "template": "AI-powered thoughts achieving peak efficiency!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MLPrayers"
+        },
+        {
+          "id": "corp_tp_cascade_4_act2",
+          "triggerId": "tp_cascade_4",
+          "template": "Stakeholder deity engagement at all-time high!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyROI"
+        },
+        {
+          "id": "corp_tp_cascade_5_act2",
+          "triggerId": "tp_cascade_5",
+          "template": "PRAYER PRODUCTIVITY MAXIMIZED! ANGELS IMPRESSED!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SixSigmaSaints"
+        },
+        {
+          "id": "corp_tp_cascade_6_act2",
+          "triggerId": "tp_cascade_6",
+          "template": "ACHIEVING PRAYER-MARKET FIT! DISRUPTING REALITY!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@UnicornPrayers"
+        },
+        {
+          "id": "corp_tp_anticlimax_act2",
+          "triggerId": "tp_anticlimax",
+          "template": "Prayers delivered successfully! Oil chose not to participate.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NotOurFault"
         }
       ]
     },
     "act3": {
-      "integrityRange": [30, 60],
+      "integrityRange": [
+        30,
+        60
+      ],
       "messages": [
         {
           "id": "corp_frantic_001",
@@ -240,11 +415,94 @@
           "template": "Current conditions caused by factors beyond corporate control",
           "weight": 10,
           "prerequisites": []
+        },
+        {
+          "id": "corp_tp_hope_1_act3",
+          "triggerId": "tp_hope_1",
+          "template": "Initializing spiritual response protocols!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SynergyDept"
+        },
+        {
+          "id": "corp_tp_hope_2_act3",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer task force assembled! Overtime not approved.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ThoughtLeadership"
+        },
+        {
+          "id": "corp_tp_hope_3_act3",
+          "triggerId": "tp_hope_3",
+          "template": "Leveraging divine synergies for optimal outcomes!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ChiefFeelsOfficer"
+        },
+        {
+          "id": "corp_tp_cascade_1_act3",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer metrics show 200% quarter-over-quarter growth!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@KPIAngels"
+        },
+        {
+          "id": "corp_tp_cascade_2_act3",
+          "triggerId": "tp_cascade_2",
+          "template": "Pivoting to blockchain-enabled prayer solutions",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DisruptHeaven"
+        },
+        {
+          "id": "corp_tp_cascade_3_act3",
+          "triggerId": "tp_cascade_3",
+          "template": "AI-powered thoughts achieving peak efficiency!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MLPrayers"
+        },
+        {
+          "id": "corp_tp_cascade_4_act3",
+          "triggerId": "tp_cascade_4",
+          "template": "Stakeholder deity engagement at all-time high!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyROI"
+        },
+        {
+          "id": "corp_tp_cascade_5_act3",
+          "triggerId": "tp_cascade_5",
+          "template": "PRAYER PRODUCTIVITY MAXIMIZED! ANGELS IMPRESSED!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SixSigmaSaints"
+        },
+        {
+          "id": "corp_tp_cascade_6_act3",
+          "triggerId": "tp_cascade_6",
+          "template": "ACHIEVING PRAYER-MARKET FIT! DISRUPTING REALITY!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@UnicornPrayers"
+        },
+        {
+          "id": "corp_tp_anticlimax_act3",
+          "triggerId": "tp_anticlimax",
+          "template": "Divine intervention postponed pending regulatory approval",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@Compliance"
         }
       ]
     },
     "act4": {
-      "integrityRange": [0, 30],
+      "integrityRange": [
+        0,
+        30
+      ],
       "messages": [
         {
           "id": "corp_unhinged_001",
@@ -309,15 +567,107 @@
           "triggerId": "special_end_times",
           "template": "The Gulf was unprofitable anyway. Next quarter looks promising!",
           "weight": 5,
-          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 15}]
+          "prerequisites": [
+            {
+              "type": "integrity_below",
+              "op": "<=",
+              "value": 15
+            }
+          ]
         },
         {
           "id": "corp_unhinged_010",
           "triggerId": "special_final_denial",
           "template": "For the record: this was an act of God. See you in court!",
           "weight": 3,
-          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 7200}],
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": ">=",
+              "value": 7200
+            }
+          ],
           "handleOverride": "@LegalTeam"
+        },
+        {
+          "id": "corp_tp_hope_1_act4",
+          "triggerId": "tp_hope_1",
+          "template": "Initializing spiritual response protocols!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SynergyDept"
+        },
+        {
+          "id": "corp_tp_hope_2_act4",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer task force assembled! Overtime not approved.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ThoughtLeadership"
+        },
+        {
+          "id": "corp_tp_hope_3_act4",
+          "triggerId": "tp_hope_3",
+          "template": "Leveraging divine synergies for optimal outcomes!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ChiefFeelsOfficer"
+        },
+        {
+          "id": "corp_tp_cascade_1_act4",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer metrics show 200% quarter-over-quarter growth!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@KPIAngels"
+        },
+        {
+          "id": "corp_tp_cascade_2_act4",
+          "triggerId": "tp_cascade_2",
+          "template": "Pivoting to blockchain-enabled prayer solutions",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DisruptHeaven"
+        },
+        {
+          "id": "corp_tp_cascade_3_act4",
+          "triggerId": "tp_cascade_3",
+          "template": "AI-powered thoughts achieving peak efficiency!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@MLPrayers"
+        },
+        {
+          "id": "corp_tp_cascade_4_act4",
+          "triggerId": "tp_cascade_4",
+          "template": "Stakeholder deity engagement at all-time high!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyROI"
+        },
+        {
+          "id": "corp_tp_cascade_5_act4",
+          "triggerId": "tp_cascade_5",
+          "template": "PRAYER PRODUCTIVITY MAXIMIZED! ANGELS IMPRESSED!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SixSigmaSaints"
+        },
+        {
+          "id": "corp_tp_cascade_6_act4",
+          "triggerId": "tp_cascade_6",
+          "template": "ACHIEVING PRAYER-MARKET FIT! DISRUPTING REALITY!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@UnicornPrayers"
+        },
+        {
+          "id": "corp_tp_anticlimax_act4",
+          "triggerId": "tp_anticlimax",
+          "template": "Prayer bankruptcy filed. Oil appointed as creditor.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@Chapter11Angels"
         }
       ]
     }

@@ -6,7 +6,10 @@
   "defaultSoundKey": "notification_alert",
   "acts": {
     "act1": {
-      "integrityRange": [80, 100],
+      "integrityRange": [
+        80,
+        100
+      ],
       "messages": [
         {
           "id": "reality_opening_001",
@@ -85,11 +88,94 @@
           "weight": 5,
           "prerequisites": [],
           "handleOverride": "@ToxicologyLab"
+        },
+        {
+          "id": "reality_tp_hope_1_act1",
+          "triggerId": "tp_hope_1",
+          "template": "Detecting prayer particles... calibrating instruments...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@FaithLab"
+        },
+        {
+          "id": "reality_tp_hope_2_act1",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer velocity: 0 m/s. Oil velocity: unstoppable",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PhysicsDesk"
+        },
+        {
+          "id": "reality_tp_hope_3_act1",
+          "triggerId": "tp_hope_3",
+          "template": "Miracle probability calculating... ERROR: Divide by zero",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@StatsDept"
+        },
+        {
+          "id": "reality_tp_cascade_1_act1",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer density reaching 1000 PPM. Oil unaffected.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyMetrics"
+        },
+        {
+          "id": "reality_tp_cascade_2_act1",
+          "triggerId": "tp_cascade_2",
+          "template": "Quantum prayers detected in superposition of helping/not helping",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SchrodingersPrayer"
+        },
+        {
+          "id": "reality_tp_cascade_3_act1",
+          "triggerId": "tp_cascade_3",
+          "template": "Divine wavelength outside visible spectrum. Also outside useful spectrum.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TheologyOptics"
+        },
+        {
+          "id": "reality_tp_cascade_4_act1",
+          "triggerId": "tp_cascade_4",
+          "template": "Prayer half-life: 0.3 seconds. Oil half-life: geological",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DecayRates"
+        },
+        {
+          "id": "reality_tp_cascade_5_act1",
+          "triggerId": "tp_cascade_5",
+          "template": "CRITICAL PRAYER MASS ACHIEVED! Effect: Placebo",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NuclearPrayers"
+        },
+        {
+          "id": "reality_tp_cascade_6_act1",
+          "triggerId": "tp_cascade_6",
+          "template": "DIVINE FUSION REACTION! Output: Hot air",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ColdFusion"
+        },
+        {
+          "id": "reality_tp_anticlimax_act1",
+          "triggerId": "tp_anticlimax",
+          "template": "Conclusion: Prayers operate outside physical laws. So does oil spill.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PeerReview"
         }
       ]
     },
     "act2": {
-      "integrityRange": [60, 80],
+      "integrityRange": [
+        60,
+        80
+      ],
       "messages": [
         {
           "id": "reality_damage_001",
@@ -160,12 +246,101 @@
           "triggerId": "special_corexit",
           "template": "Corexit dispersant breaking oil into microplastics. Worse than surface slick",
           "weight": 3,
-          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 600}]
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": ">=",
+              "value": 600
+            }
+          ]
+        },
+        {
+          "id": "reality_tp_hope_1_act2",
+          "triggerId": "tp_hope_1",
+          "template": "Detecting prayer particles... calibrating instruments...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@FaithLab"
+        },
+        {
+          "id": "reality_tp_hope_2_act2",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer velocity: 0 m/s. Oil velocity: unstoppable",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PhysicsDesk"
+        },
+        {
+          "id": "reality_tp_hope_3_act2",
+          "triggerId": "tp_hope_3",
+          "template": "Miracle probability calculating... ERROR: Divide by zero",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@StatsDept"
+        },
+        {
+          "id": "reality_tp_cascade_1_act2",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer density reaching 1000 PPM. Oil unaffected.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyMetrics"
+        },
+        {
+          "id": "reality_tp_cascade_2_act2",
+          "triggerId": "tp_cascade_2",
+          "template": "Quantum prayers detected in superposition of helping/not helping",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SchrodingersPrayer"
+        },
+        {
+          "id": "reality_tp_cascade_3_act2",
+          "triggerId": "tp_cascade_3",
+          "template": "Divine wavelength outside visible spectrum. Also outside useful spectrum.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TheologyOptics"
+        },
+        {
+          "id": "reality_tp_cascade_4_act2",
+          "triggerId": "tp_cascade_4",
+          "template": "Prayer half-life: 0.3 seconds. Oil half-life: geological",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DecayRates"
+        },
+        {
+          "id": "reality_tp_cascade_5_act2",
+          "triggerId": "tp_cascade_5",
+          "template": "CRITICAL PRAYER MASS ACHIEVED! Effect: Placebo",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NuclearPrayers"
+        },
+        {
+          "id": "reality_tp_cascade_6_act2",
+          "triggerId": "tp_cascade_6",
+          "template": "DIVINE FUSION REACTION! Output: Hot air",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ColdFusion"
+        },
+        {
+          "id": "reality_tp_anticlimax_act2",
+          "triggerId": "tp_anticlimax",
+          "template": "Study complete: Prayer correlation with oil stoppage: 0.0000",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DoubleBlind"
         }
       ]
     },
     "act3": {
-      "integrityRange": [30, 60],
+      "integrityRange": [
+        30,
+        60
+      ],
       "messages": [
         {
           "id": "reality_catastrophe_001",
@@ -233,13 +408,102 @@
           "triggerId": "special_mutation",
           "template": "DNA mutations detected in 73% of sampled organisms",
           "weight": 3,
-          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 45}],
+          "prerequisites": [
+            {
+              "type": "integrity_below",
+              "op": "<=",
+              "value": 45
+            }
+          ],
           "handleOverride": "@GeneticistOnSite"
+        },
+        {
+          "id": "reality_tp_hope_1_act3",
+          "triggerId": "tp_hope_1",
+          "template": "Detecting prayer particles... calibrating instruments...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@FaithLab"
+        },
+        {
+          "id": "reality_tp_hope_2_act3",
+          "triggerId": "tp_hope_2",
+          "template": "Prayer velocity: 0 m/s. Oil velocity: unstoppable",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PhysicsDesk"
+        },
+        {
+          "id": "reality_tp_hope_3_act3",
+          "triggerId": "tp_hope_3",
+          "template": "Miracle probability calculating... ERROR: Divide by zero",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@StatsDept"
+        },
+        {
+          "id": "reality_tp_cascade_1_act3",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer density reaching 1000 PPM. Oil unaffected.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyMetrics"
+        },
+        {
+          "id": "reality_tp_cascade_2_act3",
+          "triggerId": "tp_cascade_2",
+          "template": "Quantum prayers detected in superposition of helping/not helping",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SchrodingersPrayer"
+        },
+        {
+          "id": "reality_tp_cascade_3_act3",
+          "triggerId": "tp_cascade_3",
+          "template": "Divine wavelength outside visible spectrum. Also outside useful spectrum.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TheologyOptics"
+        },
+        {
+          "id": "reality_tp_cascade_4_act3",
+          "triggerId": "tp_cascade_4",
+          "template": "Prayer half-life: 0.3 seconds. Oil half-life: geological",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@DecayRates"
+        },
+        {
+          "id": "reality_tp_cascade_5_act3",
+          "triggerId": "tp_cascade_5",
+          "template": "CRITICAL PRAYER MASS ACHIEVED! Effect: Placebo",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NuclearPrayers"
+        },
+        {
+          "id": "reality_tp_cascade_6_act3",
+          "triggerId": "tp_cascade_6",
+          "template": "DIVINE FUSION REACTION! Output: Hot air",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@ColdFusion"
+        },
+        {
+          "id": "reality_tp_anticlimax_act3",
+          "triggerId": "tp_anticlimax",
+          "template": "Final measurement: Infinity prayers < 1 drop of oil",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LastScientist"
         }
       ]
     },
     "act4": {
-      "integrityRange": [0, 30],
+      "integrityRange": [
+        0,
+        30
+      ],
       "messages": [
         {
           "id": "reality_testimony_001",
@@ -308,14 +572,26 @@
           "triggerId": "special_final_science",
           "template": "Last sample contained 0% living organisms. Recording for posterity.",
           "weight": 3,
-          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 5400}]
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": ">=",
+              "value": 5400
+            }
+          ]
         },
         {
           "id": "reality_testimony_010",
           "triggerId": "special_epitaph",
           "template": "Here lies the Gulf. Cause of death: Shareholder value.",
           "weight": 2,
-          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 5}],
+          "prerequisites": [
+            {
+              "type": "integrity_below",
+              "op": "<=",
+              "value": 5
+            }
+          ],
           "iconKey": "tombstone"
         }
       ]

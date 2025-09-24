@@ -6,7 +6,10 @@
   "defaultSoundKey": "notification_comic",
   "acts": {
     "act1": {
-      "integrityRange": [80, 100],
+      "integrityRange": [
+        80,
+        100
+      ],
       "messages": [
         {
           "id": "gallows_early_001",
@@ -93,7 +96,13 @@
           "triggerId": "special_kevin_costner",
           "template": "Kevin Costner's here with centrifuges! We're saved! (Narrator: They weren't)",
           "weight": 2,
-          "prerequisites": [{"type": "time_elapsed", "op": ">=", "value": 300}],
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": ">=",
+              "value": 300
+            }
+          ],
           "handleOverride": "@HollywoodSavior",
           "iconKey": "waterworld"
         },
@@ -104,11 +113,94 @@
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@GolfBallBeliever"
+        },
+        {
+          "id": "gallows_tp_hope_1_act1",
+          "triggerId": "tp_hope_1",
+          "template": "Someone's praying! The oil is laughing!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LastOptimist"
+        },
+        {
+          "id": "gallows_tp_hope_2_act1",
+          "triggerId": "tp_hope_2",
+          "template": "Thoughts detected! Prayers detected! Hope... buffering...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BufferingFaith"
+        },
+        {
+          "id": "gallows_tp_hope_3_act1",
+          "triggerId": "tp_hope_3",
+          "template": "Heaven's phone is ringing! No one's home!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GhostlyOperator"
+        },
+        {
+          "id": "gallows_tp_cascade_1_act1",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer army mobilized! Oil laughs in fossil fuel!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyWarrior"
+        },
+        {
+          "id": "gallows_tp_cascade_2_act1",
+          "triggerId": "tp_cascade_2",
+          "template": "Angels unionizing! Demanding hazmat pay!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@WingedUnion"
+        },
+        {
+          "id": "gallows_tp_cascade_3_act1",
+          "triggerId": "tp_cascade_3",
+          "template": "God left us on read ✓✓",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SeenAt1159"
+        },
+        {
+          "id": "gallows_tp_cascade_4_act1",
+          "triggerId": "tp_cascade_4",
+          "template": "Plot twist: The prayers are coming from inside the oil!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@M_Night_Shaman"
+        },
+        {
+          "id": "gallows_tp_cascade_5_act1",
+          "triggerId": "tp_cascade_5",
+          "template": "ULTIMATE PRAYER COMBO! Oil uses IGNORE! It's super effective!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PrayermonGO"
+        },
+        {
+          "id": "gallows_tp_cascade_6_act1",
+          "triggerId": "tp_cascade_6",
+          "template": "HEAVEN.EXE HAS STOPPED RESPONDING",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TaskManager"
+        },
+        {
+          "id": "gallows_tp_anticlimax_act1",
+          "triggerId": "tp_anticlimax",
+          "template": "...oil continues leaking. Prayers continue floating uselessly upward.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@RealityCheck"
         }
       ]
     },
     "act2": {
-      "integrityRange": [60, 80],
+      "integrityRange": [
+        60,
+        80
+      ],
       "messages": [
         {
           "id": "gallows_dark_001",
@@ -173,20 +265,97 @@
           "prerequisites": []
         },
         {
-          "id": "gallows_dark_008",
-          "triggerId": "special_thoughts_prayers",
-          "template": "Thoughts and prayers shipment arrived! (Contents: literally nothing)",
-          "weight": 3,
+          "id": "gallows_tp_hope_1_act2",
+          "triggerId": "tp_hope_1",
+          "template": "Someone's praying! The oil is laughing!",
+          "weight": 10,
           "prerequisites": [],
-          "handleOverride": "@ThoughtsAndPrayersHQ",
-          "iconKey": "empty_box"
+          "handleOverride": "@LastOptimist"
+        },
+        {
+          "id": "gallows_tp_hope_2_act2",
+          "triggerId": "tp_hope_2",
+          "template": "Thoughts detected! Prayers detected! Hope... buffering...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BufferingFaith"
+        },
+        {
+          "id": "gallows_tp_hope_3_act2",
+          "triggerId": "tp_hope_3",
+          "template": "Heaven's phone is ringing! No one's home!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GhostlyOperator"
+        },
+        {
+          "id": "gallows_tp_cascade_1_act2",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer army mobilized! Oil laughs in fossil fuel!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyWarrior"
+        },
+        {
+          "id": "gallows_tp_cascade_2_act2",
+          "triggerId": "tp_cascade_2",
+          "template": "Angels unionizing! Demanding hazmat pay!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@WingedUnion"
+        },
+        {
+          "id": "gallows_tp_cascade_3_act2",
+          "triggerId": "tp_cascade_3",
+          "template": "God left us on read ✓✓",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SeenAt1159"
+        },
+        {
+          "id": "gallows_tp_cascade_4_act2",
+          "triggerId": "tp_cascade_4",
+          "template": "Plot twist: The prayers are coming from inside the oil!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@M_Night_Shaman"
+        },
+        {
+          "id": "gallows_tp_cascade_5_act2",
+          "triggerId": "tp_cascade_5",
+          "template": "ULTIMATE PRAYER COMBO! Oil uses IGNORE! It's super effective!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PrayermonGO"
+        },
+        {
+          "id": "gallows_tp_cascade_6_act2",
+          "triggerId": "tp_cascade_6",
+          "template": "HEAVEN.EXE HAS STOPPED RESPONDING",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TaskManager"
+        },
+        {
+          "id": "gallows_tp_anticlimax_act2",
+          "triggerId": "tp_anticlimax",
+          "template": "Spoiler alert: The prayers were placebo all along",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@NoSpoilers"
         },
         {
           "id": "gallows_dark_009",
           "triggerId": "special_item_sludge_50",
           "template": "50 items turned to sludge. I'm basically Midas but worse!",
           "weight": 3,
-          "prerequisites": [{"type": "items_degraded", "op": ">=", "value": 50}],
+          "prerequisites": [
+            {
+              "type": "items_degraded",
+              "op": ">=",
+              "value": 50
+            }
+          ],
           "handleOverride": "@SludgeKing"
         },
         {
@@ -200,7 +369,10 @@
       ]
     },
     "act3": {
-      "integrityRange": [30, 60],
+      "integrityRange": [
+        30,
+        60
+      ],
       "messages": [
         {
           "id": "gallows_surreal_001",
@@ -270,7 +442,13 @@
           "triggerId": "special_item_sludge_100",
           "template": "100 items to sludge! I AM become sludge, destroyer of items",
           "weight": 2,
-          "prerequisites": [{"type": "items_degraded", "op": ">=", "value": 100}],
+          "prerequisites": [
+            {
+              "type": "items_degraded",
+              "op": ">=",
+              "value": 100
+            }
+          ],
           "handleOverride": "@SludgeKing",
           "soundKey": "achievement_dark"
         },
@@ -289,11 +467,94 @@
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@OilPRParody"
+        },
+        {
+          "id": "gallows_tp_hope_1_act3",
+          "triggerId": "tp_hope_1",
+          "template": "Someone's praying! The oil is laughing!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LastOptimist"
+        },
+        {
+          "id": "gallows_tp_hope_2_act3",
+          "triggerId": "tp_hope_2",
+          "template": "Thoughts detected! Prayers detected! Hope... buffering...",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BufferingFaith"
+        },
+        {
+          "id": "gallows_tp_hope_3_act3",
+          "triggerId": "tp_hope_3",
+          "template": "Heaven's phone is ringing! No one's home!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GhostlyOperator"
+        },
+        {
+          "id": "gallows_tp_cascade_1_act3",
+          "triggerId": "tp_cascade_1",
+          "template": "Prayer army mobilized! Oil laughs in fossil fuel!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@HolyWarrior"
+        },
+        {
+          "id": "gallows_tp_cascade_2_act3",
+          "triggerId": "tp_cascade_2",
+          "template": "Angels unionizing! Demanding hazmat pay!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@WingedUnion"
+        },
+        {
+          "id": "gallows_tp_cascade_3_act3",
+          "triggerId": "tp_cascade_3",
+          "template": "God left us on read ✓✓",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@SeenAt1159"
+        },
+        {
+          "id": "gallows_tp_cascade_4_act3",
+          "triggerId": "tp_cascade_4",
+          "template": "Plot twist: The prayers are coming from inside the oil!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@M_Night_Shaman"
+        },
+        {
+          "id": "gallows_tp_cascade_5_act3",
+          "triggerId": "tp_cascade_5",
+          "template": "ULTIMATE PRAYER COMBO! Oil uses IGNORE! It's super effective!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@PrayermonGO"
+        },
+        {
+          "id": "gallows_tp_cascade_6_act3",
+          "triggerId": "tp_cascade_6",
+          "template": "HEAVEN.EXE HAS STOPPED RESPONDING",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@TaskManager"
+        },
+        {
+          "id": "gallows_tp_anticlimax_act3",
+          "triggerId": "tp_anticlimax",
+          "template": "The real miracle was the oil we spilled along the way",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@Philosofish"
         }
       ]
     },
     "act4": {
-      "integrityRange": [0, 30],
+      "integrityRange": [
+        0,
+        30
+      ],
       "messages": [
         {
           "id": "gallows_posthumous_001",
@@ -363,7 +624,13 @@
           "triggerId": "special_mike_2010",
           "template": "Still got those oil sponges in my trunk. 15 years later. We tried.",
           "weight": 1,
-          "prerequisites": [{"type": "time_elapsed", "op": "==", "value": 2010}],
+          "prerequisites": [
+            {
+              "type": "time_elapsed",
+              "op": "==",
+              "value": 2010
+            }
+          ],
           "handleOverride": "@MikeFromCalifornia",
           "iconKey": "sponge_memorial",
           "soundKey": "memorial_chime"
@@ -373,7 +640,13 @@
           "triggerId": "special_final_joke",
           "template": "On the bright side, no more hurricane season!",
           "weight": 2,
-          "prerequisites": [{"type": "integrity_below", "op": "<=", "value": 5}],
+          "prerequisites": [
+            {
+              "type": "integrity_below",
+              "op": "<=",
+              "value": 5
+            }
+          ],
           "handleOverride": "@SilverLining"
         }
       ]

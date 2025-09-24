@@ -40,6 +40,12 @@ public class UIController : MonoBehaviour
     public UnityEngine.UI.Image restartProgressBar;  // Fill bar (use Filled image type)
     public TextMeshProUGUI restartProgressText;  // "Hold R to Restart"
 
+    [Header("Thoughts & Prayers UI")]
+    public GameObject thoughtsAndPrayersCanvas;  // Full screen T&P overlay
+    public GameObject rotatingRaysObject;  // The rotating rays behind text
+    public TextMeshProUGUI thoughtsAndPrayersText;  // Main "THOUGHTS & PRAYERS" text
+    public TextMeshProUGUI prayerCounterText;  // "Prayers Sent: X, Oil Blocked: 0"
+
     public ScoringManager scoringManager;
     public GameState gameState; // Reference to GameState ScriptableObject
     public GameTimerData gameTimerData; // Reference to GameTimerData ScriptableObject
@@ -349,6 +355,61 @@ public class UIController : MonoBehaviour
         if (pauseCanvas != null)
         {
             pauseCanvas.SetActive(false);
+        }
+    }
+
+    // === Thoughts & Prayers UI Methods ===
+
+    public void ShowThoughtsAndPrayersUI()
+    {
+        if (thoughtsAndPrayersCanvas != null)
+        {
+            thoughtsAndPrayersCanvas.SetActive(true);
+
+            // Ensure rotating rays are active
+            if (rotatingRaysObject != null)
+            {
+                rotatingRaysObject.SetActive(true);
+            }
+
+            Debug.Log("[UIController] Showing Thoughts & Prayers UI");
+        }
+        else
+        {
+            Debug.LogWarning("[UIController] Thoughts & Prayers Canvas not assigned!");
+        }
+    }
+
+    public void HideThoughtsAndPrayersUI()
+    {
+        if (thoughtsAndPrayersCanvas != null)
+        {
+            thoughtsAndPrayersCanvas.SetActive(false);
+        }
+
+        if (rotatingRaysObject != null)
+        {
+            rotatingRaysObject.SetActive(false);
+        }
+
+        Debug.Log("[UIController] Hiding Thoughts & Prayers UI");
+    }
+
+    public void UpdatePrayerCounter(int prayerCount, int oilBlocked = 0)
+    {
+        if (prayerCounterText != null)
+        {
+            prayerCounterText.text = $"Prayers Sent: {prayerCount:N0}\nOil Blocked: {oilBlocked}";
+        }
+    }
+
+    public void AnimateThoughtsAndPrayersText()
+    {
+        if (thoughtsAndPrayersText != null)
+        {
+            // This could trigger the drop animation
+            // For now just ensure it's visible
+            thoughtsAndPrayersText.gameObject.SetActive(true);
         }
     }
 

@@ -235,6 +235,19 @@ namespace OilLeak.Toast.Editor
             validTriggerIds.Add("special_junk_shot");
             validTriggerIds.Add("special_kevin_costner");
             validTriggerIds.Add("special_thoughts_prayers");
+
+            // Thoughts & Prayers sequence triggers
+            validTriggerIds.Add("tp_hope_1");
+            validTriggerIds.Add("tp_hope_2");
+            validTriggerIds.Add("tp_hope_3");
+            validTriggerIds.Add("tp_cascade_1");
+            validTriggerIds.Add("tp_cascade_2");
+            validTriggerIds.Add("tp_cascade_3");
+            validTriggerIds.Add("tp_cascade_4");
+            validTriggerIds.Add("tp_cascade_5");
+            validTriggerIds.Add("tp_cascade_6");
+            validTriggerIds.Add("tp_anticlimax");
+
             validTriggerIds.Add("special_item_sludge_50");
             validTriggerIds.Add("special_item_sludge_100");
             validTriggerIds.Add("special_mike_2010");

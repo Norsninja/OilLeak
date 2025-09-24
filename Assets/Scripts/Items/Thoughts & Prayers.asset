@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb79824094b549e439ae15c3050e3135, type: 3}
+  m_Name: Thoughts & Prayers
+  m_EditorClassIdentifier: 
+  itemName: Thoughts & Prayers
+  buoyancy: 0.1
+  weight: 10
+  cost: 1
+  itemPrefab: {fileID: 3741458117070555896, guid: c7e382ef9e28f6c46b899dac4f8b3321,
+    type: 3}
+  isRagdoll: 0
+  assemblesOnBoat: 0
+  exposureToSaturating: 99999
+  exposureToSaturated: 99999
+  exposureToSludge: 99999
+  porosityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  blockCapacity: 0
+  particlesToSaturating: 99999
+  particlesToSaturated: 99999
+  particlesToSludge: 99999
+  exposurePerParticle: 0
+  exposureGracePeriod: 0
+  sinksOnExposure: 0
+  sinkStepPerStage: 0.5
+  tintSaturating: {r: 0.8, g: 0.7, b: 0.5, a: 1}
+  tintSaturated: {r: 0.5, g: 0.4, b: 0.3, a: 1}
+  tintSludge: {r: 0.3, g: 0.25, b: 0.2, a: 1}

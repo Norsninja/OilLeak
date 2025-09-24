@@ -786,7 +786,8 @@ namespace OilLeak.Toast.Services
 
             if (voice == null)
             {
-                voice = voiceProfiles.FirstOrDefault();
+                // Respect act-based voice weights when no explicit voice is provided
+                voice = SelectVoiceForAct(act);
             }
 
             if (voice == null)
