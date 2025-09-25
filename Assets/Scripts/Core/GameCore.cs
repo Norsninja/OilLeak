@@ -89,6 +89,40 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        // Apply initial state after all Awake() calls complete
+        if (Flow == null) return;
+
+        Debug.Log($"[GameCore] Start - Applying initial state: {Flow.CurrentState}");
+
+        // Handle whatever state we're starting in
+        switch (Flow.CurrentState)
+        {
+            case GameFlowState.Menu:
+                HandleMenuState();
+                break;
+            case GameFlowState.Starting:
+                HandleStartingState();
+                break;
+            case GameFlowState.Running:
+                HandleRunningState(GameFlowState.Menu); // Assume from Menu if starting in Running
+                break;
+            case GameFlowState.Paused:
+                HandlePausedState();
+                break;
+            case GameFlowState.Ending:
+                HandleEndingState();
+                break;
+            case GameFlowState.Cleaning:
+                HandleCleaningState();
+                break;
+            case GameFlowState.ShowingResults:
+                HandleShowingResultsState();
+                break;
+        }
+    }
+
     /// <summary>
     /// Phase 1 initialization - Core systems only
     /// </summary>
@@ -222,8 +256,19 @@ public class GameCore : MonoBehaviour
             Debug.LogWarning("[GameCore] InventoryController not found - inventory won't reset properly");
         }
 
-        // Audio service remains null for now
-        Audio = null;
+        // Register SoundtrackManager as audio service
+        var soundtrackManager = FindObjectOfType<OilLeak.Audio.SoundtrackManager>();
+        if (soundtrackManager != null)
+        {
+            Audio = soundtrackManager;
+            ResetRegistry.Register(soundtrackManager);
+            Debug.Log("[GameCore] SoundtrackManager registered as Audio service");
+        }
+        else
+        {
+            Audio = null;
+            Debug.LogWarning("[GameCore] SoundtrackManager not found - Audio service will be null");
+        }
 
         // Register Toast system services
         if (Session != null)
@@ -475,6 +520,13 @@ public class GameCore : MonoBehaviour
     {
         // Hide any lingering results UI first
         HUD?.HideResults();
+
+        // Play menu music
+        if (Audio != null)
+        {
+            Audio.PlayMusic(MusicType.Menu);
+            Debug.Log("[GameCore] Starting menu music");
+        }
 
         // Initialize menu state
         Leaks?.InitializeMenuState();

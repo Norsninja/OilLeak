@@ -130,6 +130,12 @@ namespace Core.Systems
             gameStartTime = Time.time;
             lastUpdateTime = Time.time;
 
+            // Start gameplay music (will choose based on integrity)
+            if (GameCore.Audio != null)
+            {
+                GameCore.Audio.PlayMusic(MusicType.Gameplay);
+            }
+
             // Log initial integrity state with dynamic threshold
             int threshold = GameCore.Session?.GetMaxEscapedForDisplay() ?? 100;
             Debug.Log($"[FutilitySystem] Game Starting - Integrity: {currentIntegrity:F1}%, Tier: {currentTier} ({tierNames[currentTier]})");
@@ -211,6 +217,12 @@ namespace Core.Systems
 
         private void OnShowingResults()
         {
+            // Play game over music
+            if (GameCore.Audio != null)
+            {
+                GameCore.Audio.PlayMusic(MusicType.Failure);
+            }
+
             // Push final stats to UI
             if (GameCore.HUD != null && GameCore.Session != null)
             {
@@ -341,6 +353,13 @@ namespace Core.Systems
             }
 
             currentIntegrity = newIntegrity;
+
+            // Update music based on integrity (with hysteresis)
+            if (GameCore.Audio != null)
+            {
+                var soundtrackManager = GameCore.Audio as OilLeak.Audio.SoundtrackManager;
+                soundtrackManager?.UpdateMusicForIntegrity(currentIntegrity / 100f); // Convert to 0-1 range
+            }
 
             // Determine current tier
             int newTier = CalculateIntegrityTier(currentIntegrity);
