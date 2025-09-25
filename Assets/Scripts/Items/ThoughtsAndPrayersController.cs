@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using OilLeak.Toast.Services;
+using Core; // For ResetRegistry and IResettable
 
-public class ThoughtsAndPrayersController : MonoBehaviour
+public class ThoughtsAndPrayersController : MonoBehaviour, IResettable
 {
     // Cooldown management
     private static float lastActivationTime = -60f; // Static to persist across instances
@@ -93,6 +94,9 @@ public class ThoughtsAndPrayersController : MonoBehaviour
         {
             collider.isTrigger = true; // Make it a trigger so it doesn't physically block
         }
+
+        // Register for global resets to clear static cooldown/state
+        ResetRegistry.Register(this);
     }
 
     private void OnEnable()
@@ -419,8 +423,66 @@ public class ThoughtsAndPrayersController : MonoBehaviour
         {
             ReleasePhysics();
         }
+
+        // Ensure overlay UI is hidden if we were interrupted mid-sequence
+        if (uiController != null)
+        {
+            uiController.HideThoughtsAndPrayersUI();
+        }
+
+        // Make sure hover loop exits
+        isHovering = false;
     }
 
     // NO OnParticleCollision - oil passes through completely
     // This is the key to the satire - it does nothing
+    // IResettable implementation to ensure clean cooldown/state between runs
+    public void Reset()
+    {
+        // Clear global cooldown so new runs can use T&P immediately
+        lastActivationTime = -COOLDOWN_DURATION;
+
+        // Stop any local activity
+        if (activationCoroutine != null)
+        {
+            StopCoroutine(activationCoroutine);
+            activationCoroutine = null;
+        }
+
+        // Stop hover and release physics control
+        isHovering = false;
+        if (rb != null)
+        {
+            // Return to physics mode safely
+            rb.isKinematic = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        // Re-enable ItemController if it was disabled
+        if (itemController != null)
+        {
+            itemController.enabled = true;
+        }
+
+        // Hide any lingering UI
+        if (uiController != null)
+        {
+            uiController.HideThoughtsAndPrayersUI();
+        }
+
+        // Reset local state
+        isActivated = false;
+        currentPhase = ActivationPhase.Idle;
+        prayerCount = 0;
+    }
+
+    public bool IsClean
+    {
+        get
+        {
+            bool physicsReleased = rb == null || !rb.isKinematic;
+            return !isActivated && !isHovering && physicsReleased;
+        }
+    }
 }

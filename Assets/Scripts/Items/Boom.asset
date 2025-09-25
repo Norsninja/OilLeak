@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Boom
   m_EditorClassIdentifier: 
   itemName: Boom
-  buoyancy: 0
+  buoyancy: 1
   weight: 50
   cost: 0
   itemPrefab: {fileID: 3824190032724024760, guid: 5986311bac85ec943b2d7fb770c1637a,
@@ -53,8 +53,10 @@ MonoBehaviour:
   particlesToSludge: 50
   exposurePerParticle: 0.3
   exposureGracePeriod: 0.4
-  sinksOnExposure: 1
+  sinksOnExposure: 0
   sinkStepPerStage: 0.5
   tintSaturating: {r: 0.8, g: 0.7, b: 0.5, a: 1}
   tintSaturated: {r: 0.5, g: 0.4, b: 0.3, a: 1}
   tintSludge: {r: 0.3, g: 0.25, b: 0.2, a: 1}
+  launchSound: {fileID: 8300000, guid: b43380242b8c24b44a83d61d6e8729b3, type: 3}
+  launchVolume: 0.68

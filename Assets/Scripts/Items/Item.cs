@@ -60,5 +60,13 @@ public class Item : ScriptableObject
 
     [Tooltip("Tint color when sludge")]
     public Color tintSludge = new Color(0.3f, 0.25f, 0.2f, 1f);
+
+    [Header("Audio")]
+    [Tooltip("Sound to play when item is launched/thrown")]
+    public AudioClip launchSound;
+
+    [Tooltip("Volume for the launch sound (0-1)")]
+    [Range(0f, 1f)]
+    public float launchVolume = 1f;
 }
 
