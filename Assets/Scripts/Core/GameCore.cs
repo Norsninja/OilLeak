@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 using Core;
 using Core.Services;
 using Core.Systems;
@@ -23,6 +24,7 @@ public class GameCore : MonoBehaviour
     public static IHUDService HUD { get; private set; }
     public static IPlayerMovementService Player { get; private set; }
     public static IDevHudService DevHud { get; private set; }
+    public static ILeaderboardService Leaderboards { get; private set; }
 
     // Toast system services
     public static IGameStateProvider ToastState { get; private set; }
@@ -96,6 +98,9 @@ public class GameCore : MonoBehaviour
 
         Debug.Log($"[GameCore] Start - Applying initial state: {Flow.CurrentState}");
 
+        // Initialize leaderboard service asynchronously (fire-and-forget)
+        InitializeLeaderboardsAsync();
+
         // Handle whatever state we're starting in
         switch (Flow.CurrentState)
         {
@@ -120,6 +125,28 @@ public class GameCore : MonoBehaviour
             case GameFlowState.ShowingResults:
                 HandleShowingResultsState();
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Initialize leaderboard service asynchronously
+    /// </summary>
+    private async void InitializeLeaderboardsAsync()
+    {
+        if (Leaderboards == null)
+        {
+            Debug.LogWarning("[GameCore] No leaderboard service to initialize");
+            return;
+        }
+
+        bool success = await Leaderboards.InitializeAsync();
+        if (success)
+        {
+            Debug.Log("[GameCore] Leaderboard service initialized successfully");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] Leaderboard service initialization failed - continuing offline");
         }
     }
 
@@ -268,6 +295,20 @@ public class GameCore : MonoBehaviour
         {
             Audio = null;
             Debug.LogWarning("[GameCore] SoundtrackManager not found - Audio service will be null");
+        }
+
+        // Register UgsLeaderboardService as leaderboard service
+        var leaderboardService = FindObjectOfType<OilLeak.Online.UgsLeaderboardService>();
+        if (leaderboardService != null)
+        {
+            Leaderboards = leaderboardService;
+            ResetRegistry.Register(leaderboardService);
+            Debug.Log("[GameCore] UgsLeaderboardService registered as Leaderboard service");
+        }
+        else
+        {
+            Leaderboards = null;
+            Debug.LogWarning("[GameCore] UgsLeaderboardService not found - Leaderboard service will be null");
         }
 
         // Register Toast system services
@@ -509,17 +550,74 @@ public class GameCore : MonoBehaviour
         Flow.TransitionTo(GameFlowState.ShowingResults);
     }
 
-    private void HandleShowingResultsState()
+    // Track if scores have been submitted this session
+    private bool scoresSubmitted = false;
+
+    private async void HandleShowingResultsState()
     {
         // Display results (UI will handle this)
         var stats = Session.GetStats();
         Debug.Log($"Game Over - Time: {stats.TimeElapsed:F1}s, Gallons: {stats.GallonsDelayed}");
+
+        // Check for player name BEFORE submitting scores
+        if (!scoresSubmitted && Leaderboards != null && Leaderboards.IsReady)
+        {
+            scoresSubmitted = true;
+
+            // Check if player has a custom name
+            var ugsLeaderboard = Leaderboards as OilLeak.Online.UgsLeaderboardService;
+            if (ugsLeaderboard != null && !ugsLeaderboard.HasCustomPlayerName())
+            {
+                Debug.Log("[GameCore] No player name found - prompting before score submission");
+
+                // Show name prompt and wait for completion
+                var leaderboardUI = UnityEngine.Object.FindObjectOfType<OilLeak.UI.LeaderboardUIController>();
+                if (leaderboardUI != null)
+                {
+                    bool nameEntered = await leaderboardUI.PromptForPlayerNameAsync();
+                    if (!nameEntered)
+                    {
+                        Debug.Log("[GameCore] Player cancelled name entry - skipping score submission");
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[GameCore] LeaderboardUIController not found - submitting with anonymous name");
+                }
+            }
+
+            // NOW submit scores with the correct name
+            await SubmitScoresAsync(stats);
+        }
+    }
+
+    /// <summary>
+    /// Submit scores to all leaderboards asynchronously
+    /// </summary>
+    private async Task SubmitScoresAsync(SessionStats stats)
+    {
+        // Use SessionStats as the single source of truth for final score
+        int finalScore = stats.Score;
+
+        Debug.Log($"[GameCore] Submitting score - Total: {finalScore} (Gallons: {stats.GallonsDelayed}, Time: {stats.TimeElapsed:F0}s)");
+
+        // Submit to the single leaderboard (per-run final score)
+        var totalTask = Leaderboards.SubmitScoreAsync(LeaderboardIds.EndlessTotalScore, finalScore);
+        bool ok = await totalTask;
+        if (ok)
+            Debug.Log("[GameCore] Score submitted successfully");
+        else
+            Debug.LogWarning("[GameCore] Score submission failed");
     }
 
     private void HandleMenuState()
     {
         // Hide any lingering results UI first
         HUD?.HideResults();
+
+        // Reset submission flag for next run
+        scoresSubmitted = false;
 
         // Play menu music
         if (Audio != null)
