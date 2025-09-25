@@ -97,10 +97,8 @@ namespace Core.Services
 
         public void SetGrade(char grade)
         {
-            if (controller != null)
-            {
-                controller.SetGradeTextColor(grade);
-            }
+            // Grades removed - not used in futility mode
+            // Method kept for interface compatibility
         }
 
         #endregion

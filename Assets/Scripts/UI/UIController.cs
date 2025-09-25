@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
     [SerializeField, HideInInspector] private TextMeshProUGUI currencyText; // Hidden for serialization compatibility
-    [SerializeField, HideInInspector] public TextMeshProUGUI gradeText; // Hidden - no grades in futility mode
+    // Removed: gradeText - no grades in futility mode
     public TextMeshProUGUI particlesBlockedText;
     public TextMeshProUGUI particlesEscapedText;
     public TextMeshProUGUI roundTotalScoreText;  // For round-over UI
@@ -17,18 +17,21 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI highScoreText;
     [SerializeField, HideInInspector] private TextMeshProUGUI currencyRewardedText; // Hidden for serialization compatibility 
 
-    public TextMeshProUGUI maximumPossibleScoreText;
-    public TextMeshProUGUI escapePenaltyText;
-    public TextMeshProUGUI efficiencyScoreText;
-    public TextMeshProUGUI throwEfficiencyScoreText;
-    public TextMeshProUGUI adjustedGradeScoreText;
-    public TextMeshProUGUI bonusText;
+    // Removed: detailed scoring elements (deprecated)
 
     // New futility mode UI elements
     public TextMeshProUGUI futilityMessageText;  // "You are Sisyphus..."
     public TextMeshProUGUI restartInstructionText;  // "Press R to Try Again"
     public TextMeshProUGUI integrityText;  // Live ocean integrity display
     public TextMeshProUGUI peakDifficultyText;  // Shows highest difficulty reached
+
+    [Header("Leaderboard UI")]
+    public TextMeshProUGUI leaderboardStatusText;  // "Score submitted as {name}"
+    public TextMeshProUGUI leaderboardPromptText;  // "Press L to View Leaderboard"
+    public GameObject leaderboardCanvas;  // Full leaderboard screen (to be created)
+    public GameObject playerNameModal;  // Player name entry modal
+    public TMPro.TMP_InputField playerNameInput;  // Input field for player name
+    public TextMeshProUGUI playerNamePromptText;  // "Enter your name for the leaderboard"
 
     [Header("Pause UI")]
     public GameObject pauseCanvas;  // Full screen pause overlay
@@ -138,30 +141,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void SetGradeTextColor(char grade)
-    {
-        switch (grade)
-        {
-            case 'A':
-                gradeText.color = Color.green;
-                break;
-            case 'B':
-                gradeText.color = new Color(0.5f, 1f, 0); // Light green
-                break;
-            case 'C':
-                gradeText.color = Color.yellow;
-                break;
-            case 'D':
-                gradeText.color = new Color(1f, 0.5f, 0); // Orange
-                break;
-            case 'F':
-                gradeText.color = Color.red;
-                break;
-            default:
-                gradeText.color = Color.white; // Default to white if grade is not A, B, C, D, or F
-                break;
-        }
-    }
+    // SetGradeTextColor method removed - grades not used in futility mode
 
 
     // Show the round-over UI
@@ -187,9 +167,7 @@ public class UIController : MonoBehaviour
             roundOverSubtitleText.text = $"You delayed {minutes:00}:{seconds:00} and blocked {gallonsDelayed:N0} gallons\n\n<size=20>Press R to try again (it won't help)</size>";
         }
 
-        // Update round-over UI components
-        gradeText.text = "Grade: " + gameState.grade;
-        SetGradeTextColor(gameState.grade);
+        // Removed grade display - no grades in futility mode
 
         // Main stats - what matters in the futility simulator
         if (roundTotalScoreText != null)
@@ -201,16 +179,7 @@ public class UIController : MonoBehaviour
 
         highScoreText.text = "High Score: " + gameState.highScore;
 
-        // Show detailed scoring if available
-        if (gameController.scoringManager.scoreSummary != null)
-        {
-            maximumPossibleScoreText.text = "Max Possible Score: " + gameController.scoringManager.scoreSummary.maximumPossibleScore;
-            escapePenaltyText.text = "Escape Penalty: " + gameController.scoringManager.scoreSummary.escapePenalty;
-            efficiencyScoreText.text = "Efficiency Score: " + gameController.scoringManager.scoreSummary.efficiencyScore;
-            throwEfficiencyScoreText.text = "Throw Efficiency Score: " + gameController.scoringManager.scoreSummary.throwEfficiencyScore;
-            adjustedGradeScoreText.text = "Adjusted Grade Score: " + gameController.scoringManager.scoreSummary.adjustedGradeScore;
-            bonusText.text = "Bonus: " + gameController.scoringManager.scoreSummary.bonus;
-        }
+        // Removed detailed scoring display - using simplified futility scoring
     }
     // New method that uses SessionStats instead of ScriptableObjects
     public void ShowRoundOverUI(SessionStats stats, float peakDifficulty)
@@ -233,11 +202,7 @@ public class UIController : MonoBehaviour
             roundOverSubtitleText.text = $"You delayed {stats.GallonsDelayed:N0} gallons for {minutes:00}:{seconds:00}\n\n<size=20>Press R to try again (it won't help)</size>";
         }
 
-        // Hide the grade system - no grades in futility mode
-        if (gradeText != null && gradeText.gameObject != null)
-        {
-            gradeText.gameObject.SetActive(false);
-        }
+        // Grade system removed - no grades in futility mode
 
         // Main stats - show total score with breakdown
         if (roundTotalScoreText != null)
@@ -284,11 +249,14 @@ public class UIController : MonoBehaviour
             futilityMessageText.text = GetFutilityMessage(stats.Score);
         }
 
-        // Show restart instruction
+        // Show action prompts for centered card layout
         if (restartInstructionText != null)
         {
-            restartInstructionText.text = "Press R to Try Again";
+            restartInstructionText.text = "[R] Try Again   [L] Leaderboard";
         }
+
+        // Show leaderboard status and prompt
+        UpdateLeaderboardStatus();
 
         // Hide old scoring UI elements
         HideOldScoringElements();
@@ -307,24 +275,8 @@ public class UIController : MonoBehaviour
     // Helper to hide old UI elements that don't fit futility theme
     private void HideOldScoringElements()
     {
-        // Hide detailed scoring breakdown - not relevant for futility
-        if (maximumPossibleScoreText != null && maximumPossibleScoreText.gameObject != null)
-            maximumPossibleScoreText.gameObject.SetActive(false);
-
-        if (escapePenaltyText != null && escapePenaltyText.gameObject != null)
-            escapePenaltyText.gameObject.SetActive(false);
-
-        if (efficiencyScoreText != null && efficiencyScoreText.gameObject != null)
-            efficiencyScoreText.gameObject.SetActive(false);
-
-        if (throwEfficiencyScoreText != null && throwEfficiencyScoreText.gameObject != null)
-            throwEfficiencyScoreText.gameObject.SetActive(false);
-
-        if (adjustedGradeScoreText != null && adjustedGradeScoreText.gameObject != null)
-            adjustedGradeScoreText.gameObject.SetActive(false);
-
-        if (bonusText != null && bonusText.gameObject != null)
-            bonusText.gameObject.SetActive(false);
+        // All deprecated scoring elements have been removed from the class
+        // This method kept for compatibility if called elsewhere
     }
 
     public void HideRoundOverUI()
@@ -332,6 +284,68 @@ public class UIController : MonoBehaviour
         // Hide the "Game Over" UI here. This could be as simple as setting its GameObject to inactive.
         // For example:
         roundOverCanvas.SetActive(false);
+    }
+
+    // === Leaderboard UI Methods ===
+
+    private void UpdateLeaderboardStatus()
+    {
+        // Get leaderboard service
+        var leaderboardService = GameCore.Leaderboards as OilLeak.Online.UgsLeaderboardService;
+
+        if (leaderboardService != null && leaderboardService.IsReady)
+        {
+            // Get player name
+            string playerName = leaderboardService.GetLocalPlayerName();
+
+            // Show submission status
+            if (leaderboardStatusText != null)
+            {
+                leaderboardStatusText.text = $"Score submitted as {playerName}";
+            }
+
+            // Show leaderboard prompt
+            if (leaderboardPromptText != null)
+            {
+                leaderboardPromptText.text = "Press L to View Leaderboard";
+            }
+        }
+        else
+        {
+            // Offline or service not ready
+            if (leaderboardStatusText != null)
+            {
+                leaderboardStatusText.text = "Playing Offline";
+            }
+
+            // Hide leaderboard prompt when offline
+            if (leaderboardPromptText != null)
+            {
+                leaderboardPromptText.text = "";
+            }
+        }
+    }
+
+    public void ShowLeaderboardScreen()
+    {
+        if (leaderboardCanvas != null)
+        {
+            leaderboardCanvas.SetActive(true);
+            Debug.Log("[UIController] Showing leaderboard screen");
+        }
+        else
+        {
+            Debug.LogWarning("[UIController] Leaderboard canvas not assigned");
+        }
+    }
+
+    public void HideLeaderboardScreen()
+    {
+        if (leaderboardCanvas != null)
+        {
+            leaderboardCanvas.SetActive(false);
+            Debug.Log("[UIController] Hiding leaderboard screen");
+        }
     }
 
     // === Pause UI Methods ===
