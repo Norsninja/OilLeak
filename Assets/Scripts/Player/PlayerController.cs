@@ -6,6 +6,10 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f;
     [SerializeField] private float rotationSpeed = 720f; // Degrees per second (2 full rotations/sec = fast but smooth)
 
+    // Target-yaw rotation state
+    private bool isRotating = false;
+    private float targetYaw = 0f;
+
     [Header("Boost Settings")]
     [SerializeField] private float boostSpeed = 10f;       // 2x normal speed
     [SerializeField] private float boostDuration = 2f;     // How long boost lasts
@@ -52,24 +56,41 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(horizontalInput * currentSpeed * Time.fixedDeltaTime, 0, 0);
         boatRb.MovePosition(boatRb.position + movement);
 
-        // Smoothly rotate the boat based on direction
-        if (horizontalInput > 0)
+        // Apply target-yaw rotation (fire-and-forget discrete turns)
+        if (isRotating)
         {
-            // Facing right
-            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
-            boatRb.rotation = Quaternion.RotateTowards(boatRb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            Quaternion target = Quaternion.Euler(0f, targetYaw, 0f);
+            boatRb.rotation = Quaternion.RotateTowards(boatRb.rotation, target, rotationSpeed * Time.fixedDeltaTime);
+
+            // Check if rotation is complete
+            if (Quaternion.Angle(boatRb.rotation, target) <= 0.1f)
+            {
+                // Snap to target and stop rotating
+                boatRb.rotation = target;
+                isRotating = false;
+            }
         }
-        else if (horizontalInput < 0)
-        {
-            // Facing left
-            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
-            boatRb.rotation = Quaternion.RotateTowards(boatRb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-        }
+        // Note: Removed axis-driven rotation to avoid input fighting
     }
 
 
     void Update()
     {
+        // Handle discrete rotation input (fire-and-forget)
+        if (canMove)
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                targetYaw = 180f;  // Face left
+                isRotating = true;
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                targetYaw = 0f;    // Face right
+                isRotating = true;
+            }
+        }
+
         // Handle boost input and timing
         UpdateBoost();
 
@@ -155,6 +176,10 @@ public class PlayerController : MonoBehaviour
         isBoosting = false;
         boostTimeRemaining = boostDuration;  // Reset to full boost
         cooldownTimeRemaining = 0f;
+
+        // Reset rotation state
+        isRotating = false;
+        targetYaw = 0f;
     }
 
     /// <summary>

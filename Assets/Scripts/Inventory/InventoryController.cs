@@ -12,6 +12,10 @@ public class InventoryController : MonoBehaviour, IResettable
     public int defaultItemCount = 50;  // Default count for the default item
     public int testItemCount = 10;     // Count for all other items (for testing)
     public int itemsUsedThisRound = 0;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource boatAudioSource;
+    [SerializeField] private AudioClip defaultLaunchSound;
     // Reference to GameState for updating inventory-related variables
     public GameState gameState;
     public InventoryState inventoryState;
@@ -29,6 +33,22 @@ public class InventoryController : MonoBehaviour, IResettable
         {
             GameObject poolerObject = new GameObject("ItemPooler");
             itemPooler = poolerObject.AddComponent<ItemPooler>();
+        }
+
+        // Setup audio source if not assigned
+        if (boatAudioSource == null && boatTransform != null)
+        {
+            // Try to find existing AudioSource on boat
+            boatAudioSource = boatTransform.GetComponent<AudioSource>();
+
+            // Create one if it doesn't exist
+            if (boatAudioSource == null)
+            {
+                boatAudioSource = boatTransform.gameObject.AddComponent<AudioSource>();
+                boatAudioSource.playOnAwake = false;
+                boatAudioSource.spatialBlend = 0f; // 2D sound
+                Debug.Log("[InventoryController] Created AudioSource on boat");
+            }
         }
 
         inventoryState.Reset();  // Reset the inventory state
@@ -175,6 +195,9 @@ public class InventoryController : MonoBehaviour, IResettable
                 }
             }
 
+            // Play launch sound
+            PlayLaunchSound(itemToDrop);
+
             // Reduce item count in inventory by 1
             itemsUsedThisRound++;
             RemoveItem(itemToDrop, 1);
@@ -307,6 +330,36 @@ public class InventoryController : MonoBehaviour, IResettable
     /// </summary>
     public bool IsClean => itemsUsedThisRound == 0 &&
         (inventoryState.inventory.Count == 1 || inventoryState.inventory.Count == allPossibleItems.Count);
+
+    #endregion
+
+    #region Audio
+
+    /// <summary>
+    /// Play launch sound when item is thrown
+    /// </summary>
+    private void PlayLaunchSound(Item item)
+    {
+        if (boatAudioSource == null)
+        {
+            Debug.LogWarning("[InventoryController] No AudioSource available for launch sound");
+            return;
+        }
+
+        // Play item-specific sound if available
+        if (item.launchSound != null)
+        {
+            boatAudioSource.PlayOneShot(item.launchSound, item.launchVolume);
+            Debug.Log($"[InventoryController] Playing launch sound for {item.itemName} at volume {item.launchVolume}");
+        }
+        // Otherwise play default sound if available
+        else if (defaultLaunchSound != null)
+        {
+            boatAudioSource.PlayOneShot(defaultLaunchSound, 1f);
+            Debug.Log("[InventoryController] Playing default launch sound");
+        }
+        // Silent if no sounds configured (no error logged)
+    }
 
     #endregion
 }
