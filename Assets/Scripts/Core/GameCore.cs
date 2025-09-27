@@ -18,6 +18,7 @@ public class GameCore : MonoBehaviour
     // Services (null until properly initialized)
     public static ILeakService Leaks { get; private set; }
     public static IItemService Items { get; private set; }
+    public static IItemLookupService ItemLookup { get; private set; }
     public static IResupplyService Resupply { get; private set; }
     public static IAudioService Audio { get; private set; }
     public static IDifficultyService Difficulty { get; private set; }
@@ -48,6 +49,7 @@ public class GameCore : MonoBehaviour
     [SerializeField] private GameObject leakManagerPrefab; // For future spawning
     [SerializeField] private ItemPoolConfig itemPoolConfig;
     [SerializeField] private ScoringConfig scoringConfig; // Dynamic scoring configuration
+    [SerializeField] private OilLeak.Inventory.ItemCatalog itemCatalog; // Central item catalog
 
     // Debug settings
     [Header("Debug")]
@@ -272,6 +274,17 @@ public class GameCore : MonoBehaviour
             Debug.LogWarning("[GameCore] DevHUD not found - DevHudService will be null");
         }
 
+        // ItemCatalog service
+        if (itemCatalog != null)
+        {
+            ItemLookup = new ItemCatalogAdapter(itemCatalog);
+            Debug.Log("[GameCore] ItemCatalog registered as ItemLookupService");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] ItemCatalog not assigned - ItemLookupService will be null");
+        }
+
         // Inventory controller registration
         if (inventoryController != null)
         {
@@ -395,6 +408,13 @@ public class GameCore : MonoBehaviour
                 break;
 
             case GameFlowState.Menu:
+                // Reset when restarting from Round Over (bypasses Cleaning state)
+                // This handles the ShowingResults → Menu transition that skips normal cleanup
+                if (oldState == GameFlowState.ShowingResults)
+                {
+                    Debug.Log("[GameCore] Direct ShowingResults → Menu transition - calling ResetRegistry.ResetAll()");
+                    ResetRegistry.ResetAll();
+                }
                 HandleMenuState();
                 break;
         }

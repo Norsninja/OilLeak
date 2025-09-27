@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using OilLeak.Inventory;
 
 /// <summary>
 /// Manages all resupply events (air-drops, barges, etc)
@@ -16,6 +18,9 @@ public class ResupplyManager : MonoBehaviour, IResettable
     [SerializeField] private LootTable corporateLoot;
     [SerializeField] private LootTable desperationLoot;
     [SerializeField] private LootTable absurdistLoot;
+
+    [Header("Item Gating")]
+    [SerializeField] private ItemGatingConfig itemGatingConfig;
 
     [Header("Water Settings")]
     [SerializeField] private float waterSurfaceY = 0f; // Adjust if water isn't at Y=0
@@ -498,6 +503,33 @@ public class ResupplyManager : MonoBehaviour, IResettable
         if (currentLoot != null && inventoryController != null)
         {
             var lootItems = currentLoot.GenerateLoot();
+
+            // Apply integrity-based gating filter if configured
+            if (itemGatingConfig != null && GameCore.FutilitySystem != null)
+            {
+                int currentTier = GameCore.FutilitySystem.GetIntegrityTier();
+                var filteredItems = new List<(Item, int)>();
+
+                foreach (var (item, count) in lootItems)
+                {
+                    if (itemGatingConfig.IsItemAllowedAtTier(item, currentTier))
+                    {
+                        filteredItems.Add((item, count));
+                    }
+                    else
+                    {
+                        Debug.Log($"[ResupplyManager] Item {item.itemName} filtered out - not allowed at tier {currentTier}");
+                    }
+                }
+
+                lootItems = filteredItems;
+
+                // Edge case: If all items filtered out, log warning
+                if (lootItems.Count == 0)
+                {
+                    Debug.LogWarning($"[ResupplyManager] All loot items filtered out at tier {currentTier}!");
+                }
+            }
 
             string summary = "";
             foreach (var (item, count) in lootItems)

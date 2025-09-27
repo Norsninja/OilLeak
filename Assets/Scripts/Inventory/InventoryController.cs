@@ -1,11 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Core;
+using OilLeak.Inventory;
 
 public class InventoryController : MonoBehaviour, IResettable
 {
-    public List<Item> allPossibleItems;
-    public Item defaultItem;
+    [Header("Inventory Configuration")]
+    [SerializeField] private StartingInventoryConfig startingInventoryConfig;
+
+    [Header("Legacy Fields - To Be Removed")]
+    [SerializeField] private List<Item> allPossibleItems; // DEPRECATED - will be removed after testing
+    [SerializeField] private Item defaultItem; // DEPRECATED - will be removed after testing
+
+    [Header("References")]
     public Transform boatTransform; // Reference to the boat's Transform
     public float tossForce = 5.0f; // Upward force to toss the item
     public Vector3 itemDropOffset = new Vector3(0, 1, 0); // Offset for dropping the item
@@ -57,27 +64,54 @@ public class InventoryController : MonoBehaviour, IResettable
 
     public void LoadInventory()
     {
-        Debug.Log("Loading Inventory");
+        Debug.Log("[InventoryController] Loading starting inventory");
+        inventoryState.Reset();  // Clear any existing inventory
 
-        // Populate the inventory with all possible items
-        foreach (Item item in allPossibleItems)
+        // Use new config if available, fallback to legacy for backward compatibility
+        if (startingInventoryConfig != null)
         {
-            if (item == defaultItem) // If it's the default item
+            // Load from StartingInventoryConfig
+            foreach (var startingItem in startingInventoryConfig.StartingItems)
             {
-                if(!inventoryState.inventory.ContainsKey(item.itemName)) // Check if it's not already added
+                if (startingItem.item == null)
                 {
-                    Debug.Log($"Adding {defaultItem.itemName} to inventory with count of {defaultItemCount}");
-                    AddItem(item, defaultItemCount);
-                    EquipItem(item.itemName); // Equip default item
+                    Debug.LogWarning("[InventoryController] Null item in starting inventory config");
+                    continue;
                 }
-                else
-                {
-                    Debug.Log($"Inventory already has {inventoryState.inventory[defaultItem.itemName].count} of {defaultItem.itemName}");
-                }
+
+                AddItem(startingItem.item, startingItem.quantity);
+                Debug.Log($"[InventoryController] Added {startingItem.quantity}x {startingItem.item.itemName}");
             }
-            else // For all other items
+
+            // Auto-equip the designated item
+            var autoEquipItem = startingInventoryConfig.GetAutoEquipItem();
+            if (autoEquipItem != null)
             {
-                AddItem(item, testItemCount); 
+                EquipItem(autoEquipItem.itemName);
+                Debug.Log($"[InventoryController] Auto-equipped {autoEquipItem.itemName}");
+            }
+        }
+        else
+        {
+            // Fallback to legacy behavior if no config assigned
+            Debug.LogWarning("[InventoryController] No StartingInventoryConfig assigned, using legacy allPossibleItems");
+
+            // Legacy loading code (to be removed after migration)
+            foreach (Item item in allPossibleItems)
+            {
+                if (item == defaultItem) // If it's the default item
+                {
+                    if(!inventoryState.inventory.ContainsKey(item.itemName))
+                    {
+                        Debug.Log($"Adding {defaultItem.itemName} to inventory with count of {defaultItemCount}");
+                        AddItem(item, defaultItemCount);
+                        EquipItem(item.itemName); // Equip default item
+                    }
+                }
+                else // For all other items
+                {
+                    AddItem(item, testItemCount);
+                }
             }
         }
     }
@@ -103,8 +137,20 @@ public class InventoryController : MonoBehaviour, IResettable
                 return;
             }
 
-            // Find the Item object based on the equippedItem name
-            Item itemToDrop = allPossibleItems.Find(item => item.itemName == inventoryState.equippedItem);
+            // Find the Item object using the lookup service (or fallback to legacy search)
+            Item itemToDrop = null;
+
+            // Prefer service lookup if available
+            if (GameCore.ItemLookup != null)
+            {
+                itemToDrop = GameCore.ItemLookup.GetByName(inventoryState.equippedItem);
+            }
+            else if (allPossibleItems != null && allPossibleItems.Count > 0)
+            {
+                // Fallback to legacy search if service not available
+                Debug.LogWarning("[InventoryController] ItemLookupService not available, using legacy search");
+                itemToDrop = allPossibleItems.Find(item => item.itemName == inventoryState.equippedItem);
+            }
 
 
         if (itemToDrop != null)
@@ -328,8 +374,11 @@ public class InventoryController : MonoBehaviour, IResettable
     /// <summary>
     /// Verify the inventory is properly cleaned
     /// </summary>
-    public bool IsClean => itemsUsedThisRound == 0 &&
-        (inventoryState.inventory.Count == 1 || inventoryState.inventory.Count == allPossibleItems.Count);
+    /// <summary>
+    /// Check if inventory is in clean state (no items used this round).
+    /// Decoupled from catalog size per Senior Dev's recommendation.
+    /// </summary>
+    public bool IsClean => itemsUsedThisRound == 0;
 
     #endregion
 

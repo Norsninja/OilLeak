@@ -56,12 +56,13 @@ namespace OilLeak.UI
             {
                 leaderboardCanvas.SetActive(false);
 
-                // Ensure leaderboard appears on top of other UI
-                var canvas = leaderboardCanvas.GetComponent<Canvas>();
-                if (canvas != null)
-                {
-                    canvas.sortingOrder = 10; // Higher than RoundOverCanvas
-                }
+                // COMMENTED OUT: Respect sorting order set in Inspector instead of overriding at runtime
+                // This allows designers to control layering through Unity's Inspector
+                // var canvas = leaderboardCanvas.GetComponent<Canvas>();
+                // if (canvas != null)
+                // {
+                //     canvas.sortingOrder = 10; // Higher than RoundOverCanvas
+                // }
             }
             if (namePromptPanel != null)
                 namePromptPanel.SetActive(false);
@@ -165,12 +166,13 @@ namespace OilLeak.UI
             {
                 leaderboardCanvas.SetActive(true);
 
-                // Ensure leaderboard appears on top of other UI
-                var canvas = leaderboardCanvas.GetComponent<Canvas>();
-                if (canvas != null)
-                {
-                    canvas.sortingOrder = 10; // Higher than RoundOverCanvas
-                }
+                // COMMENTED OUT: Respect sorting order set in Inspector instead of overriding at runtime
+                // This allows designers to control layering through Unity's Inspector
+                // var canvas = leaderboardCanvas.GetComponent<Canvas>();
+                // if (canvas != null)
+                // {
+                //     canvas.sortingOrder = 10; // Higher than RoundOverCanvas
+                // }
             }
 
             // Show name prompt
