@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: GameRulesConfig
   m_EditorClassIdentifier: 
   maxEscapedParticles: 100
-  nearFailWarnPercent: 0.725
-  victoryTimeSec: 60
+  nearFailWarnPercent: 0.833
   gallonsPerParticle: 100
   enableDynamicDifficulty: 1
   scaleFailureThreshold: 0

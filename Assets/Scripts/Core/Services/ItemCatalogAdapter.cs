@@ -55,5 +55,21 @@ namespace Core
 
             return catalog.Exists(itemName);
         }
+
+        /// <summary>
+        /// Get the total number of items in the catalog
+        /// </summary>
+        public int TotalItemCount
+        {
+            get
+            {
+                if (catalog == null)
+                {
+                    Debug.LogError("[ItemCatalogAdapter] Catalog is null!");
+                    return 0;
+                }
+                return catalog.Count;
+            }
+        }
     }
 }

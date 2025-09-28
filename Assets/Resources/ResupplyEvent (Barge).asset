@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventName: Barge
   type: 1
-  minInterval: 120
+  minInterval: 90
   maxInterval: 300
-  cooldown: 90
+  cooldown: 60
   spawnWindow: 30
   spawnHeight: 15
   vehicleSpeed: 8
   parachuteDescentSpeed: 2
   horizontalDrift: 0.3
   minDropCount: 1
-  maxDropCount: 3
+  maxDropCount: 4
   despawnTime: 30
   pickupRadius: 1.5
   allowRubberBandTrigger: 1
@@ -33,5 +33,5 @@ MonoBehaviour:
   packagePrefab: {fileID: 4188851391824454191, guid: 33d20072bed5f5c4a9cec2bc76d180d3,
     type: 3}
   showIndicator: 1
-  spawnSound: {fileID: 0}
-  pickupSound: {fileID: 0}
+  spawnSound: {fileID: 8300000, guid: 0e224e82dac1a6e4eb8832e835f7de08, type: 3}
+  pickupSound: {fileID: 8300000, guid: 49e4a64328b8d6840bc518d37df817d1, type: 3}

@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "tiers": {
+    "tier5": {
+      "messages": [
+        { "id": "t5_001", "template": "Congressional Oversight Committee schedules preliminary hearing for Day 147", "weight": 10 },
+        { "id": "t5_002", "template": "EPA reports {blocked} gallons contained - 'Within acceptable variance parameters'", "weight": 8 },
+        { "id": "t5_003", "template": "Oil company stock rises 3% on 'successful mitigation efforts'", "weight": 10 },
+        { "id": "t5_004", "template": "Federal regulators confirm spill affects only 0.0001% of ocean volume", "weight": 10 },
+        { "id": "t5_005", "template": "Day {time}: Company spokesman calls situation 'temporary inconvenience'", "weight": 8 },
+        { "id": "t5_006", "template": "Tourism board: Beaches remain '99.9% oil-free'", "weight": 10 },
+        { "id": "t5_007", "template": "Energy Secretary praises 'rapid response' to minor incident", "weight": 8 },
+        { "id": "t5_008", "template": "Flow rate revised from 1,000 to 5,000 barrels - 'Routine adjustment'", "weight": 10 },
+        { "id": "t5_009", "template": "Coast Guard deploys boom to protect 'sensitive areas' as precaution", "weight": 8 },
+        { "id": "t5_010", "template": "Company CEO: 'Complete confidence in technical team's approach'", "weight": 10 },
+        { "id": "t5_011", "template": "Federal Ocean Purity Index shows {integrity}% pristine conditions", "weight": 7 },
+        { "id": "t5_012", "template": "Experts predict {blocked} gallons neutralized by natural processes", "weight": 6 }
+      ]
+    },
+    "tier4": {
+      "messages": [
+        { "id": "t4_001", "template": "Previous administration's deregulation under Congressional review", "weight": 10 },
+        { "id": "t4_002", "template": "State officials question federal response coordination", "weight": 10 },
+        { "id": "t4_003", "template": "Flow rate adjusted to 12,000 barrels - 'Better modeling available'", "weight": 8 },
+        { "id": "t4_004", "template": "Fishing industry seeks 'temporary' federal assistance package", "weight": 10 },
+        { "id": "t4_005", "template": "Day {time}: {escaped} gallons escaped - agencies dispute figures", "weight": 8 },
+        { "id": "t4_006", "template": "Oversight committee forms subcommittee to investigate oversight", "weight": 10 },
+        { "id": "t4_007", "template": "Company deploys 'top hat' technology - 40% capture rate expected", "weight": 8 },
+        { "id": "t4_008", "template": "Wildlife agencies report 'manageable impact' on local species", "weight": 10 },
+        { "id": "t4_009", "template": "Senate schedules CEO testimony for next quarter", "weight": 10 },
+        { "id": "t4_010", "template": "Environmental Protection Agency seeks additional monitoring funds", "weight": 8 },
+        { "id": "t4_011", "template": "Ocean integrity at {integrity}% - 'Still within recovery threshold'", "weight": 7 },
+        { "id": "t4_012", "template": "After {items} containment attempts, officials remain 'cautiously optimistic'", "weight": 6 }
+      ]
+    },
+    "tier3": {
+      "messages": [
+        { "id": "t3_001", "template": "Congress 'deeply concerned' after {escaped} gallons breach containment", "weight": 10 },
+        { "id": "t3_002", "template": "'Junk shot' technique shows promise - golf balls deployed", "weight": 10 },
+        { "id": "t3_003", "template": "Flow rate revised to 35,000 barrels - 'Complex variables involved'", "weight": 8 },
+        { "id": "t3_004", "template": "Tourism board: Beaches remain 'partially accessible'", "weight": 10 },
+        { "id": "t3_005", "template": "Day {time}: Company spokesman disputes 'alarmist' media coverage", "weight": 8 },
+        { "id": "t3_006", "template": "Federal judge approves class action suit from fishing industry", "weight": 10 },
+        { "id": "t3_007", "template": "Scientists discover oil plume - company questions definition of 'plume'", "weight": 10 },
+        { "id": "t3_008", "template": "'Top kill' operation begins after {items} previous attempts", "weight": 8 },
+        { "id": "t3_009", "template": "Seafood safety tests show 'acceptable contamination levels'", "weight": 10 },
+        { "id": "t3_010", "template": "87,000 square miles of fishing waters closed 'as precaution'", "weight": 10 },
+        { "id": "t3_011", "template": "With {integrity}% ocean purity, recovery plan deemed 'feasible'", "weight": 7 },
+        { "id": "t3_012", "template": "Score of {score} citizen response efforts logged by authorities", "weight": 6 }
+      ]
+    },
+    "tier2": {
+      "messages": [
+        { "id": "t2_001", "template": "Day {time}: 47th Congressional hearing yields 'productive dialogue'", "weight": 10 },
+        { "id": "t2_002", "template": "Thoughts and prayers trending #1 worldwide", "weight": 10 },
+        { "id": "t2_003", "template": "Flow rate confirmed at 60,000 barrels - previous estimates 'conservative'", "weight": 8 },
+        { "id": "t2_004", "template": "Company CEO spotted at yacht club - spokesman calls it 'scheduled maintenance'", "weight": 10 },
+        { "id": "t2_005", "template": "Federal aid package stalled in committee - deficit concerns cited", "weight": 10 },
+        { "id": "t2_006", "template": "After {escaped} gallons, company redefines 'contained' in press release", "weight": 8 },
+        { "id": "t2_007", "template": "Celebrity telethon raises awareness about awareness", "weight": 10 },
+        { "id": "t2_008", "template": "Scientists warn of 'dead zones' - officials prefer term 'life-challenged areas'", "weight": 10 },
+        { "id": "t2_009", "template": "Kitchen sinks added to 'junk shot' after {items} items prove ineffective", "weight": 8 },
+        { "id": "t2_010", "template": "Social media 'slacktivism' reaches all-time high", "weight": 10 },
+        { "id": "t2_011", "template": "Ocean integrity at {integrity}% - officials discuss 'new normal'", "weight": 7 },
+        { "id": "t2_012", "template": "Volunteer throws item #{items} - 'Every bit helps,' says nobody", "weight": 6 }
+      ]
+    },
+    "tier1": {
+      "messages": [
+        { "id": "t1_001", "template": "CEO receives $50M safety bonus despite {escaped} gallons released", "weight": 10 },
+        { "id": "t1_002", "template": "Government declares {integrity}% contamination the 'new baseline'", "weight": 10 },
+        { "id": "t1_003", "template": "Day {time}: Officials announce 'Mission Accomplished' banner premature", "weight": 8 },
+        { "id": "t1_004", "template": "Congress votes to redefine 'clean water' to include 40% oil", "weight": 10 },
+        { "id": "t1_005", "template": "Company rebrands disaster as 'Ocean Enrichment Initiative'", "weight": 10 },
+        { "id": "t1_006", "template": "Federal agency claims oil helps fish develop 'protective coating'", "weight": 10 },
+        { "id": "t1_007", "template": "Last fishing boat retired - converted to oil skimmer", "weight": 10 },
+        { "id": "t1_008", "template": "Tourism board: 'Black beaches are the new black'", "weight": 8 },
+        { "id": "t1_009", "template": "After {items} failed attempts, officials suggest 'accepting fate'", "weight": 8 },
+        { "id": "t1_010", "template": "Stock market hits record high as cleanup companies surge", "weight": 10 },
+        { "id": "t1_011", "template": "Score {score} points achieved in 'unwinnable scenario' say experts", "weight": 7 },
+        { "id": "t1_012", "template": "Breaking: Ocean renamed 'Gulf of Oil' by emergency decree", "weight": 6 }
+      ]
+    }
+  },
+  "breaking": [
+    {
+      "id": "brk_tier_drop",
+      "template": "BREAKING: Ocean integrity falls below {integrity}% - officials 'monitoring situation'",
+      "weight": 10,
+      "cooldownSec": 60,
+      "ttlSec": 30
+    },
+    {
+      "id": "brk_pressure",
+      "template": "BREAKING: Pressure surge releases additional {escaped} gallons",
+      "weight": 10,
+      "cooldownSec": 45,
+      "ttlSec": 20
+    },
+    {
+      "id": "brk_milestone",
+      "template": "BREAKING: Day {time} of crisis - no end in sight",
+      "weight": 8,
+      "cooldownSec": 120,
+      "ttlSec": 30
+    },
+    {
+      "id": "brk_items",
+      "template": "BREAKING: Item #{items} deployed - effectiveness remains at 0%",
+      "weight": 7,
+      "cooldownSec": 90,
+      "ttlSec": 25
+    },
+    {
+      "id": "brk_resupply",
+      "template": "BREAKING: Emergency supplies arrive - officials call it 'game-changer'",
+      "weight": 8,
+      "cooldownSec": 60,
+      "ttlSec": 20
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb79824094b549e439ae15c3050e3135, type: 3}
+  m_Name: GolfBall
+  m_EditorClassIdentifier: 
+  itemName: GolfBall
+  buoyancy: 1
+  weight: 3
+  cost: 0
+  itemPrefab: {fileID: 760115929732759889, guid: 3c0d7b53ab5a8f842836752c0042b5af,
+    type: 3}
+  isRagdoll: 0
+  assemblesOnBoat: 0
+  exposureToSaturating: 5
+  exposureToSaturated: 10
+  exposureToSludge: 15
+  porosityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  blockCapacity: 10
+  particlesToSaturating: 3
+  particlesToSaturated: 5
+  particlesToSludge: 10
+  exposurePerParticle: 0.3
+  exposureGracePeriod: 0.4
+  sinksOnExposure: 0
+  sinkStepPerStage: 0.5
+  tintSaturating: {r: 0.8, g: 0.7, b: 0.5, a: 1}
+  tintSaturated: {r: 0.5, g: 0.4, b: 0.3, a: 1}
+  tintSludge: {r: 0.3, g: 0.25, b: 0.2, a: 1}
+  launchSound: {fileID: 8300000, guid: 335a3703da23859408493de3eb646e7b, type: 3}
+  launchVolume: 0.789

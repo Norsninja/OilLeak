@@ -15,14 +15,14 @@ MonoBehaviour:
   eventName: Air Drop
   type: 0
   minInterval: 45
-  maxInterval: 120
-  cooldown: 90
+  maxInterval: 90
+  cooldown: 60
   spawnWindow: 30
   spawnHeight: 10
   vehicleSpeed: 8
   parachuteDescentSpeed: 2
   horizontalDrift: 0.4
-  minDropCount: 1
+  minDropCount: 2
   maxDropCount: 3
   despawnTime: 30
   pickupRadius: 1.5
@@ -33,5 +33,5 @@ MonoBehaviour:
   packagePrefab: {fileID: 4188851391824454191, guid: a1a931e1e669add42829d195c1aff6dd,
     type: 3}
   showIndicator: 1
-  spawnSound: {fileID: 0}
-  pickupSound: {fileID: 0}
+  spawnSound: {fileID: 8300000, guid: 777a845a6f4281c459c15da95e356639, type: 3}
+  pickupSound: {fileID: 8300000, guid: 49e4a64328b8d6840bc518d37df817d1, type: 3}

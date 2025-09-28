@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb79824094b549e439ae15c3050e3135, type: 3}
   m_Name: RagDoll
   m_EditorClassIdentifier: 
-  itemName: RagDoll
+  itemName: Oil Executive
   buoyancy: 0.5
   weight: 10
   cost: 0

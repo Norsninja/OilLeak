@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69cd9ff8cc430b04793595768d0d76f9, type: 3}
+  m_Name: Tense
+  m_EditorClassIdentifier: 
+  stateName: Tense
+  playlist:
+  - {fileID: 8300000, guid: aff1623ab07891942a4c9f22c01ed9dc, type: 3}
+  - {fileID: 8300000, guid: 312fddfb966c89349a8336aeeade2fad, type: 3}
+  shuffle: 1
+  loopPlaylist: 1
+  volume: 0.52
+  crossfadeSeconds: 1.5
+  minGap: 0
+  description: 

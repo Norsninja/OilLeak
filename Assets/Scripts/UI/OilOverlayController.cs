@@ -22,14 +22,7 @@ namespace OilLeak.UI
         [SerializeField] private GameObject splatPrefab; // Image prefab for splats
 
         [Header("Tier Configuration")]
-        [SerializeField] private float centerClearRadius = 200f; // Boat visibility zone
-        [SerializeField] private float splatHalfSize = 250f; // Half of 500x500 splat
         [SerializeField] private int[] tierCapacities = new int[] { 20, 20, 30, 30 }; // Matches integrity acts: 80/60/30
-
-        [Header("Splat Variation")]
-        [SerializeField] private float scaleMin = 0.8f;
-        [SerializeField] private float scaleMax = 1.2f;
-        [SerializeField] private float angleJitter = 10f; // Degrees of randomness in placement angle
 
         [Header("Debug")]
         [SerializeField] private bool debugLogging = false;

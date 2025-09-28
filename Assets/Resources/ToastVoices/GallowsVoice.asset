@@ -16,7 +16,8 @@ MonoBehaviour:
   defaultHandle: '@PelicanLarry'
   defaultAvatar: {fileID: 0}
   borderColor: {r: 0.6039216, g: 0.8039216, b: 0.19607843, a: 1}
-  defaultNotificationSound: {fileID: 0}
+  defaultNotificationSound: {fileID: 8300000, guid: 2a920d56aacaaae48bc77175d4f8c5a5,
+    type: 3}
   audioOverrides: []
   iconOverrides: []
   messagesJsonFile: {fileID: 0}

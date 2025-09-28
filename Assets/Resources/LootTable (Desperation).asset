@@ -15,15 +15,35 @@ MonoBehaviour:
   tierName: Desperation
   tier: 2
   lootEntries:
-  - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
-    dropChance: 0.674
-    minQuantity: 40
-    maxQuantity: 60
+  - item: {fileID: 11400000, guid: 4a41510edd1f68245aee0f25e855a930, type: 2}
+    dropChance: 1
+    minQuantity: 5
+    maxQuantity: 25
     weight: 0
   - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
     dropChance: 0.674
-    minQuantity: 40
-    maxQuantity: 60
+    minQuantity: 5
+    maxQuantity: 20
+    weight: 0
+  - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+    dropChance: 0.562
+    minQuantity: 5
+    maxQuantity: 20
+    weight: 0
+  - item: {fileID: 11400000, guid: d12ef6feb523fe24e99bd39edf1ed465, type: 2}
+    dropChance: 0.775
+    minQuantity: 10
+    maxQuantity: 25
+    weight: 0
+  - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
+    dropChance: 0.775
+    minQuantity: 10
+    maxQuantity: 25
+    weight: 0
+  - item: {fileID: 11400000, guid: 52960f39b0a91534e82c8bc3da0f29f8, type: 2}
+    dropChance: 0.882
+    minQuantity: 10
+    maxQuantity: 25
     weight: 0
   quantityMultiplier: 1
   minimumTotalItems: 5

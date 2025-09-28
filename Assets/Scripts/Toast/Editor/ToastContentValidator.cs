@@ -188,6 +188,7 @@ namespace OilLeak.Toast.Editor
                 validTriggerIds.Add("time_60");
                 validTriggerIds.Add("time_90");
                 validTriggerIds.Add("time_120");
+                validTriggerIds.Add("time_50");  // 50 minutes (3000 seconds)
 
                 // Gallon triggers
                 validTriggerIds.Add("gallons_10k");
@@ -230,6 +231,9 @@ namespace OilLeak.Toast.Editor
                 validTriggerIds.Add("game_start");
                 validTriggerIds.Add("resupply_first");
             }
+
+            // Warning triggers
+            validTriggerIds.Add("warning_oil_critical");
 
             // Always add special triggers (they might not be in Resources yet)
             validTriggerIds.Add("special_junk_shot");

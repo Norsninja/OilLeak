@@ -38,11 +38,13 @@ namespace OilLeak.Toast.Services
         public int ResupplyCount { get; set; }
         public int RunSeed { get; set; } = 12345;
 
+        #pragma warning disable 0067 // Events never used - test stub events
         public event Action<float> OnTimeUpdated;
         public event Action<float> OnIntegrityChanged;
         public event Action<float> OnGallonsBlockedChanged;
         public event Action<float> OnGallonsEscapedChanged;
         public event Action OnResupplyEvent;
+        #pragma warning restore 0067
 
         public void UpdateTime(float time)
         {

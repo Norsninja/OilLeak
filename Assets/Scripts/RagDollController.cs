@@ -70,14 +70,18 @@ public class RagdollController : MonoBehaviour
             StoreBindPose();
         }
 
-        // Step 1: Set all rigidbodies to kinematic to prevent physics conflicts
+        // Step 1: Zero velocities BEFORE setting kinematic to avoid warnings
         foreach (Rigidbody rbPart in ragdollRigidbodies)
         {
             if (rbPart != null)
             {
+                // Only zero velocities if not already kinematic
+                if (!rbPart.isKinematic)
+                {
+                    rbPart.velocity = Vector3.zero;
+                    rbPart.angularVelocity = Vector3.zero;
+                }
                 rbPart.isKinematic = true;
-                rbPart.velocity = Vector3.zero;
-                rbPart.angularVelocity = Vector3.zero;
             }
         }
 
@@ -203,6 +207,31 @@ public class RagdollController : MonoBehaviour
     public void Throw(Vector3 direction, float force)
     {
         spineRigidBody.AddForce(direction * force, ForceMode.Impulse);
+    }
+
+    /// <summary>
+    /// Clean up when returning to pool
+    /// </summary>
+    void OnDisable()
+    {
+        // Zero velocities first while non-kinematic
+        foreach (Rigidbody rbPart in ragdollRigidbodies)
+        {
+            if (rbPart != null && !rbPart.isKinematic)
+            {
+                rbPart.velocity = Vector3.zero;
+                rbPart.angularVelocity = Vector3.zero;
+            }
+        }
+
+        // Then set to kinematic for pool storage
+        foreach (Rigidbody rbPart in ragdollRigidbodies)
+        {
+            if (rbPart != null)
+            {
+                rbPart.isKinematic = true;
+            }
+        }
     }
     void OnCollisionEnter(Collision collision)
     {

@@ -593,6 +593,21 @@
             }
           ],
           "iconKey": "tombstone"
+        },
+        {
+          "id": "reality_testimony_011",
+          "triggerId": "time_50",
+          "template": "50 minutes. In 2010, BP said the leak was 1,000 barrels per day. It was 62,000.",
+          "weight": 10,
+          "prerequisites": []
+        },
+        {
+          "id": "reality_testimony_012",
+          "triggerId": "warning_oil_critical",
+          "template": "CRITICAL: Ocean integrity at {integrity}%. Recovery impossible past this point.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@EmergencyAlert"
         }
       ]
     }

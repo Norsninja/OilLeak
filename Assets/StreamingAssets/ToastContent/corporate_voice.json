@@ -668,6 +668,22 @@
           "weight": 10,
           "prerequisites": [],
           "handleOverride": "@Chapter11Angels"
+        },
+        {
+          "id": "corp_unhinged_time_50",
+          "triggerId": "time_50",
+          "template": "50 minutes! Containment is futile. You will be assimilated into our quarterly losses.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@BorgPR"
+        },
+        {
+          "id": "corp_warning_critical",
+          "triggerId": "warning_oil_critical",
+          "template": "Minor spillage approaching acceptable limits. Insurance claim preparation recommended.",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@RiskManagement"
         }
       ]
     }

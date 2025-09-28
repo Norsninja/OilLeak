@@ -18,7 +18,6 @@ namespace Core.Systems
         // Restart state tracking
         private float restartHoldTime = 0f;
         private bool isRestarting = false;
-        private bool autoStartNextRun = false;
         private bool pendingResultsRestart = false;
 
         // Cached state for efficiency
@@ -83,13 +82,8 @@ namespace Core.Systems
                 pendingResultsRestart = false;
             }
 
-            // Handle auto-start after restart chain completes
-            if (autoStartNextRun && newState == GameFlowState.Menu)
-            {
-                autoStartNextRun = false;
-                LogDebug("Auto-starting next run from Menu");
-                GameCore.StartGame();
-            }
+            // Auto-start is now handled in GameCore.HandleMenuState()
+            // This ensures the modal is properly gated
         }
 
         void Update()
@@ -111,7 +105,7 @@ namespace Core.Systems
             {
                 LogDebug("Executing pending restart from ShowingResults");
                 pendingResultsRestart = false;
-                autoStartNextRun = true;
+                GameCore.SetAutoStartNextRun(true);
                 GameCore.RestartGame();
                 return;
             }
@@ -135,6 +129,13 @@ namespace Core.Systems
                 if (state == GameFlowState.Menu)
                 {
                     LogDebug("E pressed - Starting game");
+
+                    // Immediately hide the start modal to prevent one-frame flicker
+                    if (GameCore.StartModal != null)
+                    {
+                        GameCore.StartModal.HideModal();
+                    }
+
                     GameCore.StartGame();
                 }
             }
@@ -217,7 +218,7 @@ namespace Core.Systems
                 if (restartHoldTime >= holdToRestartDuration)
                 {
                     isRestarting = true;
-                    autoStartNextRun = true;
+                    GameCore.SetAutoStartNextRun(true);
                     LogDebug($"R held for {holdToRestartDuration}s - Restarting game");
 
                     // Hide progress immediately
@@ -240,6 +241,35 @@ namespace Core.Systems
 
         private void HandleShowingResultsInput()
         {
+            // Check if modal is blocking input
+            if (OilLeak.UI.LeaderboardUIController.IsModalActive)
+            {
+                // Let the modal handle its own input
+                return;
+            }
+
+            // L key - View Leaderboard
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                LogDebug("L pressed in ShowingResults - Opening leaderboard");
+
+                // Get UI controller and open leaderboard
+                var uiController = UnityEngine.Object.FindObjectOfType<UIController>();
+                if (uiController != null)
+                {
+                    // Find or create leaderboard controller
+                    var leaderboardController = UnityEngine.Object.FindObjectOfType<OilLeak.UI.LeaderboardUIController>();
+                    if (leaderboardController != null)
+                    {
+                        leaderboardController.Open();
+                    }
+                    else
+                    {
+                        LogDebug("LeaderboardUIController not found in scene");
+                    }
+                }
+            }
+
             // Instant restart from results screen - no guard needed
             // Using GetKeyDown ensures fresh press (not held from previous state)
             if (Input.GetKeyDown(KeyCode.R))
@@ -249,7 +279,7 @@ namespace Core.Systems
                 // If GameCore is initialized, restart immediately
                 if (GameCore.IsInitialized)
                 {
-                    autoStartNextRun = true;
+                    GameCore.SetAutoStartNextRun(true);
                     GameCore.RestartGame(); // Goes to Menu, then auto-starts
                 }
                 else

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69cd9ff8cc430b04793595768d0d76f9, type: 3}
+  m_Name: Menu
+  m_EditorClassIdentifier: 
+  stateName: Menu
+  playlist:
+  - {fileID: 8300000, guid: a065d68b23f5f16408467b568d35fdee, type: 3}
+  - {fileID: 8300000, guid: 8619194183fc18342bbacdf08bdeb4ca, type: 3}
+  - {fileID: 8300000, guid: 0d2ce4bd7e02a6b4d9b315f8fe9b282f, type: 3}
+  - {fileID: 8300000, guid: 29d8052f3b0c00c408d429f9acea4f0b, type: 3}
+  shuffle: 1
+  loopPlaylist: 1
+  volume: 0.78
+  crossfadeSeconds: 1.5
+  minGap: 0
+  description: 

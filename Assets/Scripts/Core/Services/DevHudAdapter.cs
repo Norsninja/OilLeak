@@ -42,8 +42,8 @@ namespace Core.Services
             sessionData.timeElapsed = stats.TimeElapsed;
             sessionData.particlesBlocked = stats.ParticlesBlocked;
             sessionData.particlesEscaped = stats.ParticlesEscaped;
-            sessionData.maxEscaped = 100; // Legacy field, keeping for compatibility
-            sessionData.escapedPercent = stats.ParticlesEscaped; // Now just raw count
+            sessionData.maxEscaped = 100; // Fixed threshold for MVP
+            sessionData.escapedPercent = stats.ParticlesEscaped; // When max=100, count equals percentage
 
             // Integrity metrics
             sessionData.integrityPercent = stats.Integrity;

@@ -1,0 +1,11 @@
+{
+  "RoslynExtensionsOptions": {
+    "EnableAnalyzersSupport": false
+  },
+  "FormattingOptions": {
+    "EnableEditorConfigSupport": false
+  },
+  "MSBuild": {
+    "Enabled": false
+  }
+}

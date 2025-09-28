@@ -107,7 +107,7 @@ QualitySettings:
   - serializedVersion: 3
     name: Medium
     pixelLightCount: 1
-    shadows: 1
+    shadows: 0
     shadowResolution: 2
     shadowProjection: 1
     shadowCascades: 2

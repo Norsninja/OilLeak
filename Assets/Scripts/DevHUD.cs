@@ -86,7 +86,7 @@ public class DevHUD : MonoBehaviour
         var stateData = adapter.GetStateData();
 
         // Calculate background size
-        int totalHeight = 750; // Increased for new integrity and scoring sections
+        int totalHeight = 900; // Increased to prevent section overlaps
 
         // Background box
         GUI.Box(new Rect(10, 10, 340, totalHeight), "");
@@ -94,7 +94,7 @@ public class DevHUD : MonoBehaviour
 
         int y = 35;
         int lineHeight = 20;
-        int sectionSpacing = 5;
+        int sectionSpacing = 20; // Increased spacing between sections to prevent overlaps
 
         // === PERFORMANCE SECTION ===
         GUI.Label(new Rect(15, y, 330, lineHeight), "-- Performance --", headerStyle);

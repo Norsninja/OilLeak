@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71475aa9761a3cd40a7673df36b92c5c, type: 3}
+  m_Name: ItemGatingConfig
+  m_EditorClassIdentifier: 
+  tierConfigs:
+  - tier: 5
+    tierName: Pristine
+    availableItems:
+    - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 1
+    - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 1
+    - item: {fileID: 11400000, guid: d12ef6feb523fe24e99bd39edf1ed465, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+  - tier: 4
+    tierName: Stable
+    availableItems:
+    - item: {fileID: 11400000, guid: d12ef6feb523fe24e99bd39edf1ed465, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+  - tier: 3
+    tierName: Damaged
+    availableItems:
+    - item: {fileID: 11400000, guid: d12ef6feb523fe24e99bd39edf1ed465, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 4a41510edd1f68245aee0f25e855a930, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+  - tier: 2
+    tierName: Critical
+    availableItems:
+    - item: {fileID: 11400000, guid: 52960f39b0a91534e82c8bc3da0f29f8, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 4a41510edd1f68245aee0f25e855a930, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: a1e533d8bd9d013498ed4e189131bb0b, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+  - tier: 1
+    tierName: Failing
+    availableItems:
+    - item: {fileID: 11400000, guid: a1e533d8bd9d013498ed4e189131bb0b, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 5f095dfd8552c8d4998ec176368cad07, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: ccaaaad8d368e6e4491a1a1c9d905d9f, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 52960f39b0a91534e82c8bc3da0f29f8, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0
+    - item: {fileID: 11400000, guid: 4a41510edd1f68245aee0f25e855a930, type: 2}
+      allowedInResupply: 1
+      allowedInStartingInventory: 0

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: CorporateVoice
   m_EditorClassIdentifier: 
   voiceId: corporate
-  defaultHandle: '@BPSocialTeam'
+  defaultHandle: '@OilSocialTeam'
   defaultAvatar: {fileID: 0}
   borderColor: {r: 1, g: 0.84313726, b: 0, a: 1}
-  defaultNotificationSound: {fileID: 0}
+  defaultNotificationSound: {fileID: 8300000, guid: 053701903323c7442bf78863e44f4a95,
+    type: 3}
   audioOverrides: []
   iconOverrides: []
   messagesJsonFile: {fileID: 0}

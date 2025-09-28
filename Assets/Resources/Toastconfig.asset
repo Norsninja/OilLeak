@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: ToastSystemConfig
+  m_Name: Toastconfig
   m_EditorClassIdentifier: OilLeak.Runtime:OilLeak.Toast.Services:ToastSystemConfig
-  maxVisibleToasts: 3
-  defaultDisplayDuration: 2.5
+  maxVisibleToasts: 7
+  defaultDisplayDuration: 5
   maxQueueLength: 10
   overflowPolicy: 0
   batchProcessInterval: 0.25

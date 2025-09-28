@@ -31,6 +31,12 @@ public class GameCore : MonoBehaviour
     public static IGameStateProvider ToastState { get; private set; }
     public static IToastService Toasts { get; private set; }
 
+    // News ticker service
+    public static OilLeak.News.INewsTickerService NewsTicker { get; private set; }
+
+    // Start modal service
+    public static OilLeak.UI.StartModalController StartModal { get; private set; }
+
     // Core game systems
     public static GameFlowStateMachine Flow { get; private set; }
     public static GameSession Session { get; private set; }
@@ -43,6 +49,9 @@ public class GameCore : MonoBehaviour
 
     // Deferred state transition flag
     private static bool pendingStartRun = false;
+
+    // Auto-restart intent flag - set when player restarts from Round Over
+    private static bool autoStartNextRun = false;
 
     // Configuration references (will be set in Inspector)
     [Header("Service Configurations")]
@@ -357,6 +366,40 @@ public class GameCore : MonoBehaviour
             Toasts = null;
         }
 
+        // Register News Ticker service
+        var newsTickerUI = FindObjectOfType<OilLeak.News.NewsTickerUI>();
+        if (newsTickerUI != null)
+        {
+            // Create manager and adapter
+            var newsTickerManager = new OilLeak.News.NewsTickerManager();
+            var newsTickerAdapter = new NewsTickerServiceAdapter(newsTickerManager, newsTickerUI);
+
+            NewsTicker = newsTickerAdapter;
+            ResetRegistry.Register((IResettable)newsTickerAdapter);
+
+            // Initialize immediately
+            NewsTicker.Initialize();
+
+            Debug.Log("[GameCore] NewsTickerService registered and initialized");
+        }
+        else
+        {
+            NewsTicker = null;
+            Debug.LogWarning("[GameCore] NewsTickerUI not found - News ticker will be disabled");
+        }
+
+        // Register Start Modal service
+        StartModal = FindObjectOfType<OilLeak.UI.StartModalController>();
+        if (StartModal != null)
+        {
+            ResetRegistry.Register((IResettable)StartModal);
+            Debug.Log("[GameCore] StartModalController registered");
+        }
+        else
+        {
+            Debug.LogWarning("[GameCore] StartModalController not found - Start modal will be disabled");
+        }
+
         // Verify critical services
         Debug.Assert(Leaks != null, "LeakService is required!");
         Debug.Assert(Items != null, "ItemService is required!");
@@ -468,6 +511,7 @@ public class GameCore : MonoBehaviour
             Leaks?.ResumeLeaks();
             Resupply?.ResumeResupply();
             Toasts?.ResumeToasting();
+            NewsTicker?.Resume();
             Player?.EnableMovement(true);
 
             // Hide pause UI
@@ -492,6 +536,7 @@ public class GameCore : MonoBehaviour
         Resupply?.PauseResupply();
         Audio?.PauseAll();
         Toasts?.PauseToasting();
+        NewsTicker?.Pause();
         Player?.EnableMovement(false);
 
         // Show pause UI
@@ -513,6 +558,7 @@ public class GameCore : MonoBehaviour
         Leaks?.EndLeaks();
         Resupply?.EndResupply();
         Toasts?.StopToasting();
+        NewsTicker?.Stop();
 
         // Transition to cleaning
         Flow.TransitionTo(GameFlowState.Cleaning);
@@ -550,15 +596,15 @@ public class GameCore : MonoBehaviour
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         float cleanTime = (Time.realtimeSinceStartup - cleanStart) * 1000f;
 
-        // Raised threshold to 8ms for realistic cleanup with full service suite
-        // Use Warning for moderate overruns (8-15ms), Error only for severe (>15ms)
-        if (cleanTime > 15f)
+        // Realistic thresholds for cleanup with full service suite
+        // Info < 20ms, Warning 20-35ms, Error > 35ms
+        if (cleanTime > 35f)
         {
-            Debug.LogError($"[GameCore] SEVERE PERFORMANCE: Cleaning took {cleanTime:F2}ms (critical: >15ms)");
+            Debug.LogError($"[GameCore] SEVERE PERFORMANCE: Cleaning took {cleanTime:F2}ms (critical: >35ms)");
         }
-        else if (cleanTime > 8f)
+        else if (cleanTime > 20f)
         {
-            Debug.LogWarning($"[GameCore] PERFORMANCE: Cleaning took {cleanTime:F2}ms (target: 8ms)");
+            Debug.LogWarning($"[GameCore] PERFORMANCE: Cleaning took {cleanTime:F2}ms (target: <20ms)");
         }
         else
         {
@@ -639,6 +685,20 @@ public class GameCore : MonoBehaviour
         // Reset submission flag for next run
         scoresSubmitted = false;
 
+        // Check if this is an auto-restart from Round Over
+        if (autoStartNextRun)
+        {
+            // Clear the flag immediately
+            autoStartNextRun = false;
+            Debug.Log("[GameCore] Auto-restart detected - bypassing menu modal");
+
+            // Skip modal and news ticker to avoid UI flash
+            // Start the game immediately
+            StartGame();
+            return;
+        }
+
+        // Normal menu state for fresh starts
         // Play menu music
         if (Audio != null)
         {
@@ -648,6 +708,21 @@ public class GameCore : MonoBehaviour
 
         // Initialize menu state
         Leaks?.InitializeMenuState();
+
+        // Start news ticker in menu (idle headlines)
+        if (NewsTicker != null)
+        {
+            NewsTicker.UpdateState(new SessionStats { TimeElapsed = 0, Integrity = 100 }, 5); // Pristine tier for menu
+            NewsTicker.Start();
+            Debug.Log("[GameCore] News ticker started in menu");
+        }
+
+        // Show start modal with game instructions
+        if (StartModal != null)
+        {
+            StartModal.ShowModal();
+            Debug.Log("[GameCore] Start modal shown");
+        }
     }
 
     /// <summary>
@@ -705,6 +780,14 @@ public class GameCore : MonoBehaviour
                 futilitySystem.Update();
             }
 
+            // Update news ticker with current stats
+            if (NewsTicker != null && Session != null && futilitySystem != null)
+            {
+                var stats = Session.GetStats();
+                var tier = futilitySystem.GetIntegrityTier();
+                NewsTicker.UpdateState(stats, tier);
+            }
+
             // Update HUD coordinator (manages UI refresh rate)
             if (hudCoordinator != null)
             {
@@ -726,6 +809,19 @@ public class GameCore : MonoBehaviour
     // ============================================================
     // PUBLIC API - External systems use these to control game flow
     // ============================================================
+
+    /// <summary>
+    /// Set the auto-start intent for the next run
+    /// Used when restarting from Round Over to bypass the menu modal
+    /// </summary>
+    public static void SetAutoStartNextRun(bool value)
+    {
+        autoStartNextRun = value;
+        if (value)
+        {
+            Debug.Log("[GameCore] Auto-start intent set for next run");
+        }
+    }
 
     /// <summary>
     /// Start a new game session

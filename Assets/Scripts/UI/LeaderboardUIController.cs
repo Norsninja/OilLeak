@@ -33,7 +33,9 @@ namespace OilLeak.UI
 
         [Header("Configuration")]
         [SerializeField] private int maxNameLength = 20;
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField] private bool debugLogging = true;
+        #endif
 
         // State
         private bool isOpen = false;

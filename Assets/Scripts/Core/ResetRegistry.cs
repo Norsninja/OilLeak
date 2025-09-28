@@ -98,10 +98,15 @@ namespace Core
             string summary = string.Join(", ", timings);
             Debug.Log($"[ResetRegistry] {summary}, Total: {totalTime:F2}ms");
 
-            // CRITICAL WARNING if over 5ms
-            if (totalTime > 5f)
+            // Realistic thresholds for WebGL with multiple services
+            // Info < 20ms, Warning 20-35ms, Error > 35ms
+            if (totalTime > 35f)
             {
-                Debug.LogError($"[ResetRegistry] PERFORMANCE WARNING: Reset took {totalTime:F2}ms (target: 5ms)");
+                Debug.LogError($"[ResetRegistry] PERFORMANCE ERROR: Reset took {totalTime:F2}ms (critical: >35ms)");
+            }
+            else if (totalTime > 20f)
+            {
+                Debug.LogWarning($"[ResetRegistry] PERFORMANCE WARNING: Reset took {totalTime:F2}ms (target: <20ms)");
             }
 
             // Verify all clean

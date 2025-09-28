@@ -21,11 +21,9 @@ public class ThoughtsAndPrayersController : MonoBehaviour, IResettable
     [SerializeField] private AnimationCurve glowIntensity = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private Color glowColor = new Color(1f, 0.9f, 0.7f, 0.8f);
     [SerializeField] private float riseHeight = 2f;
-    [SerializeField] private float riseSpeed = 1f;
 
     // State
     private ActivationPhase currentPhase = ActivationPhase.Idle;
-    private float phaseTimer = 0f;
     private Vector3 originalPosition;
     private MaterialPropertyBlock propertyBlock;
     private Renderer objectRenderer;

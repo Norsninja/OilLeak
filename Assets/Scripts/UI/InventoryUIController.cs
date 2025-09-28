@@ -53,8 +53,19 @@ public class InventoryUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        // Populate the panel
-        foreach (KeyValuePair<string, InventoryState.InventoryItem> entry in inventoryState.inventory)
+        // Sort inventory items for deterministic ordering
+        // This ensures items always appear in the same radial positions
+        var sortedInventory = new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, InventoryState.InventoryItem>>(inventoryState.inventory);
+
+        // Sort alphabetically for now - could be improved to use catalog order if needed
+        // For truly deterministic ordering based on game design, consider:
+        // 1. Adding an "order" field to Item ScriptableObject
+        // 2. Sorting by item tier/unlock order
+        // 3. Using a predefined order list
+        sortedInventory.Sort((a, b) => string.Compare(a.Key, b.Key, System.StringComparison.Ordinal));
+
+        // Populate the panel with sorted items
+        foreach (var entry in sortedInventory)
         {
             GameObject newButton = Instantiate(inventoryItemButtonPrefab, inventoryPanel.transform);
             TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
@@ -70,6 +81,14 @@ public class InventoryUIController : MonoBehaviour
                 // Apply highlight (You can set a color or add an icon to indicate this)
                 buttonText.color = Color.yellow;
             }
+        }
+
+        // Force the radial layout to recalculate after adding all items
+        // This ensures proper positioning even if OnTransformChildrenChanged doesn't fire
+        var radialLayout = inventoryPanel.GetComponent<RadialLayout>();
+        if (radialLayout != null)
+        {
+            radialLayout.RefreshLayout();
         }
     }
 

@@ -24,10 +24,6 @@ public class DifficultyManager : MonoBehaviour
     [SerializeField] private float targetBlockPercentage = 0.6f; // Target 60% block rate
     [SerializeField] private float rubberBandSmoothTime = 5f; // Smooth changes over 5 seconds
 
-    [Header("Particle Limits")]
-    [SerializeField] private int maxParticlesWebGL = 500;
-    [SerializeField] private int maxParticlesDesktop = 1000;
-
     [Header("Debug")]
     [SerializeField] private bool debugLogging = false;
 

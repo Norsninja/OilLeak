@@ -15,7 +15,6 @@ namespace Items
         [Header("Configuration")]
         [SerializeField] private float buoyancyStrength = 50f; // Optional buoyancy force
         [SerializeField] private bool useYConstraint = true; // Use constraint vs buoyancy
-        [SerializeField] private float fallbackSeafloorY = -30f; // Fallback if no seafloor ref provided
 
         // State
         private Rigidbody rb;

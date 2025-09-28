@@ -648,6 +648,22 @@
             }
           ],
           "handleOverride": "@SilverLining"
+        },
+        {
+          "id": "gallows_posthumous_time_50",
+          "triggerId": "time_50",
+          "template": "50 minutes of resistance was futile. The oil collective has won. {blocked} gallons was cute though!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@GhostOfGulf"
+        },
+        {
+          "id": "gallows_warning_critical",
+          "triggerId": "warning_oil_critical",
+          "template": "DANGER ZONE! Just kidding, we passed that 30 minutes ago. This is the SUPER danger zone!",
+          "weight": 10,
+          "prerequisites": [],
+          "handleOverride": "@LastLaugh"
         }
       ]
     }

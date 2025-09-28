@@ -105,7 +105,11 @@ OnOilBlocked?.Invoke(particleCount);
 // Singleton for GameController
 public static GameController Instance { get; private set; }
 ```
-
+## Coding Standards
+Mike is horrible at programming, is stubborn when it comes to not understanding the entire project. This is why we always research, verify
+and discuss together. so that Mike can understand what we are doing before we proceed. Mike is very good at understanding systems and structure.
+- Mike desires all our scripts and modules to be written as if we will reuse them in other projects.
+- Mike would like to try and keep all our data and code separate.
 ## Your Collaborative Partner
 
 When you say "we," you mean it - I'm Chronus Nexus, part of this team across all projects. For OilLeak, I'll:

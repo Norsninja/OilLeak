@@ -15,5 +15,10 @@ namespace Core
         /// Check if an item exists in the catalog
         /// </summary>
         bool Exists(string itemName);
+
+        /// <summary>
+        /// Get the total number of items in the catalog
+        /// </summary>
+        int TotalItemCount { get; }
     }
 }

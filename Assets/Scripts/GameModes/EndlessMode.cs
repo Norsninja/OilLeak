@@ -21,7 +21,7 @@ public class EndlessMode : IGameMode
         "Congressional Medal",
         "International Hero",
         "Literally Better Than BP",
-        "YOU CAPPED THE WELL!"
+        "Futile Legend"
     };
     private int currentMilestoneIndex = 0;
 
@@ -312,7 +312,14 @@ public class EndlessMode : IGameMode
             string milestoneName = milestoneNames[currentMilestoneIndex];
             Debug.Log($"MILESTONE REACHED: {milestoneName} at {timeElapsed:F1} seconds!");
 
-            // TODO: Trigger milestone UI notification
+            // Trigger milestone toast notification
+            if (GameCore.Toasts != null)
+            {
+                // Use ForceToast to ensure milestone shows regardless of other conditions
+                string triggerID = GetMilestoneTriggerID(currentMilestoneIndex);
+                GameCore.Toasts.ForceToast(triggerID, null, null);
+            }
+
             // TODO: Trigger milestone audio
             // TODO: Update news ticker
 
@@ -342,6 +349,22 @@ public class EndlessMode : IGameMode
         // Each particle = 100 gallons (for readable numbers)
         int blocked = oilLeakData?.particlesBlocked ?? 0;
         return blocked * 100;
+    }
+
+    private string GetMilestoneTriggerID(int milestoneIndex)
+    {
+        // Map milestone indices to existing time triggers
+        switch (milestoneIndex)
+        {
+            case 0: return "time_60";   // 1 minute
+            case 1: return "time_120";  // 2 minutes
+            case 2: return "time_5";    // 5 minutes (300s)
+            case 3: return "time_10";   // 10 minutes (600s)
+            case 4: return "time_15";   // 15 minutes (900s)
+            case 5: return "time_25";   // 25 minutes (1500s)
+            case 6: return "time_50";   // 50 minutes (3000s) - needs to be added to validator
+            default: return $"time_{milestones[milestoneIndex]}"; // Fallback
+        }
     }
 
     private void CheckGameOver()
@@ -378,11 +401,12 @@ public class EndlessMode : IGameMode
                 float percent = gameRules.GetEscapedPercentage(currentEscaped, timeElapsed) * 100f;
                 Debug.LogWarning($"WARNING: {percent:F0}% of oil escape limit reached!");
 
-                // TODO: Trigger warning toast/UI feedback
-                // if (ToastManager.Instance != null)
-                // {
-                //     ToastManager.Instance.ShowToast($"WARNING: {percent:F0}% oil escaped!", ToastType.Warning);
-                // }
+                // Trigger warning toast
+                if (GameCore.Toasts != null)
+                {
+                    // Use a special warning trigger that can show critical oil escape status
+                    GameCore.Toasts.ForceToast("warning_oil_critical", null, null);
+                }
             }
         }
     }

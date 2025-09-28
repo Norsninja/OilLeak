@@ -16,7 +16,8 @@ MonoBehaviour:
   defaultHandle: '@MarineBiologist'
   defaultAvatar: {fileID: 0}
   borderColor: {r: 0.54509807, g: 0, b: 0, a: 1}
-  defaultNotificationSound: {fileID: 0}
+  defaultNotificationSound: {fileID: 8300000, guid: f370ac9abe4110e46aca3f15d8bc2131,
+    type: 3}
   audioOverrides: []
   iconOverrides: []
   messagesJsonFile: {fileID: 0}
