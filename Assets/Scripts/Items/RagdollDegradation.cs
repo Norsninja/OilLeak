@@ -86,17 +86,20 @@ public class RagdollDegradation : ItemDegradation
             // Cache the original color from the material
             if (allBoneRenderers[i] != null && allBoneRenderers[i].sharedMaterial != null)
             {
-                // First check if renderer already has a property block with color
-                allBoneRenderers[i].GetPropertyBlock(bonePropertyBlocks[i]);
-                if (bonePropertyBlocks[i].HasProperty(ColorProperty))
+                var mat = allBoneRenderers[i].sharedMaterial;
+
+                // Detect which color property to use (same logic as base class)
+                int colorProp = -1;
+                if (mat.HasProperty(BaseColorProp))
+                    colorProp = BaseColorProp;  // URP
+                else if (mat.HasProperty(LegacyColorProp))
+                    colorProp = LegacyColorProp;  // Built-in
+                else if (mat.HasProperty(TintProperty))
+                    colorProp = TintProperty;  // Fallback
+
+                if (colorProp >= 0)
                 {
-                    // Use existing property block color
-                    originalBoneColors[i] = bonePropertyBlocks[i].GetColor(ColorProperty);
-                }
-                else if (allBoneRenderers[i].sharedMaterial.HasProperty(ColorProperty))
-                {
-                    // Fall back to material color
-                    originalBoneColors[i] = allBoneRenderers[i].sharedMaterial.GetColor(ColorProperty);
+                    originalBoneColors[i] = mat.GetColor(colorProp);
                 }
                 else
                 {
@@ -195,7 +198,7 @@ public class RagdollDegradation : ItemDegradation
             }
 
             allBoneRenderers[i].GetPropertyBlock(bonePropertyBlocks[i]);
-            bonePropertyBlocks[i].SetColor(ColorProperty, finalColor);
+            bonePropertyBlocks[i].SetColor(activeColorProp >= 0 ? activeColorProp : LegacyColorProp, finalColor);
             allBoneRenderers[i].SetPropertyBlock(bonePropertyBlocks[i]);
         }
     }
@@ -247,7 +250,7 @@ public class RagdollDegradation : ItemDegradation
             if (allBoneRenderers[i] == null) continue;
 
             allBoneRenderers[i].GetPropertyBlock(bonePropertyBlocks[i]);
-            bonePropertyBlocks[i].SetColor(ColorProperty, originalBoneColors[i]);
+            bonePropertyBlocks[i].SetColor(activeColorProp >= 0 ? activeColorProp : LegacyColorProp, originalBoneColors[i]);
             allBoneRenderers[i].SetPropertyBlock(bonePropertyBlocks[i]);
         }
     }

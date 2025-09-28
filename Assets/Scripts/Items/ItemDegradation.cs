@@ -40,8 +40,10 @@ public class ItemDegradation : MonoBehaviour
     protected int LAYER_POROUS_DEBRIS;
 
     // Shader property IDs - protected for subclass access
-    protected static readonly int ColorProperty = Shader.PropertyToID("_Color");
-    protected static readonly int TintProperty = Shader.PropertyToID("_TintColor");
+    protected static readonly int BaseColorProp = Shader.PropertyToID("_BaseColor");  // URP
+    protected static readonly int LegacyColorProp = Shader.PropertyToID("_Color");     // Built-in
+    protected static readonly int TintProperty = Shader.PropertyToID("_TintColor");    // Fallback
+    protected int activeColorProp = -1;  // Will be detected at runtime - protected for subclass access
 
     protected virtual void Awake()
     {
@@ -79,6 +81,20 @@ public class ItemDegradation : MonoBehaviour
         if (itemRenderer != null)
         {
             propertyBlock = new MaterialPropertyBlock();
+
+            // Detect which color property the shader uses
+            var mat = itemRenderer.sharedMaterial;
+            if (mat != null)
+            {
+                if (mat.HasProperty(BaseColorProp))
+                    activeColorProp = BaseColorProp;  // URP shader
+                else if (mat.HasProperty(LegacyColorProp))
+                    activeColorProp = LegacyColorProp;  // Built-in shader
+                else if (mat.HasProperty(TintProperty))
+                    activeColorProp = TintProperty;  // Fallback
+                else
+                    Debug.LogWarning($"[ItemDegradation] No color property found on material {mat.name}");
+            }
         }
 
         // Try to get Item data from controllers if not set
@@ -275,11 +291,14 @@ public class ItemDegradation : MonoBehaviour
     // Virtual method for applying visuals - can be overridden for multi-renderer support
     protected virtual void ApplyDegradationVisuals(Color targetColor)
     {
-        if (itemRenderer == null || propertyBlock == null) return;
+        if (activeColorProp < 0 || itemRenderer == null || propertyBlock == null) return;
+
+        // Clamp alpha for opaque materials
+        targetColor.a = 1f;
 
         // Apply color via MaterialPropertyBlock (avoids material instancing)
         itemRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor(ColorProperty, targetColor);
+        propertyBlock.SetColor(activeColorProp, targetColor);
         itemRenderer.SetPropertyBlock(propertyBlock);
     }
 
@@ -306,10 +325,10 @@ public class ItemDegradation : MonoBehaviour
         EnableForceFields();
 
         // Reset visuals
-        if (itemRenderer != null && propertyBlock != null)
+        if (activeColorProp >= 0 && itemRenderer != null && propertyBlock != null)
         {
             itemRenderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetColor(ColorProperty, Color.white);
+            propertyBlock.SetColor(activeColorProp, Color.white);
             itemRenderer.SetPropertyBlock(propertyBlock);
         }
 

@@ -62,11 +62,22 @@ namespace Items
         protected override void OnEnable()
         {
             // Store original color before base reset
-            if (!hasStoredOriginalColor && itemRenderer != null)
+            if (!hasStoredOriginalColor && itemRenderer != null && itemRenderer.sharedMaterial != null)
             {
-                if (itemRenderer.sharedMaterial != null && itemRenderer.sharedMaterial.HasProperty(ColorProperty))
+                var mat = itemRenderer.sharedMaterial;
+
+                // Detect which color property to use (same as base class detection)
+                int colorProp = -1;
+                if (mat.HasProperty(BaseColorProp))
+                    colorProp = BaseColorProp;  // URP
+                else if (mat.HasProperty(LegacyColorProp))
+                    colorProp = LegacyColorProp;  // Built-in
+                else if (mat.HasProperty(TintProperty))
+                    colorProp = TintProperty;  // Fallback
+
+                if (colorProp >= 0)
                 {
-                    originalColor = itemRenderer.sharedMaterial.GetColor(ColorProperty);
+                    originalColor = mat.GetColor(colorProp);
                     hasStoredOriginalColor = true;
                     Debug.Log($"[BoomDegradation] Stored original color: {originalColor}");
                 }
@@ -78,8 +89,11 @@ namespace Items
             // Restore original color after base reset
             if (hasStoredOriginalColor && itemRenderer != null && propertyBlock != null)
             {
+                // activeColorProp should be set by base class, but fallback if needed
+                int colorProp = activeColorProp >= 0 ? activeColorProp : LegacyColorProp;
+
                 itemRenderer.GetPropertyBlock(propertyBlock);
-                propertyBlock.SetColor(ColorProperty, originalColor);
+                propertyBlock.SetColor(colorProp, originalColor);
                 itemRenderer.SetPropertyBlock(propertyBlock);
                 Debug.Log("[BoomDegradation] Restored original boom color");
             }
@@ -92,7 +106,7 @@ namespace Items
         /// </summary>
         protected override void ApplyDegradationVisuals(Color targetColor)
         {
-            if (itemRenderer == null || propertyBlock == null) return;
+            if (activeColorProp < 0 || itemRenderer == null || propertyBlock == null) return;
 
             Color finalColor;
 
@@ -108,8 +122,11 @@ namespace Items
                 finalColor = originalColor * targetColor;
             }
 
+            // Clamp alpha for opaque materials
+            finalColor.a = 1f;
+
             itemRenderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetColor(ColorProperty, finalColor);
+            propertyBlock.SetColor(activeColorProp, finalColor);
             itemRenderer.SetPropertyBlock(propertyBlock);
         }
 
