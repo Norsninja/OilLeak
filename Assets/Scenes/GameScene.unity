@@ -560,6 +560,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127154293}
   m_CullTransparentMesh: 1
+--- !u!1 &134955588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 134955590}
+  - component: {fileID: 134955589}
+  m_Layer: 0
+  m_Name: GlobalVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &134955589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134955588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 53c022c6178f43145a265ed10702e89f, type: 2}
+--- !u!4 &134955590
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134955588}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &142417062
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1094,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f72d6d75185f842e498cbecf8339192c, type: 2}
+  - {fileID: 2100000, guid: 30713a051052b4d25b10f61c7c53434c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2180,8 +2229,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 325.25, y: -199.955}
-  m_SizeDelta: {x: 460.6, y: 41.289997}
+  m_AnchoredPosition: {x: 325.25, y: -241.56503}
+  m_SizeDelta: {x: 460.6, y: 69.030014}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &411049785
 MonoBehaviour:
@@ -2555,7 +2604,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 229494c38b8b06f47b6383dc05948e93, type: 2}
+  - {fileID: 2100000, guid: 2691e5dab82c08645b33fabcd953b4bd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2901,8 +2950,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 325.25, y: -855.69495}
-  m_SizeDelta: {x: 500, y: 81.509995}
+  m_AnchoredPosition: {x: 325.25, y: -841.8251}
+  m_SizeDelta: {x: 500, y: 109.250015}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &514554926
 MonoBehaviour:
@@ -3871,6 +3920,7 @@ GameObject:
   m_Component:
   - component: {fileID: 705507995}
   - component: {fileID: 705507994}
+  - component: {fileID: 705507996}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -3955,6 +4005,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 980547312}
   m_LocalEulerAnglesHint: {x: 51.41, y: -1.9, z: 0}
+--- !u!114 &705507996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705507993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &705678338
 GameObject:
   m_ObjectHideFlags: 0
@@ -4283,6 +4356,7 @@ GameObject:
   m_Component:
   - component: {fileID: 762458118}
   - component: {fileID: 762458117}
+  - component: {fileID: 762458119}
   m_Layer: 0
   m_Name: Moon
   m_TagString: Untagged
@@ -4367,6 +4441,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 980547312}
   m_LocalEulerAnglesHint: {x: 51.41, y: -1.9, z: 0}
+--- !u!114 &762458119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762458116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &762541217
 GameObject:
   m_ObjectHideFlags: 0
@@ -5171,8 +5268,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 325.25, y: -789.295}
-  m_SizeDelta: {x: 460.6, y: 41.289997}
+  m_AnchoredPosition: {x: 325.25, y: -747.68506}
+  m_SizeDelta: {x: 460.6, y: 69.030014}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &911834012
 MonoBehaviour:
@@ -5391,6 +5488,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5479,7 +5577,7 @@ MonoBehaviour:
   boat: {fileID: 1595044519}
   offset: {x: 0, y: 0, z: 0}
   verticalSpeed: 5
-  returnDuration: 2
+  returnDuration: 15
   returnCurve:
     serializedVersion: 2
     m_Curve:
@@ -5495,8 +5593,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -5526,6 +5624,50 @@ MonoBehaviour:
   zoomSpeed: 20
   minZoom: 30
   maxZoom: 130
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1 &980547310
 GameObject:
   m_ObjectHideFlags: 0
@@ -6281,7 +6423,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ad21f652a2c73b443aea2a77b34c26c9, type: 2}
+  - {fileID: 2100000, guid: 0c74e11c4fd801847a7dd18ce58c5890, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7621,8 +7763,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 325.25, y: -92.155}
-  m_SizeDelta: {x: 650, y: 164.31}
+  m_AnchoredPosition: {x: 325.25, y: -106.02501}
+  m_SizeDelta: {x: 650, y: 192.05002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1569675801
 MonoBehaviour:
@@ -8121,7 +8263,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 325.25, y: -494.625}
-  m_SizeDelta: {x: 565.8, y: 538.05}
+  m_SizeDelta: {x: 565.8, y: 427.09}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1672932080
 MonoBehaviour:
@@ -8146,7 +8288,7 @@ MonoBehaviour:
   m_text: 'YOUR MISSION: Save the Gulf and stop the leak before it destroys the everything.
     How long can you hold it back?
 
-    
+
 
     CONTROLS:
 
@@ -8159,7 +8301,7 @@ MonoBehaviour:
 
     - Q - Inventory wheel
 
-    
+
 
     TIP:
     Resupplies bring stronger items as the crisis escalates.'
@@ -8189,8 +8331,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 24.79
+  m_fontSizeBase: 24.79
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -16958,3 +17100,4 @@ SceneRoots:
   - {fileID: 523270587}
   - {fileID: 4285647518024133700}
   - {fileID: 269174618}
+  - {fileID: 134955590}

@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d6989b9fe3b0a2c44bbc3a9e7b7434d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,19 +151,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   glowColor: {r: 1, g: 0.9, b: 0.7, a: 0.8}
   riseHeight: 2
-  riseSpeed: 1
-  falseHopeMessages:
-  - Someone is sending thoughts!
-  - Prayers incoming from Corporate!
-  - We're thinking of you, Gulf!
-  crescendoMessages:
-  - Prayer chain started! (1/10000)
-  - PRAYER MULTIPLIER x10!
-  - Church groups mobilizing!
-  - Celebrity prayers detected!
-  - DIVINE INTERVENTION LOADING...
-  - CRITICAL PRAYER MASS REACHED!
-  anticlimaxMessage: ...oil continues leaking
 --- !u!54 &1755249776080487915
 Rigidbody:
   m_ObjectHideFlags: 0

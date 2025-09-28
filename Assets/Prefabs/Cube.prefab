@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 070acf224df24394ab9ab5a384a82b7c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -167,4 +167,3 @@ MonoBehaviour:
   exposureSeconds: 0
   particlesBlockedCount: 0
   itemData: {fileID: 11400000, guid: 8ae8df820c83238458fdeb27da0d423e, type: 2}
-  exposureGracePeriod: 0.2
